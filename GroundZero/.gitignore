@@ -1,0 +1,14 @@
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+.dart_tool/
+.packages
+build/
+*.iml
+appsettings.*.json
+!appsettings.json
+.DS_Store
+Thumbs.db
