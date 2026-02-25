@@ -43,6 +43,30 @@ public class ExceptionHandlingMiddleware
                 (int)HttpStatusCode.NotFound,
                 JsonSerializer.Serialize(new { error = exception.Message })),
 
+            ConflictException => (
+                (int)HttpStatusCode.Conflict,
+                JsonSerializer.Serialize(new { error = exception.Message })),
+
+            UnauthorizedAccessException => (
+                (int)HttpStatusCode.Unauthorized,
+                JsonSerializer.Serialize(new { error = exception.Message })),
+
+            ForbiddenException => (
+                (int)HttpStatusCode.Forbidden,
+                JsonSerializer.Serialize(new { error = exception.Message })),
+
+            EntityHasDependentsException => (
+                (int)HttpStatusCode.Conflict,
+                JsonSerializer.Serialize(new { error = exception.Message })),
+
+            KeyNotFoundException => (
+                (int)HttpStatusCode.NotFound,
+                JsonSerializer.Serialize(new { error = exception.Message })),
+
+            InvalidOperationException => (
+                (int)HttpStatusCode.BadRequest,
+                JsonSerializer.Serialize(new { error = exception.Message })),
+
             _ => (
                 (int)HttpStatusCode.InternalServerError,
                 JsonSerializer.Serialize(new { error = "An internal server error occurred." }))
