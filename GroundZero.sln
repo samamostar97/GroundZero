@@ -3,19 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Core", "GroundZero.Core\GroundZero.Core.csproj", "{BA7136EB-33A0-48A0-A07C-55E8A98DE017}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Application", "GroundZero.Application\GroundZero.Application.csproj", "{D058C6CA-77FE-4076-A6EE-1DB1422AB720}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Infrastructure", "GroundZero.Infrastructure\GroundZero.Infrastructure.csproj", "{6EF3E9CF-380E-4FD1-B349-47BE13ACF370}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.API", "GroundZero.API\GroundZero.API.csproj", "{228D6D11-FDC2-4156-B382-583442EB74D0}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{6E96D665-B6DE-4799-ABB4-A4ACA88BB333}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Application.Tests", "tests\GroundZero.Application.Tests\GroundZero.Application.Tests.csproj", "{9234D0AC-3DFE-4A5B-9E1B-0A31C827F7CB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.API.Tests", "tests\GroundZero.API.Tests\GroundZero.API.Tests.csproj", "{C7653565-DE6B-417A-A198-CC63AF0AA9FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{00B8FF0B-36D2-4E3A-9976-9FEBAADF7A25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Core", "src\GroundZero.Core\GroundZero.Core.csproj", "{B4988F5D-0F99-4282-8429-1F4AA95A0C7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Application", "src\GroundZero.Application\GroundZero.Application.csproj", "{FCD3AF33-E1A8-48E3-9EB2-0AEED133A6C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Infrastructure", "src\GroundZero.Infrastructure\GroundZero.Infrastructure.csproj", "{25C58FD2-B308-448E-8B63-64117A207AB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.API", "src\GroundZero.API\GroundZero.API.csproj", "{4C92DEC2-4990-411E-BB37-EE61D8711E97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,22 +28,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BA7136EB-33A0-48A0-A07C-55E8A98DE017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BA7136EB-33A0-48A0-A07C-55E8A98DE017}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BA7136EB-33A0-48A0-A07C-55E8A98DE017}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BA7136EB-33A0-48A0-A07C-55E8A98DE017}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D058C6CA-77FE-4076-A6EE-1DB1422AB720}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D058C6CA-77FE-4076-A6EE-1DB1422AB720}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D058C6CA-77FE-4076-A6EE-1DB1422AB720}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D058C6CA-77FE-4076-A6EE-1DB1422AB720}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6EF3E9CF-380E-4FD1-B349-47BE13ACF370}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6EF3E9CF-380E-4FD1-B349-47BE13ACF370}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6EF3E9CF-380E-4FD1-B349-47BE13ACF370}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6EF3E9CF-380E-4FD1-B349-47BE13ACF370}.Release|Any CPU.Build.0 = Release|Any CPU
-		{228D6D11-FDC2-4156-B382-583442EB74D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{228D6D11-FDC2-4156-B382-583442EB74D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{228D6D11-FDC2-4156-B382-583442EB74D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{228D6D11-FDC2-4156-B382-583442EB74D0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9234D0AC-3DFE-4A5B-9E1B-0A31C827F7CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9234D0AC-3DFE-4A5B-9E1B-0A31C827F7CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9234D0AC-3DFE-4A5B-9E1B-0A31C827F7CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -50,9 +36,29 @@ Global
 		{C7653565-DE6B-417A-A198-CC63AF0AA9FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7653565-DE6B-417A-A198-CC63AF0AA9FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7653565-DE6B-417A-A198-CC63AF0AA9FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4988F5D-0F99-4282-8429-1F4AA95A0C7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4988F5D-0F99-4282-8429-1F4AA95A0C7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4988F5D-0F99-4282-8429-1F4AA95A0C7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4988F5D-0F99-4282-8429-1F4AA95A0C7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FCD3AF33-E1A8-48E3-9EB2-0AEED133A6C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FCD3AF33-E1A8-48E3-9EB2-0AEED133A6C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FCD3AF33-E1A8-48E3-9EB2-0AEED133A6C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FCD3AF33-E1A8-48E3-9EB2-0AEED133A6C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25C58FD2-B308-448E-8B63-64117A207AB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25C58FD2-B308-448E-8B63-64117A207AB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25C58FD2-B308-448E-8B63-64117A207AB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25C58FD2-B308-448E-8B63-64117A207AB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C92DEC2-4990-411E-BB37-EE61D8711E97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C92DEC2-4990-411E-BB37-EE61D8711E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C92DEC2-4990-411E-BB37-EE61D8711E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C92DEC2-4990-411E-BB37-EE61D8711E97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9234D0AC-3DFE-4A5B-9E1B-0A31C827F7CB} = {6E96D665-B6DE-4799-ABB4-A4ACA88BB333}
 		{C7653565-DE6B-417A-A198-CC63AF0AA9FD} = {6E96D665-B6DE-4799-ABB4-A4ACA88BB333}
+		{B4988F5D-0F99-4282-8429-1F4AA95A0C7D} = {00B8FF0B-36D2-4E3A-9976-9FEBAADF7A25}
+		{FCD3AF33-E1A8-48E3-9EB2-0AEED133A6C5} = {00B8FF0B-36D2-4E3A-9976-9FEBAADF7A25}
+		{25C58FD2-B308-448E-8B63-64117A207AB2} = {00B8FF0B-36D2-4E3A-9976-9FEBAADF7A25}
+		{4C92DEC2-4990-411E-BB37-EE61D8711E97} = {00B8FF0B-36D2-4E3A-9976-9FEBAADF7A25}
 	EndGlobalSection
 EndGlobal

@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\GroundZero.Application\GroundZero.Application.csproj" />
+    <ProjectReference Include="..\..\src\GroundZero.Application\GroundZero.Application.csproj" />
   </ItemGroup>
 
 </Project>
