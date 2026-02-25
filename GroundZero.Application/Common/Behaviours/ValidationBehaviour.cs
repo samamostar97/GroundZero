@@ -1,6 +1,6 @@
 using FluentValidation;
 using MediatR;
-using ValidationException = GroundZero.Domain.Exceptions.ValidationException;
+using ValidationException = GroundZero.Application.Exceptions.ValidationException;
 
 namespace GroundZero.Application.Common.Behaviours;
 

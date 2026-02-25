@@ -1,4 +1,4 @@
-using GroundZero.Application.Common.Interfaces;
+using GroundZero.Application.IServices;
 
 namespace GroundZero.Infrastructure.Services;
 

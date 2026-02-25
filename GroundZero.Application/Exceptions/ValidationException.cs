@@ -1,4 +1,4 @@
-namespace GroundZero.Domain.Exceptions;
+namespace GroundZero.Application.Exceptions;
 
 public class ValidationException : Exception
 {

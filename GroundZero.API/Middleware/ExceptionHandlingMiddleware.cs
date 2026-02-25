@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
-using GroundZero.Domain.Exceptions;
-using ValidationException = GroundZero.Domain.Exceptions.ValidationException;
+using GroundZero.Application.Exceptions;
+using ValidationException = GroundZero.Application.Exceptions.ValidationException;
 
 namespace GroundZero.API.Middleware;
 

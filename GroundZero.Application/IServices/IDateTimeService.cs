@@ -1,4 +1,4 @@
-namespace GroundZero.Application.Common.Interfaces;
+namespace GroundZero.Application.IServices;
 
 public interface IDateTimeService
 {

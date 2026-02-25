@@ -1,10 +1,10 @@
-using GroundZero.Application.Common.Interfaces;
-using GroundZero.Domain.Entities;
+using GroundZero.Application.IServices;
+using GroundZero.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace GroundZero.Infrastructure.Persistence;
+namespace GroundZero.Infrastructure.Data;
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext : DbContext
 {
     private readonly IDateTimeService _dateTimeService;
 
