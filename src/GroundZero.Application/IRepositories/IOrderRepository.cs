@@ -1,0 +1,12 @@
+using GroundZero.Application.Common;
+using GroundZero.Domain.Entities;
+using GroundZero.Domain.Enums;
+
+namespace GroundZero.Application.IRepositories;
+
+public interface IOrderRepository : IRepository<Order>
+{
+    Task<Order?> GetByIdWithItemsAsync(int id, CancellationToken cancellationToken = default);
+    Task<PagedResult<Order>> GetUserOrdersPagedAsync(int userId, OrderStatus? status, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<PagedResult<Order>> GetAllOrdersPagedAsync(string? search, OrderStatus? status, int? userId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+}

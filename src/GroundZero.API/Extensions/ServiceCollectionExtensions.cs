@@ -47,6 +47,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IStaffRepository, StaffRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IStripeService, StripeService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IFileService, FileService>();
