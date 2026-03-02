@@ -4,9 +4,13 @@ using GroundZero.API.Middleware;
 using GroundZero.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using QuestPDF.Infrastructure;
 
 // Load .env file
 Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env"));
+
+// QuestPDF Community License
+QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
