@@ -15,7 +15,8 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .HasMaxLength(500);
 
         builder.HasIndex(rt => rt.Token)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("[IsDeleted] = 0");
 
         builder.HasOne(rt => rt.User)
             .WithMany()

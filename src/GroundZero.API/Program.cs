@@ -3,6 +3,7 @@ using GroundZero.API.Extensions;
 using GroundZero.API.Middleware;
 using GroundZero.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 // Load .env file
 Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env"));
@@ -14,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
+builder.Services.AddJwtAuthentication();
 builder.Services.AddSwaggerServices();
 
 var app = builder.Build();
@@ -36,6 +38,18 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseHttpsRedirection();
+
+// Serve uploaded files
+var storagePath = Environment.GetEnvironmentVariable("FILE_STORAGE_PATH") ?? "./uploads";
+var uploadsPath = Path.GetFullPath(storagePath);
+Directory.CreateDirectory(uploadsPath);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = ""
+});
+
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
