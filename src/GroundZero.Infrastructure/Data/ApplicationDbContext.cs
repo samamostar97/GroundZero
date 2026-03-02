@@ -16,6 +16,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Exercise> Exercises => Set<Exercise>();
+    public DbSet<WorkoutPlan> WorkoutPlans => Set<WorkoutPlan>();
+    public DbSet<WorkoutDay> WorkoutDays => Set<WorkoutDay>();
+    public DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
+    public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
