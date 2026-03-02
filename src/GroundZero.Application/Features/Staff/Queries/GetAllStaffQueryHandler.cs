@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Staff.Queries;
 
-public class GetAllStaffQueryHandler : IRequestHandler<GetAllStaffQuery, ApiResponse<PagedResult<StaffResponse>>>
+public class GetAllStaffQueryHandler : IRequestHandler<GetAllStaffQuery, PagedResult<StaffResponse>>
 {
     private readonly IStaffRepository _staffRepository;
 
@@ -14,7 +14,7 @@ public class GetAllStaffQueryHandler : IRequestHandler<GetAllStaffQuery, ApiResp
         _staffRepository = staffRepository;
     }
 
-    public async Task<ApiResponse<PagedResult<StaffResponse>>> Handle(GetAllStaffQuery query, CancellationToken cancellationToken)
+    public async Task<PagedResult<StaffResponse>> Handle(GetAllStaffQuery query, CancellationToken cancellationToken)
     {
         var pagedStaff = await _staffRepository.GetPagedAsync(query.Search, query.StaffType, query.PageNumber, query.PageSize, cancellationToken);
 
@@ -26,6 +26,6 @@ public class GetAllStaffQueryHandler : IRequestHandler<GetAllStaffQuery, ApiResp
             PageSize = pagedStaff.PageSize
         };
 
-        return ApiResponse<PagedResult<StaffResponse>>.Success(result);
+        return result;
     }
 }

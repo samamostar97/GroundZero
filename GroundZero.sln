@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Domain", "src\Gr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Infrastructure", "src\GroundZero.Infrastructure\GroundZero.Infrastructure.csproj", "{643107FC-BE19-4876-9E2F-E83757A7C17A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D84C1C3B-45AF-4ABD-BB2D-4B51AEEB7764}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GroundZero.Application.Tests", "tests\GroundZero.Application.Tests\GroundZero.Application.Tests.csproj", "{8AF304BA-8A63-4ECE-B26B-648D57CE8A0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,11 +42,16 @@ Global
 		{643107FC-BE19-4876-9E2F-E83757A7C17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{643107FC-BE19-4876-9E2F-E83757A7C17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{643107FC-BE19-4876-9E2F-E83757A7C17A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AF304BA-8A63-4ECE-B26B-648D57CE8A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AF304BA-8A63-4ECE-B26B-648D57CE8A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AF304BA-8A63-4ECE-B26B-648D57CE8A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AF304BA-8A63-4ECE-B26B-648D57CE8A0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A3F49F2B-5CC6-45EE-824D-8AB2678C4499} = {8E31A36C-6CEB-4BA7-81A3-8E20C489FE53}
 		{899C9979-9156-48E5-80CA-244EFBCCA7C2} = {8E31A36C-6CEB-4BA7-81A3-8E20C489FE53}
 		{440B962D-BB74-4212-9CC9-C158A26E7349} = {8E31A36C-6CEB-4BA7-81A3-8E20C489FE53}
 		{643107FC-BE19-4876-9E2F-E83757A7C17A} = {8E31A36C-6CEB-4BA7-81A3-8E20C489FE53}
+		{8AF304BA-8A63-4ECE-B26B-648D57CE8A0C} = {D84C1C3B-45AF-4ABD-BB2D-4B51AEEB7764}
 	EndGlobalSection
 EndGlobal

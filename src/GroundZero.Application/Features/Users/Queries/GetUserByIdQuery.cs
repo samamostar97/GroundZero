@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Queries;
 
-public class GetUserByIdQuery : IRequest<ApiResponse<UserResponse>>
+[AuthorizeRole("Admin")]
+public class GetUserByIdQuery : IRequest<UserResponse>
 {
     public int Id { get; set; }
 }

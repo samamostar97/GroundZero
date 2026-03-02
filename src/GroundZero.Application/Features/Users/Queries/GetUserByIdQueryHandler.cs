@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Users.DTOs;
 using GroundZero.Application.IRepositories;
@@ -6,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Queries;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, ApiResponse<UserResponse>>
+public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserResponse>
 {
     private readonly IUserRepository _userRepository;
 
@@ -15,7 +14,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, ApiResp
         _userRepository = userRepository;
     }
 
-    public async Task<ApiResponse<UserResponse>> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
+    public async Task<UserResponse> Handle(GetUserByIdQuery query, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(query.Id, cancellationToken)
             ?? throw new NotFoundException("Korisnik", query.Id);
@@ -34,6 +33,6 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, ApiResp
             CreatedAt = user.CreatedAt
         };
 
-        return ApiResponse<UserResponse>.Success(response);
+        return response;
     }
 }

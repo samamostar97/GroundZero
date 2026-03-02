@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Categories.DTOs;
 using GroundZero.Application.IRepositories;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Categories.Commands;
 
-public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, ApiResponse<CategoryResponse>>
+public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, CategoryResponse>
 {
     private readonly ICategoryRepository _categoryRepository;
 
@@ -16,7 +15,7 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<ApiResponse<CategoryResponse>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
+    public async Task<CategoryResponse> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
     {
         if (await _categoryRepository.NameExistsAsync(command.Request.Name, cancellationToken: cancellationToken))
             throw new ConflictException("Kategorija sa navedenim nazivom već postoji.");
@@ -30,11 +29,11 @@ public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryComman
         await _categoryRepository.AddAsync(category, cancellationToken);
         await _categoryRepository.SaveChangesAsync(cancellationToken);
 
-        return ApiResponse<CategoryResponse>.Success(new CategoryResponse
+        return new CategoryResponse
         {
             Id = category.Id,
             Name = category.Name,
             Description = category.Description
-        }, 201);
+        };
     }
 }

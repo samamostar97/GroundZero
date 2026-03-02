@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Staff.DTOs;
 using GroundZero.Application.IRepositories;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Staff.Commands;
 
-public class CreateStaffCommandHandler : IRequestHandler<CreateStaffCommand, ApiResponse<StaffResponse>>
+public class CreateStaffCommandHandler : IRequestHandler<CreateStaffCommand, StaffResponse>
 {
     private readonly IStaffRepository _staffRepository;
 
@@ -16,7 +15,7 @@ public class CreateStaffCommandHandler : IRequestHandler<CreateStaffCommand, Api
         _staffRepository = staffRepository;
     }
 
-    public async Task<ApiResponse<StaffResponse>> Handle(CreateStaffCommand command, CancellationToken cancellationToken)
+    public async Task<StaffResponse> Handle(CreateStaffCommand command, CancellationToken cancellationToken)
     {
         var request = command.Request;
 
@@ -36,6 +35,6 @@ public class CreateStaffCommandHandler : IRequestHandler<CreateStaffCommand, Api
         await _staffRepository.AddAsync(staff, cancellationToken);
         await _staffRepository.SaveChangesAsync(cancellationToken);
 
-        return ApiResponse<StaffResponse>.Success(staff.ToResponse(), 201);
+        return staff.ToResponse();
     }
 }

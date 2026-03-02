@@ -3,7 +3,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Commands;
 
-public class DeleteUserCommand : IRequest<ApiResponse<string>>
+[AuthorizeRole("Admin")]
+public class DeleteUserCommand : IRequest<Unit>
 {
     public int Id { get; set; }
 }

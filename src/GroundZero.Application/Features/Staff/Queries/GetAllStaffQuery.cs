@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Staff.Queries;
 
-public class GetAllStaffQuery : IRequest<ApiResponse<PagedResult<StaffResponse>>>
+public class GetAllStaffQuery : IRequest<PagedResult<StaffResponse>>
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;

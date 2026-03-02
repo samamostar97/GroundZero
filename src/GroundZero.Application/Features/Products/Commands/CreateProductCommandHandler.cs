@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Products.DTOs;
 using GroundZero.Application.IRepositories;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Commands;
 
-public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ApiResponse<ProductResponse>>
+public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, ProductResponse>
 {
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
@@ -18,7 +17,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<ApiResponse<ProductResponse>> Handle(CreateProductCommand command, CancellationToken cancellationToken)
+    public async Task<ProductResponse> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
         var category = await _categoryRepository.GetByIdAsync(command.Request.CategoryId, cancellationToken)
             ?? throw new NotFoundException("Kategorija", command.Request.CategoryId);
@@ -36,6 +35,6 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
         await _productRepository.SaveChangesAsync(cancellationToken);
 
         product.Category = category;
-        return ApiResponse<ProductResponse>.Success(product.ToResponse(), 201);
+        return product.ToResponse();
     }
 }

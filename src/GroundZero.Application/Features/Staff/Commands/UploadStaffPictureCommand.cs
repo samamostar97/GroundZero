@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Staff.Commands;
 
-public class UploadStaffPictureCommand : IRequest<ApiResponse<StaffResponse>>
+[AuthorizeRole("Admin")]
+public class UploadStaffPictureCommand : IRequest<StaffResponse>
 {
     public int Id { get; set; }
     public Stream? FileStream { get; set; }

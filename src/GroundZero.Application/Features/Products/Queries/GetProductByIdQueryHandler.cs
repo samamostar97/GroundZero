@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Products.DTOs;
 using GroundZero.Application.IRepositories;
@@ -6,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Queries;
 
-public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ApiResponse<ProductResponse>>
+public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ProductResponse>
 {
     private readonly IProductRepository _productRepository;
 
@@ -15,11 +14,11 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, A
         _productRepository = productRepository;
     }
 
-    public async Task<ApiResponse<ProductResponse>> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
+    public async Task<ProductResponse> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(query.Id, cancellationToken)
             ?? throw new NotFoundException("Proizvod", query.Id);
 
-        return ApiResponse<ProductResponse>.Success(product.ToResponse());
+        return product.ToResponse();
     }
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Queries;
 
-public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, ApiResponse<PagedResult<UserResponse>>>
+public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, PagedResult<UserResponse>>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,7 +14,7 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, ApiResp
         _userRepository = userRepository;
     }
 
-    public async Task<ApiResponse<PagedResult<UserResponse>>> Handle(GetAllUsersQuery query, CancellationToken cancellationToken)
+    public async Task<PagedResult<UserResponse>> Handle(GetAllUsersQuery query, CancellationToken cancellationToken)
     {
         var pagedUsers = await _userRepository.GetPagedAsync(query.Search, query.PageNumber, query.PageSize, cancellationToken);
 
@@ -38,6 +38,6 @@ public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, ApiResp
             PageSize = pagedUsers.PageSize
         };
 
-        return ApiResponse<PagedResult<UserResponse>>.Success(result);
+        return result;
     }
 }

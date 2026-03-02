@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Commands;
 
-public class UpdateProductCommand : IRequest<ApiResponse<ProductResponse>>
+[AuthorizeRole("Admin")]
+public class UpdateProductCommand : IRequest<ProductResponse>
 {
     public int Id { get; set; }
     public UpdateProductRequest Request { get; set; } = null!;

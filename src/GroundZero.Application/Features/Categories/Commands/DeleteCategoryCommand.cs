@@ -3,7 +3,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Categories.Commands;
 
-public class DeleteCategoryCommand : IRequest<ApiResponse<string>>
+[AuthorizeRole("Admin")]
+public class DeleteCategoryCommand : IRequest<Unit>
 {
     public int Id { get; set; }
 }

@@ -22,21 +22,21 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var result = await _mediator.Send(new RegisterCommand { Request = request });
-        return StatusCode(result.StatusCode, result);
+        return StatusCode(201, result);
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var result = await _mediator.Send(new LoginCommand { Request = request });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
     [HttpPost("refresh")]
     public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var result = await _mediator.Send(new RefreshTokenCommand { Request = request });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
     [Authorize]
@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _mediator.Send(new LogoutCommand { UserId = userId });
-        return StatusCode(result.StatusCode, result);
+        await _mediator.Send(new LogoutCommand { UserId = userId });
+        return NoContent();
     }
 }

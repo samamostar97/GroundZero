@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Users.DTOs;
 using GroundZero.Application.IRepositories;
@@ -6,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Commands;
 
-public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, ApiResponse<UserResponse>>
+public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, UserResponse>
 {
     private readonly IUserRepository _userRepository;
 
@@ -15,7 +14,7 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
         _userRepository = userRepository;
     }
 
-    public async Task<ApiResponse<UserResponse>> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
+    public async Task<UserResponse> Handle(UpdateProfileCommand command, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(command.UserId, cancellationToken)
             ?? throw new NotFoundException("Korisnik", command.UserId);
@@ -40,6 +39,6 @@ public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand,
             CreatedAt = user.CreatedAt
         };
 
-        return ApiResponse<UserResponse>.Success(response);
+        return response;
     }
 }

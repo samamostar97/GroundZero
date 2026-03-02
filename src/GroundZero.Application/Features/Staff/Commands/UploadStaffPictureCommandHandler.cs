@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Staff.DTOs;
 using GroundZero.Application.IRepositories;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Staff.Commands;
 
-public class UploadStaffPictureCommandHandler : IRequestHandler<UploadStaffPictureCommand, ApiResponse<StaffResponse>>
+public class UploadStaffPictureCommandHandler : IRequestHandler<UploadStaffPictureCommand, StaffResponse>
 {
     private readonly IStaffRepository _staffRepository;
     private readonly IFileService _fileService;
@@ -18,7 +17,7 @@ public class UploadStaffPictureCommandHandler : IRequestHandler<UploadStaffPictu
         _fileService = fileService;
     }
 
-    public async Task<ApiResponse<StaffResponse>> Handle(UploadStaffPictureCommand command, CancellationToken cancellationToken)
+    public async Task<StaffResponse> Handle(UploadStaffPictureCommand command, CancellationToken cancellationToken)
     {
         var staff = await _staffRepository.GetByIdAsync(command.Id, cancellationToken)
             ?? throw new NotFoundException("Osoblje", command.Id);
@@ -35,6 +34,6 @@ public class UploadStaffPictureCommandHandler : IRequestHandler<UploadStaffPictu
         _staffRepository.Update(staff);
         await _staffRepository.SaveChangesAsync(cancellationToken);
 
-        return ApiResponse<StaffResponse>.Success(staff.ToResponse());
+        return staff.ToResponse();
     }
 }

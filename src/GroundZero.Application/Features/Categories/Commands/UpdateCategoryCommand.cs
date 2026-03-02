@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Categories.Commands;
 
-public class UpdateCategoryCommand : IRequest<ApiResponse<CategoryResponse>>
+[AuthorizeRole("Admin")]
+public class UpdateCategoryCommand : IRequest<CategoryResponse>
 {
     public int Id { get; set; }
     public UpdateCategoryRequest Request { get; set; } = null!;

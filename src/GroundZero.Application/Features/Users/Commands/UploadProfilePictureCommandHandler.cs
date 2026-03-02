@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Users.DTOs;
 using GroundZero.Application.IRepositories;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Commands;
 
-public class UploadProfilePictureCommandHandler : IRequestHandler<UploadProfilePictureCommand, ApiResponse<UserResponse>>
+public class UploadProfilePictureCommandHandler : IRequestHandler<UploadProfilePictureCommand, UserResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IFileService _fileService;
@@ -18,7 +17,7 @@ public class UploadProfilePictureCommandHandler : IRequestHandler<UploadProfileP
         _fileService = fileService;
     }
 
-    public async Task<ApiResponse<UserResponse>> Handle(UploadProfilePictureCommand command, CancellationToken cancellationToken)
+    public async Task<UserResponse> Handle(UploadProfilePictureCommand command, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetByIdAsync(command.UserId, cancellationToken)
             ?? throw new NotFoundException("Korisnik", command.UserId);
@@ -49,6 +48,6 @@ public class UploadProfilePictureCommandHandler : IRequestHandler<UploadProfileP
             CreatedAt = user.CreatedAt
         };
 
-        return ApiResponse<UserResponse>.Success(response);
+        return response;
     }
 }

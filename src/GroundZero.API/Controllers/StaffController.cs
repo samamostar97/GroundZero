@@ -34,33 +34,30 @@ public class StaffController : ControllerBase
             Search = search,
             StaffType = staffType
         });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(new GetStaffByIdQuery { Id = id });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateStaffRequest request)
     {
         var result = await _mediator.Send(new CreateStaffCommand { Request = request });
-        return StatusCode(result.StatusCode, result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateStaffRequest request)
     {
         var result = await _mediator.Send(new UpdateStaffCommand { Id = id, Request = request });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost("{id}/picture")]
     public async Task<IActionResult> UploadPicture(int id, IFormFile file)
     {
@@ -71,14 +68,13 @@ public class StaffController : ControllerBase
             FileName = file?.FileName ?? string.Empty,
             FileSize = file?.Length ?? 0
         });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _mediator.Send(new DeleteStaffCommand { Id = id });
-        return StatusCode(result.StatusCode, result);
+        await _mediator.Send(new DeleteStaffCommand { Id = id });
+        return NoContent();
     }
 }

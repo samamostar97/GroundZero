@@ -7,7 +7,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Commands;
 
-public class UploadProductImageCommandHandler : IRequestHandler<UploadProductImageCommand, ApiResponse<ProductResponse>>
+public class UploadProductImageCommandHandler : IRequestHandler<UploadProductImageCommand, ProductResponse>
 {
     private readonly IProductRepository _productRepository;
     private readonly IFileService _fileService;
@@ -18,7 +18,7 @@ public class UploadProductImageCommandHandler : IRequestHandler<UploadProductIma
         _fileService = fileService;
     }
 
-    public async Task<ApiResponse<ProductResponse>> Handle(UploadProductImageCommand command, CancellationToken cancellationToken)
+    public async Task<ProductResponse> Handle(UploadProductImageCommand command, CancellationToken cancellationToken)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(command.Id, cancellationToken)
             ?? throw new NotFoundException("Proizvod", command.Id);
@@ -35,6 +35,6 @@ public class UploadProductImageCommandHandler : IRequestHandler<UploadProductIma
         _productRepository.Update(product);
         await _productRepository.SaveChangesAsync(cancellationToken);
 
-        return ApiResponse<ProductResponse>.Success(product.ToResponse());
+        return product.ToResponse();
     }
 }

@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Categories.Commands;
 
-public class CreateCategoryCommand : IRequest<ApiResponse<CategoryResponse>>
+[AuthorizeRole("Admin")]
+public class CreateCategoryCommand : IRequest<CategoryResponse>
 {
     public CreateCategoryRequest Request { get; set; } = null!;
 }

@@ -1,5 +1,4 @@
 using System.Text.Json;
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 
 namespace GroundZero.API.Middleware;
@@ -49,12 +48,10 @@ public class ExceptionHandlingMiddleware
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 
-        var response = new ApiResponse<object>
+        var response = new
         {
-            Data = null,
-            Errors = errors,
-            StatusCode = statusCode,
-            IsSuccess = false
+            errors,
+            statusCode
         };
 
         var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };

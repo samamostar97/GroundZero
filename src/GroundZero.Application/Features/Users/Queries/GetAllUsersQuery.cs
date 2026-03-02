@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Users.Queries;
 
-public class GetAllUsersQuery : IRequest<ApiResponse<PagedResult<UserResponse>>>
+[AuthorizeRole("Admin")]
+public class GetAllUsersQuery : IRequest<PagedResult<UserResponse>>
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;

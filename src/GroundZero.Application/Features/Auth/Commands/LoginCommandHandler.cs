@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Features.Auth.DTOs;
 using GroundZero.Application.IRepositories;
 using GroundZero.Application.IServices;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Auth.Commands;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand, ApiResponse<AuthResponse>>
+public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponse>
 {
     private readonly IUserRepository _userRepository;
     private readonly IRefreshTokenRepository _refreshTokenRepository;
@@ -26,14 +25,14 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, ApiResponse<Aut
         _passwordHasher = passwordHasher;
     }
 
-    public async Task<ApiResponse<AuthResponse>> Handle(LoginCommand command, CancellationToken cancellationToken)
+    public async Task<AuthResponse> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
         var request = command.Request;
 
         var user = await _userRepository.GetByEmailAsync(request.Email.ToLower(), cancellationToken);
 
         if (user == null || !_passwordHasher.Verify(request.Password, user.PasswordHash))
-            return ApiResponse<AuthResponse>.Fail("Pogrešan email ili lozinka.", 401);
+            throw new UnauthorizedAccessException("Pogrešan email ili lozinka.");
 
         var accessToken = _jwtService.GenerateAccessToken(user);
         var refreshToken = _jwtService.GenerateRefreshToken();
@@ -54,11 +53,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, ApiResponse<Aut
         var accessTokenExpiryMinutes = int.Parse(
             Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_EXPIRY_MINUTES") ?? "30");
 
-        return ApiResponse<AuthResponse>.Success(new AuthResponse
+        return new AuthResponse
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
             AccessTokenExpiry = DateTime.UtcNow.AddMinutes(accessTokenExpiryMinutes)
-        });
+        };
     }
 }

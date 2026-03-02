@@ -37,33 +37,30 @@ public class ProductsController : ControllerBase
             MinPrice = minPrice,
             MaxPrice = maxPrice
         });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(new GetProductByIdQuery { Id = id });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
     {
         var result = await _mediator.Send(new CreateProductCommand { Request = request });
-        return StatusCode(result.StatusCode, result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateProductRequest request)
     {
         var result = await _mediator.Send(new UpdateProductCommand { Id = id, Request = request });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost("{id}/image")]
     public async Task<IActionResult> UploadImage(int id, IFormFile file)
     {
@@ -74,14 +71,13 @@ public class ProductsController : ControllerBase
             FileName = file?.FileName ?? string.Empty,
             FileSize = file?.Length ?? 0
         });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _mediator.Send(new DeleteProductCommand { Id = id });
-        return StatusCode(result.StatusCode, result);
+        await _mediator.Send(new DeleteProductCommand { Id = id });
+        return NoContent();
     }
 }

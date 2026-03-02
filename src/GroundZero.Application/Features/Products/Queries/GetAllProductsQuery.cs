@@ -4,7 +4,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Queries;
 
-public class GetAllProductsQuery : IRequest<ApiResponse<PagedResult<ProductResponse>>>
+public class GetAllProductsQuery : IRequest<PagedResult<ProductResponse>>
 {
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;

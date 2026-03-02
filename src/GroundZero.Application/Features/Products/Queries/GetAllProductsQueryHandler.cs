@@ -5,7 +5,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Queries;
 
-public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, ApiResponse<PagedResult<ProductResponse>>>
+public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, PagedResult<ProductResponse>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -14,7 +14,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, A
         _productRepository = productRepository;
     }
 
-    public async Task<ApiResponse<PagedResult<ProductResponse>>> Handle(GetAllProductsQuery query, CancellationToken cancellationToken)
+    public async Task<PagedResult<ProductResponse>> Handle(GetAllProductsQuery query, CancellationToken cancellationToken)
     {
         var paged = await _productRepository.GetPagedAsync(
             query.Search, query.CategoryId, query.MinPrice, query.MaxPrice,
@@ -28,6 +28,6 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, A
             PageSize = paged.PageSize
         };
 
-        return ApiResponse<PagedResult<ProductResponse>>.Success(result);
+        return result;
     }
 }

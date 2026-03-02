@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Products.Commands;
 
-public class UploadProductImageCommand : IRequest<ApiResponse<ProductResponse>>
+[AuthorizeRole("Admin")]
+public class UploadProductImageCommand : IRequest<ProductResponse>
 {
     public int Id { get; set; }
     public Stream? FileStream { get; set; }

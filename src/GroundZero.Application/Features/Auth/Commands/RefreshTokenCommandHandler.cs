@@ -1,4 +1,3 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Features.Auth.DTOs;
 using GroundZero.Application.IRepositories;
 using GroundZero.Application.IServices;
@@ -7,7 +6,7 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Auth.Commands;
 
-public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, ApiResponse<AuthResponse>>
+public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, AuthResponse>
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IUserRepository _userRepository;
@@ -23,16 +22,16 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
         _jwtService = jwtService;
     }
 
-    public async Task<ApiResponse<AuthResponse>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
+    public async Task<AuthResponse> Handle(RefreshTokenCommand command, CancellationToken cancellationToken)
     {
         var existingToken = await _refreshTokenRepository.GetByTokenAsync(command.Request.RefreshToken, cancellationToken);
 
         if (existingToken == null || existingToken.RevokedAt != null || existingToken.ExpiresAt <= DateTime.UtcNow)
-            return ApiResponse<AuthResponse>.Fail("Refresh token nije validan ili je istekao.", 401);
+            throw new UnauthorizedAccessException("Refresh token nije validan ili je istekao.");
 
         var user = await _userRepository.GetByIdAsync(existingToken.UserId, cancellationToken);
         if (user == null)
-            return ApiResponse<AuthResponse>.Fail("Korisnik nije pronađen.", 401);
+            throw new UnauthorizedAccessException("Korisnik nije pronađen.");
 
         // Revoke old token
         existingToken.RevokedAt = DateTime.UtcNow;
@@ -58,11 +57,11 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, A
         var accessTokenExpiryMinutes = int.Parse(
             Environment.GetEnvironmentVariable("JWT_ACCESS_TOKEN_EXPIRY_MINUTES") ?? "30");
 
-        return ApiResponse<AuthResponse>.Success(new AuthResponse
+        return new AuthResponse
         {
             AccessToken = accessToken,
             RefreshToken = newRefreshToken,
             AccessTokenExpiry = DateTime.UtcNow.AddMinutes(accessTokenExpiryMinutes)
-        });
+        };
     }
 }

@@ -25,7 +25,7 @@ public class UsersController : ControllerBase
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await _mediator.Send(new GetCurrentUserQuery { UserId = userId });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
     [HttpPut("me")]
@@ -33,7 +33,7 @@ public class UsersController : ControllerBase
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await _mediator.Send(new UpdateProfileCommand { UserId = userId, Request = request });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
     [HttpPost("me/picture")]
@@ -47,10 +47,9 @@ public class UsersController : ControllerBase
             FileName = file?.FileName ?? string.Empty,
             FileSize = file?.Length ?? 0
         });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> GetAllUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
     {
@@ -60,22 +59,20 @@ public class UsersController : ControllerBase
             PageSize = pageSize,
             Search = search
         });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {
         var result = await _mediator.Send(new GetUserByIdQuery { Id = id });
-        return StatusCode(result.StatusCode, result);
+        return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var result = await _mediator.Send(new DeleteUserCommand { Id = id });
-        return StatusCode(result.StatusCode, result);
+        await _mediator.Send(new DeleteUserCommand { Id = id });
+        return NoContent();
     }
 }

@@ -1,10 +1,9 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.IRepositories;
 using MediatR;
 
 namespace GroundZero.Application.Features.Auth.Commands;
 
-public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ApiResponse<string>>
+public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Unit>
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
 
@@ -13,11 +12,11 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, ApiResponse<s
         _refreshTokenRepository = refreshTokenRepository;
     }
 
-    public async Task<ApiResponse<string>> Handle(LogoutCommand command, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(LogoutCommand command, CancellationToken cancellationToken)
     {
         await _refreshTokenRepository.RevokeAllForUserAsync(command.UserId, cancellationToken);
         await _refreshTokenRepository.SaveChangesAsync(cancellationToken);
 
-        return ApiResponse<string>.Success("Uspješno ste se odjavili.");
+        return Unit.Value;
     }
 }

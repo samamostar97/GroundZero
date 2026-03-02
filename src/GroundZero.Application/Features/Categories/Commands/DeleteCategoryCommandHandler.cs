@@ -1,11 +1,10 @@
-using GroundZero.Application.Common;
 using GroundZero.Application.Exceptions;
 using GroundZero.Application.IRepositories;
 using MediatR;
 
 namespace GroundZero.Application.Features.Categories.Commands;
 
-public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, ApiResponse<string>>
+public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Unit>
 {
     private readonly ICategoryRepository _categoryRepository;
 
@@ -14,7 +13,7 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<ApiResponse<string>> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
     {
         var category = await _categoryRepository.GetByIdAsync(command.Id, cancellationToken)
             ?? throw new NotFoundException("Kategorija", command.Id);
@@ -25,6 +24,6 @@ public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryComman
         _categoryRepository.SoftDelete(category);
         await _categoryRepository.SaveChangesAsync(cancellationToken);
 
-        return ApiResponse<string>.Success("Kategorija je uspješno obrisana.");
+        return Unit.Value;
     }
 }

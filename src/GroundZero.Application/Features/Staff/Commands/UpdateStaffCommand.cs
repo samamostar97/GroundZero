@@ -4,7 +4,8 @@ using MediatR;
 
 namespace GroundZero.Application.Features.Staff.Commands;
 
-public class UpdateStaffCommand : IRequest<ApiResponse<StaffResponse>>
+[AuthorizeRole("Admin")]
+public class UpdateStaffCommand : IRequest<StaffResponse>
 {
     public int Id { get; set; }
     public UpdateStaffRequest Request { get; set; } = null!;
