@@ -1,0 +1,14 @@
+using GroundZero.Application.Common;
+using GroundZero.Application.Features.Staff.DTOs;
+using GroundZero.Domain.Enums;
+using MediatR;
+
+namespace GroundZero.Application.Features.Staff.Queries;
+
+public class GetAllStaffQuery : IRequest<ApiResponse<PagedResult<StaffResponse>>>
+{
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+    public string? Search { get; set; }
+    public StaffType? StaffType { get; set; }
+}
