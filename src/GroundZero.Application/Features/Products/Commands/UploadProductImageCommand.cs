@@ -1,10 +1,10 @@
 using GroundZero.Application.Common;
-using GroundZero.Application.Features.Staff.DTOs;
+using GroundZero.Application.Features.Products.DTOs;
 using MediatR;
 
-namespace GroundZero.Application.Features.Staff.Commands;
+namespace GroundZero.Application.Features.Products.Commands;
 
-public class UploadStaffPictureCommand : IRequest<ApiResponse<StaffResponse>>
+public class UploadProductImageCommand : IRequest<ApiResponse<ProductResponse>>
 {
     public int Id { get; set; }
     public Stream? FileStream { get; set; }

@@ -39,15 +39,13 @@ public class UsersController : ControllerBase
     [HttpPost("me/picture")]
     public async Task<IActionResult> UploadProfilePicture(IFormFile file)
     {
-        if (file == null || file.Length == 0)
-            return BadRequest(new { errors = new[] { "Fajl je obavezan." }, statusCode = 400, isSuccess = false });
-
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await _mediator.Send(new UploadProfilePictureCommand
         {
             UserId = userId,
-            FileStream = file.OpenReadStream(),
-            FileName = file.FileName
+            FileStream = file?.OpenReadStream(),
+            FileName = file?.FileName ?? string.Empty,
+            FileSize = file?.Length ?? 0
         });
         return StatusCode(result.StatusCode, result);
     }

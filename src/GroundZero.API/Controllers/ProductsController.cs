@@ -1,7 +1,6 @@
-using GroundZero.Application.Features.Staff.Commands;
-using GroundZero.Application.Features.Staff.DTOs;
-using GroundZero.Application.Features.Staff.Queries;
-using GroundZero.Domain.Enums;
+using GroundZero.Application.Features.Products.Commands;
+using GroundZero.Application.Features.Products.DTOs;
+using GroundZero.Application.Features.Products.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,11 +10,11 @@ namespace GroundZero.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class StaffController : ControllerBase
+public class ProductsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public StaffController(IMediator mediator)
+    public ProductsController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -25,14 +24,18 @@ public class StaffController : ControllerBase
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
-        [FromQuery] StaffType? staffType = null)
+        [FromQuery] int? categoryId = null,
+        [FromQuery] decimal? minPrice = null,
+        [FromQuery] decimal? maxPrice = null)
     {
-        var result = await _mediator.Send(new GetAllStaffQuery
+        var result = await _mediator.Send(new GetAllProductsQuery
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
             Search = search,
-            StaffType = staffType
+            CategoryId = categoryId,
+            MinPrice = minPrice,
+            MaxPrice = maxPrice
         });
         return StatusCode(result.StatusCode, result);
     }
@@ -40,31 +43,31 @@ public class StaffController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var result = await _mediator.Send(new GetStaffByIdQuery { Id = id });
+        var result = await _mediator.Send(new GetProductByIdQuery { Id = id });
         return StatusCode(result.StatusCode, result);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateStaffRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
     {
-        var result = await _mediator.Send(new CreateStaffCommand { Request = request });
+        var result = await _mediator.Send(new CreateProductCommand { Request = request });
         return StatusCode(result.StatusCode, result);
     }
 
     [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateStaffRequest request)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateProductRequest request)
     {
-        var result = await _mediator.Send(new UpdateStaffCommand { Id = id, Request = request });
+        var result = await _mediator.Send(new UpdateProductCommand { Id = id, Request = request });
         return StatusCode(result.StatusCode, result);
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("{id}/picture")]
-    public async Task<IActionResult> UploadPicture(int id, IFormFile file)
+    [HttpPost("{id}/image")]
+    public async Task<IActionResult> UploadImage(int id, IFormFile file)
     {
-        var result = await _mediator.Send(new UploadStaffPictureCommand
+        var result = await _mediator.Send(new UploadProductImageCommand
         {
             Id = id,
             FileStream = file?.OpenReadStream(),
@@ -78,7 +81,7 @@ public class StaffController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var result = await _mediator.Send(new DeleteStaffCommand { Id = id });
+        var result = await _mediator.Send(new DeleteProductCommand { Id = id });
         return StatusCode(result.StatusCode, result);
     }
 }

@@ -23,6 +23,9 @@ public class UploadProfilePictureCommandHandler : IRequestHandler<UploadProfileP
         var user = await _userRepository.GetByIdAsync(command.UserId, cancellationToken)
             ?? throw new NotFoundException("Korisnik", command.UserId);
 
+        if (command.FileStream is null)
+            throw new ValidationException("Fajl je obavezan.");
+
         if (!string.IsNullOrEmpty(user.ProfileImageUrl))
             _fileService.DeleteFile(user.ProfileImageUrl);
 

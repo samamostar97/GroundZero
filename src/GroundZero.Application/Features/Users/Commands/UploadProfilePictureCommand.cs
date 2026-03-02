@@ -7,6 +7,7 @@ namespace GroundZero.Application.Features.Users.Commands;
 public class UploadProfilePictureCommand : IRequest<ApiResponse<UserResponse>>
 {
     public int UserId { get; set; }
-    public Stream FileStream { get; set; } = null!;
+    public Stream? FileStream { get; set; }
     public string FileName { get; set; } = string.Empty;
+    public long FileSize { get; set; }
 }

@@ -23,6 +23,9 @@ public class UploadStaffPictureCommandHandler : IRequestHandler<UploadStaffPictu
         var staff = await _staffRepository.GetByIdAsync(command.Id, cancellationToken)
             ?? throw new NotFoundException("Osoblje", command.Id);
 
+        if (command.FileStream is null)
+            throw new ValidationException("Fajl je obavezan.");
+
         if (!string.IsNullOrEmpty(staff.ProfileImageUrl))
             _fileService.DeleteFile(staff.ProfileImageUrl);
 
