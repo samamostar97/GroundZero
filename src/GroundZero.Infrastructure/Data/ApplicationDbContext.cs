@@ -21,6 +21,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<WorkoutDay> WorkoutDays => Set<WorkoutDay>();
     public DbSet<WorkoutExercise> WorkoutExercises => Set<WorkoutExercise>();
     public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
+    public DbSet<GymVisit> GymVisits => Set<GymVisit>();
+    public DbSet<Level> Levels => Set<Level>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

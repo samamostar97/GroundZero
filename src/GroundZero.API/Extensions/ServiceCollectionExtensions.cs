@@ -53,6 +53,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IExerciseRepository, ExerciseRepository>();
         services.AddScoped<IWorkoutPlanRepository, WorkoutPlanRepository>();
         services.AddScoped<IWorkoutLogRepository, WorkoutLogRepository>();
+        services.AddScoped<IGymVisitRepository, GymVisitRepository>();
+        services.AddScoped<ILevelRepository, LevelRepository>();
         services.AddScoped<IStripeService, StripeService>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();

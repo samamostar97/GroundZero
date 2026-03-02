@@ -10,6 +10,7 @@ public static class DataSeeder
     {
         await SeedAdminAsync(context);
         await SeedExercisesAsync(context);
+        await SeedLevelsAsync(context);
     }
 
     private static async Task SeedAdminAsync(ApplicationDbContext context)
@@ -109,6 +110,29 @@ public static class DataSeeder
         };
 
         await context.Exercises.AddRangeAsync(exercises);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedLevelsAsync(ApplicationDbContext context)
+    {
+        if (await context.Levels.AnyAsync())
+            return;
+
+        var levels = new List<Level>
+        {
+            new() { Name = "Početnik", MinXP = 0, MaxXP = 99 },
+            new() { Name = "Rekreativac", MinXP = 100, MaxXP = 249 },
+            new() { Name = "Vježbač", MinXP = 250, MaxXP = 499 },
+            new() { Name = "Sportista", MinXP = 500, MaxXP = 999 },
+            new() { Name = "Atlet", MinXP = 1000, MaxXP = 1999 },
+            new() { Name = "Warrior", MinXP = 2000, MaxXP = 3499 },
+            new() { Name = "Titan", MinXP = 3500, MaxXP = 5499 },
+            new() { Name = "Elite", MinXP = 5500, MaxXP = 7999 },
+            new() { Name = "Champion", MinXP = 8000, MaxXP = 11999 },
+            new() { Name = "Legend", MinXP = 12000, MaxXP = int.MaxValue }
+        };
+
+        await context.Levels.AddRangeAsync(levels);
         await context.SaveChangesAsync();
     }
 }

@@ -36,6 +36,13 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("me/gamification")]
+    public async Task<IActionResult> GetMyGamification()
+    {
+        var result = await _mediator.Send(new GetMyGamificationQuery());
+        return Ok(result);
+    }
+
     [HttpPost("me/picture")]
     public async Task<IActionResult> UploadProfilePicture(IFormFile file)
     {
