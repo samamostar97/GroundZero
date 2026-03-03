@@ -10,4 +10,5 @@ public interface IAppointmentRepository : IRepository<Appointment>
     Task<PagedResult<Appointment>> GetUserAppointmentsPagedAsync(int userId, AppointmentStatus? status, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<PagedResult<Appointment>> GetAllAppointmentsPagedAsync(string? search, AppointmentStatus? status, int? staffId, int? userId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<bool> HasOverlappingAppointmentAsync(int staffId, DateTime scheduledAt, int durationMinutes, int? excludeId = null, CancellationToken cancellationToken = default);
+    Task<List<Appointment>> GetStaffAppointmentsForDateAsync(int staffId, DateTime date, CancellationToken cancellationToken = default);
 }

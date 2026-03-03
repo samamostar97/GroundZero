@@ -93,6 +93,20 @@ public class AppointmentRepository : Repository<Appointment>, IAppointmentReposi
         };
     }
 
+    public async Task<List<Appointment>> GetStaffAppointmentsForDateAsync(
+        int staffId, DateTime date, CancellationToken cancellationToken = default)
+    {
+        var dayStart = date.Date;
+        var dayEnd = dayStart.AddDays(1);
+
+        return await _dbSet
+            .Where(a => a.StaffId == staffId)
+            .Where(a => a.Status != AppointmentStatus.Cancelled)
+            .Where(a => a.ScheduledAt >= dayStart && a.ScheduledAt < dayEnd)
+            .OrderBy(a => a.ScheduledAt)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> HasOverlappingAppointmentAsync(
         int staffId, DateTime scheduledAt, int durationMinutes, int? excludeId = null,
         CancellationToken cancellationToken = default)

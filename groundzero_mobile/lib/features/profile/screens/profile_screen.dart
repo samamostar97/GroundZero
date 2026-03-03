@@ -112,6 +112,18 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 10),
                 _MenuTile(
+                  icon: Icons.calendar_today_rounded,
+                  label: 'Moji termini',
+                  onTap: () => context.push('/appointments'),
+                ),
+                const SizedBox(height: 10),
+                _MenuTile(
+                  icon: Icons.people_outline_rounded,
+                  label: 'Osoblje',
+                  onTap: () => context.push('/staff'),
+                ),
+                const SizedBox(height: 10),
+                _MenuTile(
                   icon: Icons.receipt_long_rounded,
                   label: 'Moje narudžbe',
                   onTap: () => context.push('/orders'),

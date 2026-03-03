@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/appointments/screens/appointment_detail_screen.dart';
+import '../../features/appointments/screens/book_appointment_screen.dart';
+import '../../features/appointments/screens/my_appointments_screen.dart';
+import '../../features/appointments/screens/staff_detail_screen.dart';
+import '../../features/appointments/screens/staff_list_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
@@ -31,6 +36,11 @@ abstract class AppRoutes {
   static const String orderConfirmation = '/order-confirmation/:id';
   static const String myOrders = '/orders';
   static const String orderDetail = '/orders/:id';
+  static const String staffList = '/staff';
+  static const String staffDetail = '/staff/:id';
+  static const String bookAppointment = '/book-appointment/:staffId';
+  static const String myAppointments = '/appointments';
+  static const String appointmentDetail = '/appointments/:id';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -161,6 +171,40 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           return OrderDetailScreen(orderId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.staffList,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const StaffListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.staffDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return StaffDetailScreen(staffId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.bookAppointment,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final staffId = int.parse(state.pathParameters['staffId']!);
+          return BookAppointmentScreen(staffId: staffId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.myAppointments,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MyAppointmentsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.appointmentDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return AppointmentDetailScreen(appointmentId: id);
         },
       ),
     ],

@@ -44,6 +44,17 @@ public class StaffController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("{id}/available-slots")]
+    public async Task<IActionResult> GetAvailableSlots(int id, [FromQuery] DateTime date)
+    {
+        var result = await _mediator.Send(new GetStaffAvailableSlotsQuery
+        {
+            StaffId = id,
+            Date = date
+        });
+        return Ok(result);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateStaffRequest request)
     {

@@ -19,6 +19,8 @@ class ApiConstants {
 
   // Staff
   static const String staff = '/staff';
+  static String staffAvailableSlots(int staffId) =>
+      '/staff/$staffId/available-slots';
 
   // Products
   static const String products = '/products';
@@ -33,6 +35,7 @@ class ApiConstants {
 
   // Appointments
   static const String appointments = '/appointments';
+  static const String myAppointments = '/appointments/my';
 
   // Reviews
   static const String reviews = '/reviews';
