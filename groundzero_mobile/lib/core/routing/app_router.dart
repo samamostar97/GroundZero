@@ -6,6 +6,10 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/home/screens/home_screen.dart';
+import '../../features/orders/screens/cart_screen.dart';
+import '../../features/orders/screens/my_orders_screen.dart';
+import '../../features/orders/screens/order_confirmation_screen.dart';
+import '../../features/orders/screens/order_detail_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/leaderboard_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
@@ -23,6 +27,10 @@ abstract class AppRoutes {
   static const String productDetail = '/shop/:id';
   static const String editProfile = '/profile/edit';
   static const String leaderboard = '/leaderboard';
+  static const String cart = '/cart';
+  static const String orderConfirmation = '/order-confirmation/:id';
+  static const String myOrders = '/orders';
+  static const String orderDetail = '/orders/:id';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -128,6 +136,32 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.leaderboard,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const LeaderboardScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.cart,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const CartScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderConfirmation,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return OrderConfirmationScreen(orderId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.myOrders,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MyOrdersScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return OrderDetailScreen(orderId: id);
+        },
       ),
     ],
   );

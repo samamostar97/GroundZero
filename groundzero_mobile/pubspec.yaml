@@ -37,6 +37,9 @@ dependencies:
   image_picker: ^1.1.2
   cached_network_image: ^3.4.1
 
+  # Payments
+  flutter_stripe: ^11.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

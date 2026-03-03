@@ -110,6 +110,12 @@ class ProfileScreen extends ConsumerWidget {
                   label: 'Rang lista',
                   onTap: () => context.push(AppRoutes.leaderboard),
                 ),
+                const SizedBox(height: 10),
+                _MenuTile(
+                  icon: Icons.receipt_long_rounded,
+                  label: 'Moje narudžbe',
+                  onTap: () => context.push('/orders'),
+                ),
                 const SizedBox(height: 24),
 
                 // Logout

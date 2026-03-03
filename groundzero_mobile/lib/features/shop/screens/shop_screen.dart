@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/cart_badge.dart';
 import '../../../shared/widgets/category_chip.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/product_card.dart';
+import '../../orders/providers/cart_provider.dart';
 import '../providers/categories_provider.dart';
 import '../providers/products_provider.dart';
 
@@ -56,16 +58,28 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
   Widget build(BuildContext context) {
     final productsState = ref.watch(productsNotifierProvider);
     final categoriesAsync = ref.watch(categoriesProvider);
+    final cartItemCount = ref.watch(
+      cartNotifierProvider.select((cart) => cart.itemCount),
+    );
 
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header + Search
+            // Header + Search + Cart
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Text('Shop', style: AppTextStyles.heading1),
+              child: Row(
+                children: [
+                  Text('Shop', style: AppTextStyles.heading1),
+                  const Spacer(),
+                  CartBadge(
+                    itemCount: cartItemCount,
+                    onTap: () => context.push('/cart'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 14),
             Padding(

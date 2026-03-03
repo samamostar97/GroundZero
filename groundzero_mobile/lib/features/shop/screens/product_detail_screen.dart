@@ -10,6 +10,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/review_card.dart';
+import '../../orders/providers/cart_provider.dart';
 import '../data/review_repository.dart';
 import '../models/create_review_request.dart';
 import '../providers/product_detail_provider.dart';
@@ -39,6 +40,54 @@ class ProductDetailScreen extends ConsumerWidget {
             style: AppTextStyles.heading3,
           ),
         ),
+      ),
+      bottomNavigationBar: productAsync.whenOrNull(
+        data: (product) => product.stockQuantity > 0
+            ? Container(
+                padding: const EdgeInsets.all(20),
+                decoration: const BoxDecoration(
+                  color: AppColors.surface,
+                  border: Border(
+                    top: BorderSide(color: AppColors.border),
+                  ),
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        ref
+                            .read(cartNotifierProvider.notifier)
+                            .addItem(product);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${product.name} dodano u korpu.',
+                            ),
+                            backgroundColor: AppColors.success,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.add_shopping_cart_rounded),
+                      label: Text(
+                        'Dodaj u korpu',
+                        style: AppTextStyles.button,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        foregroundColor: AppColors.onAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : null,
       ),
       body: productAsync.when(
         loading: () => const Center(

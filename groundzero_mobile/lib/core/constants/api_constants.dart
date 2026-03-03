@@ -29,6 +29,7 @@ class ApiConstants {
 
   // Orders
   static const String orders = '/orders';
+  static const String myOrders = '/orders/my';
 
   // Appointments
   static const String appointments = '/appointments';
