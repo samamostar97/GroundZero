@@ -23,7 +23,7 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<PagedResult<User>> GetPagedAsync(string? search, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        var query = _dbSet.AsQueryable();
+        var query = _dbSet.Where(u => u.Role == Role.User);
 
         if (!string.IsNullOrWhiteSpace(search))
         {

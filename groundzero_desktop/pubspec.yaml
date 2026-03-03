@@ -1,0 +1,58 @@
+name: groundzero_desktop
+description: GroundZero gym management desktop admin app.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # State management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Navigation
+  go_router: ^14.8.1
+
+  # Networking
+  dio: ^5.7.0
+
+  # Local storage (desktop — no secure storage needed for admin)
+  shared_preferences: ^2.5.4
+
+  # Code generation annotations
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Images
+  cached_network_image: ^3.4.1
+  file_picker: ^10.3.10
+
+  # Charts
+  fl_chart: ^1.1.1
+
+  # Date formatting
+  intl: ^0.20.2
+
+  # Typography
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+  # Code generators
+  build_runner: ^2.4.14
+  freezed: ^2.5.8
+  json_serializable: ^6.9.4
+
+flutter:
+  uses-material-design: true

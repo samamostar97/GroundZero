@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../features/auth/providers/auth_provider.dart';
+import '../../features/dashboard/screens/dashboard_screen.dart';
+import '../../features/staff/screens/staff_screen.dart';
+import '../../features/users/screens/users_screen.dart';
+import 'app_sidebar.dart';
+import 'placeholder_screen.dart';
+import 'top_tab_bar.dart';
+
+// Current sidebar section
+final sidebarIndexProvider = StateProvider<int>((ref) => 0);
+
+// Current tab within a section
+final tabIndexProvider = StateProvider<int>((ref) => 0);
+
+// Tab definitions per sidebar section
+const _sectionTabs = <int, List<String>>{
+  // 0 = Dashboard — no tabs
+  1: ['Korisnici', 'Osoblje', 'Proizvodi', 'Kategorije', 'Planovi članarina'],
+  2: ['Narudžbe', 'Termini', 'Check-in / Check-out', 'Članarine'],
+  3: ['Prihodi', 'Proizvodi', 'Korisnici', 'Termini', 'Gamifikacija'],
+};
+
+class AppShell extends ConsumerWidget {
+  const AppShell({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sidebarIndex = ref.watch(sidebarIndexProvider);
+    final tabIndex = ref.watch(tabIndexProvider);
+    final tabs = _sectionTabs[sidebarIndex];
+
+    return Scaffold(
+      body: Row(
+        children: [
+          // Sidebar
+          AppSidebar(
+            selectedIndex: sidebarIndex,
+            onItemSelected: (index) {
+              ref.read(sidebarIndexProvider.notifier).state = index;
+              ref.read(tabIndexProvider.notifier).state = 0;
+            },
+            onLogout: () {
+              ref.read(authNotifierProvider.notifier).logout();
+            },
+          ),
+
+          // Main content area
+          Expanded(
+            child: Column(
+              children: [
+                // Top tab bar (only for sections with tabs)
+                if (tabs != null)
+                  TopTabBar(
+                    tabs: tabs,
+                    selectedIndex: tabIndex,
+                    onTabSelected: (index) {
+                      ref.read(tabIndexProvider.notifier).state = index;
+                    },
+                  ),
+
+                // Content
+                Expanded(
+                  child: _buildContent(sidebarIndex, tabIndex),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent(int sidebarIndex, int tabIndex) {
+    switch (sidebarIndex) {
+      case 0:
+        return const DashboardScreen();
+
+      // Upravljanje
+      case 1:
+        switch (tabIndex) {
+          case 0:
+            return const UsersScreen();
+          case 1:
+            return const StaffScreen();
+          case 2:
+            return const PlaceholderScreen(title: 'Proizvodi');
+          case 3:
+            return const PlaceholderScreen(title: 'Kategorije');
+          case 4:
+            return const PlaceholderScreen(title: 'Planovi članarina');
+          default:
+            return const PlaceholderScreen(title: 'Korisnici');
+        }
+
+      // Operacije
+      case 2:
+        switch (tabIndex) {
+          case 0:
+            return const PlaceholderScreen(title: 'Narudžbe');
+          case 1:
+            return const PlaceholderScreen(title: 'Termini');
+          case 2:
+            return const PlaceholderScreen(title: 'Check-in / Check-out');
+          case 3:
+            return const PlaceholderScreen(title: 'Članarine');
+          default:
+            return const PlaceholderScreen(title: 'Narudžbe');
+        }
+
+      // Izvještaji
+      case 3:
+        switch (tabIndex) {
+          case 0:
+            return const PlaceholderScreen(title: 'Izvještaj — Prihodi');
+          case 1:
+            return const PlaceholderScreen(title: 'Izvještaj — Proizvodi');
+          case 2:
+            return const PlaceholderScreen(title: 'Izvještaj — Korisnici');
+          case 3:
+            return const PlaceholderScreen(title: 'Izvještaj — Termini');
+          case 4:
+            return const PlaceholderScreen(title: 'Izvještaj — Gamifikacija');
+          default:
+            return const PlaceholderScreen(title: 'Izvještaj — Prihodi');
+        }
+
+      default:
+        return const DashboardScreen();
+    }
+  }
+}
