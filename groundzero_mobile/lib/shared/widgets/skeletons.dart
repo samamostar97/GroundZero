@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_shadows.dart';
 import 'shimmer_loading.dart';
 
 // ─── GamificationCard Skeleton ──────────────────────────────────────────────
@@ -14,9 +15,9 @@ class GamificationCardSkeleton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,16 +60,16 @@ class ProductCardSkeleton extends StatelessWidget {
     return ShimmerLoading(
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Container(color: const Color(0xFF1A1A1A)),
+              child: Container(color: const Color(0xFF121212)),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
@@ -100,16 +101,16 @@ class StaffCardSkeleton extends StatelessWidget {
     return ShimmerLoading(
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: Container(color: const Color(0xFF1A1A1A)),
+              child: Container(color: const Color(0xFF121212)),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
@@ -139,9 +140,9 @@ class OrderListTileSkeleton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,9 +182,9 @@ class AppointmentListTileSkeleton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,9 +224,9 @@ class LeaderboardTileSkeleton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Row(
           children: [
@@ -262,9 +263,9 @@ class WorkoutPlanCardSkeleton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceLow,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,7 +302,7 @@ class ProductDetailSkeleton extends StatelessWidget {
           // Image placeholder
           AspectRatio(
             aspectRatio: 1,
-            child: Container(color: const Color(0xFF1A1A1A)),
+            child: Container(color: const Color(0xFF121212)),
           ),
           Padding(
             padding: const EdgeInsets.all(20),
@@ -355,9 +356,9 @@ class StaffDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const Column(
               children: [
@@ -374,9 +375,9 @@ class StaffDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const Column(
               children: [
@@ -410,9 +411,9 @@ class AppointmentDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const ShimmerBox(width: double.infinity, height: 20),
           ),
@@ -423,9 +424,9 @@ class AppointmentDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const Column(
               children: [
@@ -442,9 +443,9 @@ class AppointmentDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const Column(
               children: [
@@ -478,9 +479,9 @@ class OrderDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -501,9 +502,9 @@ class OrderDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const Column(
               children: [
@@ -524,9 +525,9 @@ class OrderDetailSkeleton extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: AppColors.surfaceLow,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.border),
+                boxShadow: AppShadows.card,
               ),
               child: const Row(
                 children: [
@@ -570,9 +571,9 @@ class WorkoutPlanDetailSkeleton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: AppColors.surfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
+              boxShadow: AppShadows.card,
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -594,9 +595,9 @@ class WorkoutPlanDetailSkeleton extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: AppColors.surfaceLow,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
+                boxShadow: AppShadows.card,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -647,9 +648,9 @@ class ProfileSkeleton extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: AppColors.surfaceLow,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.border),
+                boxShadow: AppShadows.card,
               ),
               child: const Row(
                 children: [

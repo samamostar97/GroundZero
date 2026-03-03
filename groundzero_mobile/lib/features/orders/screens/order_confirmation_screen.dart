@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/order_status_badge.dart';
@@ -71,7 +72,7 @@ class OrderConfirmationScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
+                    boxShadow: AppShadows.card,
                   ),
                   child: Column(
                     children: [

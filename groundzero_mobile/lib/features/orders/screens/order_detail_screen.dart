@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/utils/image_utils.dart';
 import '../../../shared/widgets/error_display.dart';
@@ -71,7 +72,7 @@ class OrderDetailScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
+                boxShadow: AppShadows.card,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +141,7 @@ class _StatusTimeline extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,7 +201,7 @@ class _OrderInfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         children: [
@@ -279,7 +280,7 @@ class _OrderItemTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Row(
         children: [

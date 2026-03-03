@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_shadows.dart';
 import '../../core/constants/app_text_styles.dart';
 
 class GamificationCard extends StatelessWidget {
@@ -32,7 +33,7 @@ class GamificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.accentGlow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Backgrounds
-  static const Color background = Color(0xFF0D0D0D);
-  static const Color surface = Color(0xFF1A1A1A);
-  static const Color inputFill = Color(0xFF242424);
+  // Backgrounds (elevation levels)
+  static const Color background = Color(0xFF0A0A0A);
+  static const Color surfaceLow = Color(0xFF121212);
+  static const Color surface = Color(0xFF161616);
+  static const Color surfaceHigh = Color(0xFF1E1E1E);
+  static const Color inputFill = Color(0xFF1E1E1E);
 
   // Accent
   static const Color accent = Color(0xFFCCFF00);
@@ -26,4 +28,7 @@ class AppColors {
   static const Color error = Color(0xFFFF4D4D);
   static const Color success = Color(0xFF4DFF88);
   static const Color warning = Color(0xFFFFBB33);
+
+  // Glow
+  static const Color accentGlow = Color(0x12CCFF00);
 }

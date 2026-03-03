@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_shadows.dart';
 import '../../core/constants/app_text_styles.dart';
 import '../../core/utils/image_utils.dart';
 
@@ -36,7 +37,7 @@ class StaffCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(

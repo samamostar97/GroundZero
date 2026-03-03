@@ -34,7 +34,6 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppColors.border, width: 1),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -102,14 +101,13 @@ class AppTheme {
         ),
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         contentTextStyle: GoogleFonts.inter(
           fontSize: 14,
           color: AppColors.textPrimary,
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: AppColors.border),
         ),
         behavior: SnackBarBehavior.floating,
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/image_utils.dart';
@@ -50,10 +51,8 @@ class ProductDetailScreen extends ConsumerWidget {
             ? Container(
                 padding: const EdgeInsets.all(20),
                 decoration: const BoxDecoration(
-                  color: AppColors.surface,
-                  border: Border(
-                    top: BorderSide(color: AppColors.border),
-                  ),
+                  color: AppColors.surfaceHigh,
+                  boxShadow: AppShadows.elevated,
                 ),
                 child: SafeArea(
                   top: false,
@@ -342,7 +341,7 @@ class ProductDetailScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.surfaceHigh,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -497,7 +496,7 @@ class ProductDetailScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.surfaceHigh,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -634,7 +633,7 @@ class ProductDetailScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         title: Text(
           'Obriši recenziju?',
           style: AppTextStyles.heading3,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/error_display.dart';
@@ -101,7 +102,7 @@ class WorkoutPlanDetailScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         title: Text('Obriši plan?', style: AppTextStyles.heading3),
         content: Text(
           'Da li ste sigurni da želite obrisati "${plan.name}"?',
@@ -235,7 +236,7 @@ class _PlanDetailBody extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.surfaceHigh,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -435,7 +436,7 @@ class _DayCardState extends ConsumerState<_DayCard> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         children: [
@@ -562,7 +563,7 @@ class _DayCardState extends ConsumerState<_DayCard> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         title: Text('Obriši dan?', style: AppTextStyles.heading3),
         content: Text(
           'Da li ste sigurni da želite obrisati "${day.name}"?',
@@ -722,7 +723,7 @@ class _ExerciseTile extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.surfaceHigh,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -884,7 +885,7 @@ class _ExerciseTile extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         title: Text('Obriši vježbu?', style: AppTextStyles.heading3),
         content: Text(
           'Da li ste sigurni da želite ukloniti "${exercise.exerciseName}"?',
@@ -963,7 +964,7 @@ void _showAddExerciseSheet(
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.surface,
+    backgroundColor: AppColors.surfaceHigh,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),

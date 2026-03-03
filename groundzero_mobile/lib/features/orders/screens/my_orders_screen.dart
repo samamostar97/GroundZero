@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/order_status_badge.dart';
@@ -124,7 +125,7 @@ class _OrderListTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

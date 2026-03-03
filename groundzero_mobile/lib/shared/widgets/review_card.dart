@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_shadows.dart';
 import '../../core/constants/app_text_styles.dart';
 import 'rating_stars.dart';
 
@@ -29,7 +30,7 @@ class ReviewCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

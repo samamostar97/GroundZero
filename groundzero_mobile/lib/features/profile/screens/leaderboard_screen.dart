@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/skeletons.dart';
@@ -128,9 +129,10 @@ class _LeaderboardTile extends StatelessWidget {
             ? AppColors.accent.withValues(alpha: 0.1)
             : AppColors.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isCurrentUser ? AppColors.accent : AppColors.border,
-        ),
+        border: isCurrentUser
+            ? Border.all(color: AppColors.accent)
+            : null,
+        boxShadow: isCurrentUser ? AppShadows.accentGlow : AppShadows.card,
       ),
       child: Row(
         children: [

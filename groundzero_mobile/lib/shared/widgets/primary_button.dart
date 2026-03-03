@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_shadows.dart';
 import '../../core/constants/app_text_styles.dart';
 
 class PrimaryButton extends StatelessWidget {
@@ -36,6 +37,7 @@ class PrimaryButton extends StatelessWidget {
                   ),
             color: _isDisabled ? AppColors.accent.withAlpha(128) : null,
             borderRadius: BorderRadius.circular(10),
+            boxShadow: _isDisabled ? null : AppShadows.accentGlow,
           ),
           alignment: Alignment.center,
           child: isLoading

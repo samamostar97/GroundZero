@@ -9,8 +9,8 @@ class ShimmerLoading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: const Color(0xFF1A1A1A),
-      highlightColor: const Color(0xFF242424),
+      baseColor: const Color(0xFF121212),
+      highlightColor: const Color(0xFF1E1E1E),
       child: child,
     );
   }
@@ -34,7 +34,7 @@ class ShimmerBox extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: const Color(0xFF121212),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
     );

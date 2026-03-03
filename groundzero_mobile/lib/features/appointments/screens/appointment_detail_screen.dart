@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/appointment_status_badge.dart';
@@ -128,7 +129,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
+                    boxShadow: AppShadows.card,
                   ),
                   child: Text(
                     appointment.notes!,
@@ -264,7 +265,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -287,7 +288,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        boxShadow: AppShadows.card,
       ),
       child: Column(
         children: [
@@ -310,7 +311,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.surfaceHigh,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -453,7 +454,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         title: Text(
           'Otkaži termin?',
           style: AppTextStyles.heading3,

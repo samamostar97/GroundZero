@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/image_utils.dart';
@@ -157,7 +158,7 @@ class StaffDetailScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
+                  boxShadow: AppShadows.card,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +191,7 @@ class StaffDetailScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
+                    boxShadow: AppShadows.card,
                   ),
                   child: Text(
                     staff.bio!,
@@ -327,7 +328,7 @@ class StaffDetailScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.surfaceHigh,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -472,7 +473,7 @@ class StaffDetailScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.surfaceHigh,
         title: Text(
           'Obriši recenziju?',
           style: AppTextStyles.heading3,

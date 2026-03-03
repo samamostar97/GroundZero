@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/primary_button.dart';
@@ -190,7 +191,7 @@ class _BookAppointmentScreenState
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
+                  boxShadow: AppShadows.card,
                 ),
                 child: Row(
                   children: [
@@ -284,7 +285,7 @@ class _BookAppointmentScreenState
                       decoration: BoxDecoration(
                         color: AppColors.surface,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.border),
+                        boxShadow: AppShadows.card,
                       ),
                       child: Text(
                         'Nema slobodnih termina za ovaj datum.',

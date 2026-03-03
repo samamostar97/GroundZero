@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/cart_item_tile.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -80,10 +81,8 @@ class CartScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    border: Border(
-                      top: BorderSide(color: AppColors.border),
-                    ),
+                    color: AppColors.surfaceHigh,
+                    boxShadow: AppShadows.elevated,
                   ),
                   child: SafeArea(
                     top: false,
