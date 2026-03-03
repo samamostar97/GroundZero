@@ -1,0 +1,165 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/widgets/error_display.dart';
+import '../../../shared/widgets/gamification_card.dart';
+import '../../../shared/widgets/product_card.dart';
+import '../../auth/providers/user_provider.dart';
+import '../../profile/providers/gamification_provider.dart';
+import '../../shop/providers/recommendations_provider.dart';
+
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userAsync = ref.watch(userNotifierProvider);
+    final gamificationAsync = ref.watch(gamificationProvider);
+    final recommendationsAsync = ref.watch(recommendationsProvider);
+
+    return Scaffold(
+      body: SafeArea(
+        child: userAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: AppColors.accent),
+          ),
+          error: (error, _) => ErrorDisplay(
+            message: 'Greška pri učitavanju profila.',
+            onRetry: () =>
+                ref.read(userNotifierProvider.notifier).refresh(),
+          ),
+          data: (user) {
+            if (user == null) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.accent),
+              );
+            }
+
+            return RefreshIndicator(
+              color: AppColors.accent,
+              onRefresh: () async {
+                ref.invalidate(gamificationProvider);
+                ref.invalidate(recommendationsProvider);
+                ref.read(userNotifierProvider.notifier).refresh();
+              },
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // Welcome header
+                  Text(
+                    'Dobrodošli,',
+                    style: AppTextStyles.bodyLarge.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    '${user.firstName} ${user.lastName}!',
+                    style: AppTextStyles.heading1.copyWith(
+                      color: AppColors.accent,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Gamification card
+                  gamificationAsync.when(
+                    loading: () => Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.accent,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (gamification) => GamificationCard(
+                      level: gamification.level,
+                      levelName: gamification.levelName,
+                      xp: gamification.xp,
+                      nextLevelXP: gamification.nextLevelXP,
+                      rank: gamification.rank,
+                      totalGymMinutes: gamification.totalGymMinutes,
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Recommendations section
+                  Text(
+                    'Preporučeno za vas',
+                    style: AppTextStyles.heading3,
+                  ),
+                  const SizedBox(height: 14),
+                  recommendationsAsync.when(
+                    loading: () => const SizedBox(
+                      height: 220,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.accent,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                    error: (_, _) => Text(
+                      'Nije moguće učitati preporuke.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textHint,
+                      ),
+                    ),
+                    data: (recommendations) {
+                      if (recommendations.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Text(
+                            'Nema preporuka za sada.',
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textHint,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return SizedBox(
+                        height: 240,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: recommendations.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, index) {
+                            final product = recommendations[index];
+                            return SizedBox(
+                              width: 160,
+                              child: ProductCard(
+                                id: product.id,
+                                name: product.name,
+                                categoryName: product.categoryName,
+                                price: product.price,
+                                imageUrl: product.imageUrl,
+                                onTap: () => context.push(
+                                  '/shop/${product.id}',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}

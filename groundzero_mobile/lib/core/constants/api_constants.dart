@@ -22,7 +22,10 @@ class ApiConstants {
 
   // Products
   static const String products = '/products';
-  static const String productCategories = '/product-categories';
+  static const String categories = '/categories';
+
+  // Recommendations
+  static const String userRecommendations = '/recommendations/user';
 
   // Orders
   static const String orders = '/orders';
@@ -32,6 +35,8 @@ class ApiConstants {
 
   // Reviews
   static const String reviews = '/reviews';
+  static String productReviews(int productId) =>
+      '/reviews/product/$productId';
 
   // Workouts
   static const String workoutPlans = '/workout-plans';
@@ -40,6 +45,6 @@ class ApiConstants {
 
   // Gamification
   static const String gymVisits = '/gym-visits';
-  static const String leaderboard = '/gamification/leaderboard';
+  static const String leaderboard = '/leaderboard';
   static const String levels = '/gamification/levels';
 }

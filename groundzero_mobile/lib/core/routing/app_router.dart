@@ -5,19 +5,33 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
-import '../../home/screens/home_screen.dart';
+import '../../features/home/screens/home_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/leaderboard_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../../features/shell/screens/main_shell_screen.dart';
+import '../../features/shop/screens/product_detail_screen.dart';
+import '../../features/shop/screens/shop_screen.dart';
 
 abstract class AppRoutes {
   static const String splash = '/splash';
   static const String login = '/login';
   static const String register = '/register';
-  static const String home = '/';
+  static const String home = '/home';
+  static const String shop = '/shop';
+  static const String profile = '/profile';
+  static const String productDetail = '/shop/:id';
+  static const String editProfile = '/profile/edit';
+  static const String leaderboard = '/leaderboard';
 }
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authNotifierProvider);
 
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
     redirect: (context, state) {
@@ -60,9 +74,60 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.register,
         builder: (context, state) => const RegisterScreen(),
       ),
+
+      // Bottom navigation shell
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            MainShellScreen(navigationShell: navigationShell),
+        branches: [
+          // Tab 0 — Home
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.home,
+                builder: (context, state) => const HomeScreen(),
+              ),
+            ],
+          ),
+          // Tab 1 — Shop
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.shop,
+                builder: (context, state) => const ShopScreen(),
+              ),
+            ],
+          ),
+          // Tab 2 — Profile
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.profile,
+                builder: (context, state) => const ProfileScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
+
+      // Full-screen routes (outside shell, no bottom nav)
       GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
+        path: AppRoutes.productDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return ProductDetailScreen(productId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.editProfile,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.leaderboard,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const LeaderboardScreen(),
       ),
     ],
   );
