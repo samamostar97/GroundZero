@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../shared/widgets/error_display.dart';
@@ -11,6 +13,7 @@ import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/providers/user_provider.dart';
+import '../../membership/providers/membership_provider.dart';
 import '../providers/gamification_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -20,6 +23,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userAsync = ref.watch(userNotifierProvider);
     final gamificationAsync = ref.watch(gamificationProvider);
+    final membershipAsync = ref.watch(currentMembershipProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -80,6 +84,69 @@ class ProfileScreen extends ConsumerWidget {
                     totalGymMinutes: gamification.totalGymMinutes,
                   ),
                 ),
+                const SizedBox(height: 12),
+
+                // Membership status card
+                GestureDetector(
+                  onTap: () => context.push(AppRoutes.membership),
+                  child: membershipAsync.when(
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (membership) {
+                      final isActive = membership != null && membership.status == 'Active';
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: AppShadows.card,
+                          border: isActive
+                              ? Border.all(color: AppColors.accent.withValues(alpha: 0.2))
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.card_membership_rounded,
+                              color: isActive ? AppColors.accent : AppColors.textHint,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isActive
+                                        ? membership.planName
+                                        : 'Nema aktivne članarine',
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  if (isActive) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Aktivna do ${_formatDate(membership.endDate)}',
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: AppColors.accent,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: AppColors.textHint,
+                              size: 22,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 const SizedBox(height: 24),
 
                 // Menu items
@@ -132,6 +199,8 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
+String _formatDate(DateTime date) => DateFormat('dd.MM.yyyy.').format(date);
+
 class _MenuTile extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -156,7 +225,7 @@ class _MenuTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
+          boxShadow: AppShadows.card,
         ),
         child: Row(
           children: [

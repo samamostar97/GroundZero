@@ -12,6 +12,8 @@ public static class DataSeeder
         await SeedExercisesAsync(context);
         await SeedLevelsAsync(context);
         await SeedTestDataAsync(context);
+        await SeedMembershipPlansAsync(context);
+        await SeedTestMembershipsAsync(context);
     }
 
     private static async Task SeedAdminAsync(ApplicationDbContext context)
@@ -208,6 +210,7 @@ public static class DataSeeder
                 FirstName = "Mirza", LastName = "Terzić", Email = "mirza@groundzero.ba",
                 Phone = "+38761111111", StaffType = StaffType.Trainer, IsActive = true,
                 Bio = "Certificirani personal trainer sa 8 godina iskustva u funkcionalnom treningu.",
+                ProfileImageUrl = "/seed/mirza.jpg",
                 CreatedAt = now.AddDays(-200)
             },
             new()
@@ -215,6 +218,7 @@ public static class DataSeeder
                 FirstName = "Amila", LastName = "Bašić", Email = "amila@groundzero.ba",
                 Phone = "+38761222222", StaffType = StaffType.Trainer, IsActive = true,
                 Bio = "Specijalistkinja za snagu i kondiciju, bivša reprezentativka u atletici.",
+                ProfileImageUrl = "/seed/amila.jpg",
                 CreatedAt = now.AddDays(-180)
             },
             new()
@@ -222,6 +226,7 @@ public static class DataSeeder
                 FirstName = "Haris", LastName = "Čolić", Email = "haris@groundzero.ba",
                 Phone = "+38761333333", StaffType = StaffType.Trainer, IsActive = true,
                 Bio = "Bodybuilding trener sa fokusom na hipertrofiju i pripremu za takmičenja.",
+                ProfileImageUrl = "/seed/haris.jpg",
                 CreatedAt = now.AddDays(-150)
             },
             new()
@@ -229,6 +234,7 @@ public static class DataSeeder
                 FirstName = "Dženan", LastName = "Imamović", Email = "dzenan@groundzero.ba",
                 Phone = "+38761444444", StaffType = StaffType.Trainer, IsActive = false,
                 Bio = "Crossfit i HIIT trener. Trenutno na pauziranju.",
+                ProfileImageUrl = "/seed/dzenan.jpg",
                 CreatedAt = now.AddDays(-300)
             },
             new()
@@ -236,6 +242,7 @@ public static class DataSeeder
                 FirstName = "Naida", LastName = "Softić", Email = "naida@groundzero.ba",
                 Phone = "+38761555555", StaffType = StaffType.Nutritionist, IsActive = true,
                 Bio = "Diplomirana nutricionistkinja sa specijalizacijom u sportskoj ishrani.",
+                ProfileImageUrl = "/seed/naida.jpg",
                 CreatedAt = now.AddDays(-160)
             },
             new()
@@ -243,6 +250,7 @@ public static class DataSeeder
                 FirstName = "Faruk", LastName = "Hodžić", Email = "faruk@groundzero.ba",
                 Phone = "+38761666666", StaffType = StaffType.Nutritionist, IsActive = true,
                 Bio = "Nutricionista sa fokusom na planove ishrane za mršavljenje i dobijanje mase.",
+                ProfileImageUrl = "/seed/faruk.jpg",
                 CreatedAt = now.AddDays(-100)
             }
         };
@@ -277,34 +285,34 @@ public static class DataSeeder
         var products = new List<Product>
         {
             // Proteini (6)
-            new() { Name = "Whey Gold Standard 2.27kg", Description = "Optimum Nutrition 100% Whey Gold Standard, čokolada", Price = 89.90m, StockQuantity = 25, CategoryId = proteini, CreatedAt = now.AddDays(-180) },
-            new() { Name = "Whey Gold Standard 900g", Description = "Optimum Nutrition 100% Whey Gold Standard, vanilija", Price = 45.90m, StockQuantity = 40, CategoryId = proteini, CreatedAt = now.AddDays(-180) },
-            new() { Name = "Casein Gold Standard 1.8kg", Description = "Optimum Nutrition Gold Standard Casein, čokolada", Price = 79.90m, StockQuantity = 15, CategoryId = proteini, CreatedAt = now.AddDays(-170) },
-            new() { Name = "ISO 100 Hydrolyzed 2.27kg", Description = "Dymatize ISO100 hidrolizirani whey izolat, cookies & cream", Price = 99.90m, StockQuantity = 12, CategoryId = proteini, CreatedAt = now.AddDays(-160) },
-            new() { Name = "Vegan Protein 750g", Description = "BioTechUSA Vegan Protein mješavina, čokolada-cimet", Price = 35.90m, StockQuantity = 20, CategoryId = proteini, CreatedAt = now.AddDays(-90) },
-            new() { Name = "Mass Gainer 5kg", Description = "Serious Mass gainer sa 1250 kalorija po servingu", Price = 69.90m, StockQuantity = 8, CategoryId = proteini, CreatedAt = now.AddDays(-150) },
+            new() { Name = "Whey Gold Standard 2.27kg", Description = "Optimum Nutrition 100% Whey Gold Standard, čokolada", Price = 89.90m, StockQuantity = 25, CategoryId = proteini, ImageUrl = "/seed/protein_powder_1.jpg", CreatedAt = now.AddDays(-180) },
+            new() { Name = "Whey Gold Standard 900g", Description = "Optimum Nutrition 100% Whey Gold Standard, vanilija", Price = 45.90m, StockQuantity = 40, CategoryId = proteini, ImageUrl = "/seed/protein_powder_2.jpg", CreatedAt = now.AddDays(-180) },
+            new() { Name = "Casein Gold Standard 1.8kg", Description = "Optimum Nutrition Gold Standard Casein, čokolada", Price = 79.90m, StockQuantity = 15, CategoryId = proteini, ImageUrl = "/seed/protein_powder_3.jpg", CreatedAt = now.AddDays(-170) },
+            new() { Name = "ISO 100 Hydrolyzed 2.27kg", Description = "Dymatize ISO100 hidrolizirani whey izolat, cookies & cream", Price = 99.90m, StockQuantity = 12, CategoryId = proteini, ImageUrl = "/seed/protein_powder_4.jpg", CreatedAt = now.AddDays(-160) },
+            new() { Name = "Vegan Protein 750g", Description = "BioTechUSA Vegan Protein mješavina, čokolada-cimet", Price = 35.90m, StockQuantity = 20, CategoryId = proteini, ImageUrl = "/seed/protein_powder_5.jpg", CreatedAt = now.AddDays(-90) },
+            new() { Name = "Mass Gainer 5kg", Description = "Serious Mass gainer sa 1250 kalorija po servingu", Price = 69.90m, StockQuantity = 8, CategoryId = proteini, ImageUrl = "/seed/protein_powder_6.jpg", CreatedAt = now.AddDays(-150) },
 
             // Kreatin (3)
-            new() { Name = "Kreatin Monohidrat 500g", Description = "Čisti mikronizovani kreatin monohidrat, unflavoured", Price = 29.90m, StockQuantity = 50, CategoryId = kreatin, CreatedAt = now.AddDays(-180) },
-            new() { Name = "Kreatin HCL 120 caps", Description = "Kreatin hidrohlorid u kapsulama, bez potrebe za loading fazom", Price = 34.90m, StockQuantity = 30, CategoryId = kreatin, CreatedAt = now.AddDays(-120) },
-            new() { Name = "Creatine Monohydrate 1kg", Description = "MyProtein kreatin monohidrat, veće pakovanje", Price = 44.90m, StockQuantity = 18, CategoryId = kreatin, CreatedAt = now.AddDays(-100) },
+            new() { Name = "Kreatin Monohidrat 500g", Description = "Čisti mikronizovani kreatin monohidrat, unflavoured", Price = 29.90m, StockQuantity = 50, CategoryId = kreatin, ImageUrl = "/seed/creatine.jpg", CreatedAt = now.AddDays(-180) },
+            new() { Name = "Kreatin HCL 120 caps", Description = "Kreatin hidrohlorid u kapsulama, bez potrebe za loading fazom", Price = 34.90m, StockQuantity = 30, CategoryId = kreatin, ImageUrl = "/seed/capsules_1.jpg", CreatedAt = now.AddDays(-120) },
+            new() { Name = "Creatine Monohydrate 1kg", Description = "MyProtein kreatin monohidrat, veće pakovanje", Price = 44.90m, StockQuantity = 18, CategoryId = kreatin, ImageUrl = "/seed/creatine.jpg", CreatedAt = now.AddDays(-100) },
 
             // Aminokiseline (4)
-            new() { Name = "BCAA 2:1:1 400g", Description = "Xtend BCAA u prahu, mango", Price = 39.90m, StockQuantity = 35, CategoryId = amino, CreatedAt = now.AddDays(-160) },
-            new() { Name = "EAA 350g", Description = "Esencijalne aminokiseline u prahu, limun", Price = 42.90m, StockQuantity = 22, CategoryId = amino, CreatedAt = now.AddDays(-130) },
-            new() { Name = "Glutamin 500g", Description = "Čisti L-glutamin u prahu za oporavak", Price = 27.90m, StockQuantity = 28, CategoryId = amino, CreatedAt = now.AddDays(-140) },
-            new() { Name = "BCAA Mega Caps 150 caps", Description = "Olimp BCAA u kapsulama, praktično za putovanja", Price = 24.90m, StockQuantity = 0, CategoryId = amino, CreatedAt = now.AddDays(-110) }, // Out of stock
+            new() { Name = "BCAA 2:1:1 400g", Description = "Xtend BCAA u prahu, mango", Price = 39.90m, StockQuantity = 35, CategoryId = amino, ImageUrl = "/seed/pre_workout.jpg", CreatedAt = now.AddDays(-160) },
+            new() { Name = "EAA 350g", Description = "Esencijalne aminokiseline u prahu, limun", Price = 42.90m, StockQuantity = 22, CategoryId = amino, ImageUrl = "/seed/protein_powder_5.jpg", CreatedAt = now.AddDays(-130) },
+            new() { Name = "Glutamin 500g", Description = "Čisti L-glutamin u prahu za oporavak", Price = 27.90m, StockQuantity = 28, CategoryId = amino, ImageUrl = "/seed/protein_powder_4.jpg", CreatedAt = now.AddDays(-140) },
+            new() { Name = "BCAA Mega Caps 150 caps", Description = "Olimp BCAA u kapsulama, praktično za putovanja", Price = 24.90m, StockQuantity = 0, CategoryId = amino, ImageUrl = "/seed/capsules_2.jpg", CreatedAt = now.AddDays(-110) }, // Out of stock
 
             // Vitamini i minerali (4)
-            new() { Name = "Multivitamin Daily 60 tabs", Description = "Kompletan multivitamin za svakodnevnu upotrebu", Price = 19.90m, StockQuantity = 60, CategoryId = vitamini, CreatedAt = now.AddDays(-180) },
-            new() { Name = "Vitamin D3 2000IU 120 caps", Description = "Vitamin D3 za imunitet i zdravlje kostiju", Price = 14.90m, StockQuantity = 45, CategoryId = vitamini, CreatedAt = now.AddDays(-150) },
-            new() { Name = "ZMA 90 caps", Description = "Cink, magnezij i vitamin B6 za oporavak i san", Price = 22.90m, StockQuantity = 35, CategoryId = vitamini, CreatedAt = now.AddDays(-130) },
-            new() { Name = "Omega 3 Fish Oil 120 caps", Description = "Riblje ulje sa EPA i DHA masnim kiselinama", Price = 17.90m, StockQuantity = 40, CategoryId = vitamini, CreatedAt = now.AddDays(-120) },
+            new() { Name = "Multivitamin Daily 60 tabs", Description = "Kompletan multivitamin za svakodnevnu upotrebu", Price = 19.90m, StockQuantity = 60, CategoryId = vitamini, ImageUrl = "/seed/vitamin_bottle.jpg", CreatedAt = now.AddDays(-180) },
+            new() { Name = "Vitamin D3 2000IU 120 caps", Description = "Vitamin D3 za imunitet i zdravlje kostiju", Price = 14.90m, StockQuantity = 45, CategoryId = vitamini, ImageUrl = "/seed/capsules_1.jpg", CreatedAt = now.AddDays(-150) },
+            new() { Name = "ZMA 90 caps", Description = "Cink, magnezij i vitamin B6 za oporavak i san", Price = 22.90m, StockQuantity = 35, CategoryId = vitamini, ImageUrl = "/seed/capsules_2.jpg", CreatedAt = now.AddDays(-130) },
+            new() { Name = "Omega 3 Fish Oil 120 caps", Description = "Riblje ulje sa EPA i DHA masnim kiselinama", Price = 17.90m, StockQuantity = 40, CategoryId = vitamini, ImageUrl = "/seed/fish_oil.jpg", CreatedAt = now.AddDays(-120) },
 
             // Pre-workout (3)
-            new() { Name = "C4 Original 30 servings", Description = "Cellucor C4 pre-workout, fruit punch", Price = 37.90m, StockQuantity = 20, CategoryId = preworkout, CreatedAt = now.AddDays(-160) },
-            new() { Name = "Total War 30 servings", Description = "Redcon1 Total War pre-workout, rainbow candy", Price = 44.90m, StockQuantity = 15, CategoryId = preworkout, CreatedAt = now.AddDays(-130) },
-            new() { Name = "Pump Non-Stim 300g", Description = "Pre-workout bez kofeina za pump i fokus", Price = 32.90m, StockQuantity = 18, CategoryId = preworkout, CreatedAt = now.AddDays(-90) }
+            new() { Name = "C4 Original 30 servings", Description = "Cellucor C4 pre-workout, fruit punch", Price = 37.90m, StockQuantity = 20, CategoryId = preworkout, ImageUrl = "/seed/pre_workout.jpg", CreatedAt = now.AddDays(-160) },
+            new() { Name = "Total War 30 servings", Description = "Redcon1 Total War pre-workout, rainbow candy", Price = 44.90m, StockQuantity = 15, CategoryId = preworkout, ImageUrl = "/seed/protein_powder_1.jpg", CreatedAt = now.AddDays(-130) },
+            new() { Name = "Pump Non-Stim 300g", Description = "Pre-workout bez kofeina za pump i fokus", Price = 32.90m, StockQuantity = 18, CategoryId = preworkout, ImageUrl = "/seed/protein_powder_2.jpg", CreatedAt = now.AddDays(-90) }
         };
 
         await context.Products.AddRangeAsync(products);
@@ -841,6 +849,74 @@ public static class DataSeeder
         };
 
         await context.WorkoutLogs.AddRangeAsync(workoutLogs);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedMembershipPlansAsync(ApplicationDbContext context)
+    {
+        if (await context.MembershipPlans.AnyAsync())
+            return;
+
+        var plans = new List<MembershipPlan>
+        {
+            new() { Name = "Mjesečna", Description = "Standardna mjesečna članarina za pristup svim sadržajima teretane.", Price = 50m, DurationDays = 30, IsActive = true, CreatedAt = DateTime.UtcNow.AddDays(-200) },
+            new() { Name = "Kvartalna", Description = "Tromjesečna članarina sa 20% popusta u odnosu na mjesečnu.", Price = 120m, DurationDays = 90, IsActive = true, CreatedAt = DateTime.UtcNow.AddDays(-200) },
+            new() { Name = "Godišnja", Description = "Godišnja članarina sa najboljom cijenom — uštedite preko 30%!", Price = 400m, DurationDays = 365, IsActive = true, CreatedAt = DateTime.UtcNow.AddDays(-200) }
+        };
+
+        await context.MembershipPlans.AddRangeAsync(plans);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedTestMembershipsAsync(ApplicationDbContext context)
+    {
+        if (await context.UserMemberships.AnyAsync())
+            return;
+
+        var users = await context.Users.Where(u => u.Role == Role.User).OrderBy(u => u.Id).ToListAsync();
+        var plans = await context.MembershipPlans.OrderBy(p => p.Id).ToListAsync();
+
+        if (users.Count < 3 || plans.Count < 3)
+            return;
+
+        var now = DateTime.UtcNow;
+        var mjesecna = plans[0];
+        var kvartalna = plans[1];
+        var godisnja = plans[2];
+
+        var memberships = new List<UserMembership>
+        {
+            // User 0 (Amir) — active quarterly membership
+            new()
+            {
+                UserId = users[0].Id, MembershipPlanId = kvartalna.Id,
+                StartDate = now.AddDays(-30), EndDate = now.AddDays(60),
+                Status = MembershipStatus.Active, CreatedAt = now.AddDays(-30)
+            },
+            // User 0 (Amir) — expired monthly (historical)
+            new()
+            {
+                UserId = users[0].Id, MembershipPlanId = mjesecna.Id,
+                StartDate = now.AddDays(-120), EndDate = now.AddDays(-90),
+                Status = MembershipStatus.Expired, CreatedAt = now.AddDays(-120)
+            },
+            // User 1 (Lejla) — active yearly
+            new()
+            {
+                UserId = users[1].Id, MembershipPlanId = godisnja.Id,
+                StartDate = now.AddDays(-60), EndDate = now.AddDays(305),
+                Status = MembershipStatus.Active, CreatedAt = now.AddDays(-60)
+            },
+            // User 5 (Test User) — expired monthly
+            new()
+            {
+                UserId = users[5].Id, MembershipPlanId = mjesecna.Id,
+                StartDate = now.AddDays(-45), EndDate = now.AddDays(-15),
+                Status = MembershipStatus.Expired, CreatedAt = now.AddDays(-45)
+            }
+        };
+
+        await context.UserMemberships.AddRangeAsync(memberships);
         await context.SaveChangesAsync();
     }
 }

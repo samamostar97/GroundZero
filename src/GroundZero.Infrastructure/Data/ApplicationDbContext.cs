@@ -23,6 +23,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<WorkoutLog> WorkoutLogs => Set<WorkoutLog>();
     public DbSet<GymVisit> GymVisits => Set<GymVisit>();
     public DbSet<Level> Levels => Set<Level>();
+    public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
+    public DbSet<UserMembership> UserMemberships => Set<UserMembership>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

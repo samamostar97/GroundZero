@@ -62,6 +62,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IRecommendationRepository, RecommendationRepository>();
+        services.AddScoped<IMembershipRepository, MembershipRepository>();
         services.AddScoped<IPdfReportService, PdfReportService>();
         services.AddScoped<IExcelReportService, ExcelReportService>();
         services.AddHttpContextAccessor();

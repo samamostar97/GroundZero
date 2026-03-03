@@ -53,4 +53,9 @@ class ApiConstants {
   static const String gymVisits = '/gym-visits';
   static const String leaderboard = '/leaderboard';
   static const String levels = '/gamification/levels';
+
+  // Memberships
+  static const String membershipPlans = '/membership-plans';
+  static const String myMembership = '/memberships/my';
+  static const String myMembershipHistory = '/memberships/my/history';
 }
