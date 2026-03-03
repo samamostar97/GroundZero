@@ -21,6 +21,8 @@ import '../../features/profile/screens/profile_screen.dart';
 import '../../features/shell/screens/main_shell_screen.dart';
 import '../../features/shop/screens/product_detail_screen.dart';
 import '../../features/shop/screens/shop_screen.dart';
+import '../../features/workouts/screens/workout_plan_detail_screen.dart';
+import '../../features/workouts/screens/workout_plans_screen.dart';
 
 abstract class AppRoutes {
   static const String splash = '/splash';
@@ -41,6 +43,8 @@ abstract class AppRoutes {
   static const String bookAppointment = '/book-appointment/:staffId';
   static const String myAppointments = '/appointments';
   static const String appointmentDetail = '/appointments/:id';
+  static const String workouts = '/workouts';
+  static const String workoutPlanDetail = '/workouts/:id';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -116,7 +120,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          // Tab 2 — Profile
+          // Tab 2 — Workouts
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.workouts,
+                builder: (context, state) => const WorkoutPlansScreen(),
+              ),
+            ],
+          ),
+          // Tab 3 — Profile
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -205,6 +218,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
           return AppointmentDetailScreen(appointmentId: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.workoutPlanDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return WorkoutPlanDetailScreen(planId: id);
         },
       ),
     ],

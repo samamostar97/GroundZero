@@ -44,6 +44,10 @@ class MainShellScreen extends StatelessWidget {
               label: 'Shop',
             ),
             BottomNavigationBarItem(
+              icon: Icon(Icons.fitness_center_rounded),
+              label: 'Treninzi',
+            ),
+            BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),
               label: 'Profil',
             ),
