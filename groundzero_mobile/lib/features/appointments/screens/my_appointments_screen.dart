@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/appointment_status_badge.dart';
 import '../../../shared/widgets/category_chip.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../models/appointment_model.dart';
 import '../providers/appointment_provider.dart';
 
@@ -132,18 +133,23 @@ class _MyAppointmentsScreenState
 
   Widget _buildContent(MyAppointmentsState state) {
     if (state.isLoading && state.appointments.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.accent),
+      return ListView.separated(
+        padding: const EdgeInsets.all(20),
+        itemCount: 4,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (_, _) => const AppointmentListTileSkeleton(),
       );
     }
 
     if (state.appointments.isEmpty) {
       return ListView(
-        children: const [
-          SizedBox(height: 120),
+        children: [
+          const SizedBox(height: 120),
           EmptyState(
             icon: Icons.calendar_today_outlined,
             message: 'Nemate nijedan termin.',
+            actionLabel: 'Pogledaj osoblje',
+            onAction: () => context.push('/staff'),
           ),
         ],
       );

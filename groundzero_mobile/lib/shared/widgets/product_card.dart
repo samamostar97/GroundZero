@@ -41,41 +41,44 @@ class ProductCard extends StatelessWidget {
           children: [
             // Image
             Expanded(
-              child: fullUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: fullUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) => Container(
+              child: Hero(
+                tag: 'product-image-$id',
+                child: fullUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: fullUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (_, _) => Container(
+                          color: AppColors.inputFill,
+                          child: const Center(
+                            child: Icon(
+                              Icons.image_outlined,
+                              color: AppColors.textHint,
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, _, _) => Container(
+                          color: AppColors.inputFill,
+                          child: const Center(
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              color: AppColors.textHint,
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
                         color: AppColors.inputFill,
                         child: const Center(
                           child: Icon(
-                            Icons.image_outlined,
+                            Icons.fitness_center,
                             color: AppColors.textHint,
                             size: 32,
                           ),
                         ),
                       ),
-                      errorWidget: (_, _, _) => Container(
-                        color: AppColors.inputFill,
-                        child: const Center(
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            color: AppColors.textHint,
-                            size: 32,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: AppColors.inputFill,
-                      child: const Center(
-                        child: Icon(
-                          Icons.fitness_center,
-                          color: AppColors.textHint,
-                          size: 32,
-                        ),
-                      ),
-                    ),
+              ),
             ),
 
             // Info

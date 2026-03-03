@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart' show GoRouterHelper;
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../models/workout_plan_model.dart';
 import '../providers/workout_plans_provider.dart';
 
@@ -285,18 +286,23 @@ class _WorkoutPlansScreenState extends ConsumerState<WorkoutPlansScreen> {
 
   Widget _buildPlanList(WorkoutPlansState state) {
     if (state.isLoading && state.plans.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.accent),
+      return ListView.separated(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
+        itemCount: 4,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (_, _) => const WorkoutPlanCardSkeleton(),
       );
     }
 
     if (state.plans.isEmpty) {
       return ListView(
-        children: const [
-          SizedBox(height: 100),
+        children: [
+          const SizedBox(height: 100),
           EmptyState(
             icon: Icons.fitness_center_outlined,
-            message: 'Nemate nijedan plan treninga.\nKreirajte prvi!',
+            message: 'Nemate nijedan plan treninga.',
+            actionLabel: 'Kreiraj plan',
+            onAction: _showCreatePlanSheet,
           ),
         ],
       );

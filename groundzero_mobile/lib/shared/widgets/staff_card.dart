@@ -6,6 +6,7 @@ import '../../core/constants/app_text_styles.dart';
 import '../../core/utils/image_utils.dart';
 
 class StaffCard extends StatelessWidget {
+  final int id;
   final String firstName;
   final String lastName;
   final String staffType;
@@ -14,6 +15,7 @@ class StaffCard extends StatelessWidget {
 
   const StaffCard({
     super.key,
+    required this.id,
     required this.firstName,
     required this.lastName,
     required this.staffType,
@@ -42,12 +44,37 @@ class StaffCard extends StatelessWidget {
           children: [
             // Avatar area
             Expanded(
-              child: fullUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: fullUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      placeholder: (_, _) => Container(
+              child: Hero(
+                tag: 'staff-image-$id',
+                child: fullUrl != null
+                    ? CachedNetworkImage(
+                        imageUrl: fullUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        placeholder: (_, _) => Container(
+                          color: AppColors.inputFill,
+                          child: Center(
+                            child: Text(
+                              initials,
+                              style: AppTextStyles.heading2.copyWith(
+                                color: AppColors.textHint,
+                              ),
+                            ),
+                          ),
+                        ),
+                        errorWidget: (_, _, _) => Container(
+                          color: AppColors.inputFill,
+                          child: Center(
+                            child: Text(
+                              initials,
+                              style: AppTextStyles.heading2.copyWith(
+                                color: AppColors.textHint,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    : Container(
                         color: AppColors.inputFill,
                         child: Center(
                           child: Text(
@@ -58,29 +85,7 @@ class StaffCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      errorWidget: (_, _, _) => Container(
-                        color: AppColors.inputFill,
-                        child: Center(
-                          child: Text(
-                            initials,
-                            style: AppTextStyles.heading2.copyWith(
-                              color: AppColors.textHint,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: AppColors.inputFill,
-                      child: Center(
-                        child: Text(
-                          initials,
-                          style: AppTextStyles.heading2.copyWith(
-                            color: AppColors.textHint,
-                          ),
-                        ),
-                      ),
-                    ),
+              ),
             ),
 
             // Info

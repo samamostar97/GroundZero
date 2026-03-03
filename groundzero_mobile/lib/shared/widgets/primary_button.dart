@@ -15,32 +15,40 @@ class PrimaryButton extends StatelessWidget {
     this.isLoading = false,
   });
 
+  bool get _isDisabled => isLoading || onPressed == null;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accent,
-          foregroundColor: AppColors.onAccent,
-          disabledBackgroundColor: AppColors.accent.withAlpha(128),
-          shape: RoundedRectangleBorder(
+      child: GestureDetector(
+        onTap: _isDisabled ? null : onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            gradient: _isDisabled
+                ? null
+                : const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.accent, AppColors.accentDark],
+                  ),
+            color: _isDisabled ? AppColors.accent.withAlpha(128) : null,
             borderRadius: BorderRadius.circular(10),
           ),
-          elevation: 0,
+          alignment: Alignment.center,
+          child: isLoading
+              ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: AppColors.onAccent,
+                  ),
+                )
+              : Text(label, style: AppTextStyles.button),
         ),
-        child: isLoading
-            ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  color: AppColors.onAccent,
-                ),
-              )
-            : Text(label, style: AppTextStyles.button),
       ),
     );
   }

@@ -71,11 +71,16 @@ class GamificationCard extends StatelessWidget {
                 size: 18,
               ),
               const SizedBox(width: 4),
-              Text(
-                '#$rank',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.warning,
-                  fontWeight: FontWeight.w700,
+              TweenAnimationBuilder<int>(
+                tween: IntTween(begin: 0, end: rank),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, _) => Text(
+                  '#$value',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.warning,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -86,11 +91,16 @@ class GamificationCard extends StatelessWidget {
           // XP Progress
           Row(
             children: [
-              Text(
-                '$xp XP',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.accent,
-                  fontWeight: FontWeight.w600,
+              TweenAnimationBuilder<int>(
+                tween: IntTween(begin: 0, end: xp),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, _) => Text(
+                  '$value XP',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const Spacer(),
@@ -106,12 +116,17 @@ class GamificationCard extends StatelessWidget {
           const SizedBox(height: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 6,
-              backgroundColor: AppColors.inputFill,
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(AppColors.accent),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: progress),
+              duration: const Duration(milliseconds: 1000),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, _) => LinearProgressIndicator(
+                value: value,
+                minHeight: 6,
+                backgroundColor: AppColors.inputFill,
+                valueColor:
+                    const AlwaysStoppedAnimation<Color>(AppColors.accent),
+              ),
             ),
           ),
 

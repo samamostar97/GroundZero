@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/utils/image_utils.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/order_status_badge.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../models/order_item_model.dart';
 import '../models/order_model.dart';
 import '../providers/order_provider.dart';
@@ -35,9 +36,7 @@ class OrderDetailScreen extends ConsumerWidget {
         ),
       ),
       body: orderAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
+        loading: () => const OrderDetailSkeleton(),
         error: (_, _) => ErrorDisplay(
           message: 'Greška pri učitavanju narudžbe.',
           onRetry: () => ref.invalidate(orderDetailProvider(orderId)),

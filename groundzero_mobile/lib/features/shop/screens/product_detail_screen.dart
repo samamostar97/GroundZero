@@ -8,6 +8,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/utils/image_utils.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_display.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/review_card.dart';
 import '../../auth/providers/user_provider.dart';
@@ -93,9 +94,7 @@ class ProductDetailScreen extends ConsumerWidget {
             : null,
       ),
       body: productAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
+        loading: () => const ProductDetailSkeleton(),
         error: (error, _) => ErrorDisplay(
           message: 'Greška pri učitavanju proizvoda.',
           onRetry: () => ref.invalidate(productDetailProvider(productId)),
@@ -106,40 +105,43 @@ class ProductDetailScreen extends ConsumerWidget {
           return ListView(
             children: [
               // Product image
-              AspectRatio(
-                aspectRatio: 1,
-                child: fullImageUrl != null
-                    ? CachedNetworkImage(
-                        imageUrl: fullImageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (_, _) => Container(
+              Hero(
+                tag: 'product-image-$productId',
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: fullImageUrl != null
+                      ? CachedNetworkImage(
+                          imageUrl: fullImageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (_, _) => Container(
+                            color: AppColors.inputFill,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.accent,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (_, _, _) => Container(
+                            color: AppColors.inputFill,
+                            child: const Icon(
+                              Icons.broken_image_outlined,
+                              color: AppColors.textHint,
+                              size: 64,
+                            ),
+                          ),
+                        )
+                      : Container(
                           color: AppColors.inputFill,
                           child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.accent,
-                              strokeWidth: 2,
+                            child: Icon(
+                              Icons.fitness_center,
+                              color: AppColors.textHint,
+                              size: 64,
                             ),
                           ),
                         ),
-                        errorWidget: (_, _, _) => Container(
-                          color: AppColors.inputFill,
-                          child: const Icon(
-                            Icons.broken_image_outlined,
-                            color: AppColors.textHint,
-                            size: 64,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        color: AppColors.inputFill,
-                        child: const Center(
-                          child: Icon(
-                            Icons.fitness_center,
-                            color: AppColors.textHint,
-                            size: 64,
-                          ),
-                        ),
-                      ),
+                ),
               ),
 
               Padding(

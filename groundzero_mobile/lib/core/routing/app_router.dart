@@ -49,6 +49,54 @@ abstract class AppRoutes {
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+CustomTransitionPage<void> _slideTransition({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 300),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      return SlideTransition(
+        position: Tween(
+          begin: const Offset(1, 0),
+          end: Offset.zero,
+        ).animate(curved),
+        child: FadeTransition(
+          opacity: Tween(begin: 0.5, end: 1.0).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
+CustomTransitionPage<void> _slideUpTransition({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 350),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+      return SlideTransition(
+        position: Tween(
+          begin: const Offset(0, 0.15),
+          end: Offset.zero,
+        ).animate(curved),
+        child: FadeTransition(
+          opacity: Tween(begin: 0.0, end: 1.0).animate(curved),
+          child: child,
+        ),
+      );
+    },
+  );
+}
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authNotifierProvider);
 
@@ -141,91 +189,132 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
 
-      // Full-screen routes (outside shell, no bottom nav)
+      // Push navigation — slide from right
       GoRoute(
-        path: AppRoutes.productDetail,
+        path: AppRoutes.staffList,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final id = int.parse(state.pathParameters['id']!);
-          return ProductDetailScreen(productId: id);
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.editProfile,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const EditProfileScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.leaderboard,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const LeaderboardScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.cart,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const CartScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.orderConfirmation,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final id = int.parse(state.pathParameters['id']!);
-          return OrderConfirmationScreen(orderId: id);
-        },
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const StaffListScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.myOrders,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const MyOrdersScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.orderDetail,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final id = int.parse(state.pathParameters['id']!);
-          return OrderDetailScreen(orderId: id);
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.staffList,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const StaffListScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.staffDetail,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final id = int.parse(state.pathParameters['id']!);
-          return StaffDetailScreen(staffId: id);
-        },
-      ),
-      GoRoute(
-        path: AppRoutes.bookAppointment,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final staffId = int.parse(state.pathParameters['staffId']!);
-          return BookAppointmentScreen(staffId: staffId);
-        },
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const MyOrdersScreen(),
+        ),
       ),
       GoRoute(
         path: AppRoutes.myAppointments,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const MyAppointmentsScreen(),
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const MyAppointmentsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.leaderboard,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const LeaderboardScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.editProfile,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const EditProfileScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.cart,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const CartScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.bookAppointment,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) {
+          final staffId = int.parse(state.pathParameters['staffId']!);
+          return _slideTransition(
+            state: state,
+            child: BookAppointmentScreen(staffId: staffId),
+          );
+        },
+      ),
+
+      // Detail/modal screens — slide up
+      GoRoute(
+        path: AppRoutes.productDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return _slideUpTransition(
+            state: state,
+            child: ProductDetailScreen(productId: id),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.staffDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return _slideUpTransition(
+            state: state,
+            child: StaffDetailScreen(staffId: id),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetail,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return _slideUpTransition(
+            state: state,
+            child: OrderDetailScreen(orderId: id),
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.orderConfirmation,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return _slideUpTransition(
+            state: state,
+            child: OrderConfirmationScreen(orderId: id),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.appointmentDetail,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
-          return AppointmentDetailScreen(appointmentId: id);
+          return _slideUpTransition(
+            state: state,
+            child: AppointmentDetailScreen(appointmentId: id),
+          );
         },
       ),
       GoRoute(
         path: AppRoutes.workoutPlanDetail,
         parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final id = int.parse(state.pathParameters['id']!);
-          return WorkoutPlanDetailScreen(planId: id);
+          return _slideUpTransition(
+            state: state,
+            child: WorkoutPlanDetailScreen(planId: id),
+          );
         },
       ),
     ],

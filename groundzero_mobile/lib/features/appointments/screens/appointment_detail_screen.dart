@@ -7,6 +7,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/appointment_status_badge.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/rating_stars.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../shop/data/review_repository.dart';
 import '../../shop/models/create_review_request.dart';
 import '../models/appointment_model.dart';
@@ -64,9 +65,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
         title: Text('Detalji termina', style: AppTextStyles.heading3),
       ),
       body: appointmentAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
+        loading: () => const AppointmentDetailSkeleton(),
         error: (_, _) => ErrorDisplay(
           message: 'Greška pri učitavanju termina.',
           onRetry: () =>

@@ -9,6 +9,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/utils/image_utils.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_display.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/review_card.dart';
@@ -43,9 +44,7 @@ class StaffDetailScreen extends ConsumerWidget {
         ),
       ),
       body: staffAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
+        loading: () => const StaffDetailSkeleton(),
         error: (_, _) => ErrorDisplay(
           message: 'Greška pri učitavanju profila.',
           onRetry: () => ref.invalidate(staffDetailProvider(staffId)),
@@ -70,16 +69,41 @@ class StaffDetailScreen extends ConsumerWidget {
             children: [
               // Profile image
               Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: SizedBox(
-                    width: 160,
-                    height: 160,
-                    child: fullUrl != null
-                        ? CachedNetworkImage(
-                            imageUrl: fullUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (_, _) => Container(
+                child: Hero(
+                  tag: 'staff-image-$staffId',
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: SizedBox(
+                      width: 160,
+                      height: 160,
+                      child: fullUrl != null
+                          ? CachedNetworkImage(
+                              imageUrl: fullUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (_, _) => Container(
+                                color: AppColors.inputFill,
+                                child: Center(
+                                  child: Text(
+                                    initials,
+                                    style: AppTextStyles.heading1.copyWith(
+                                      color: AppColors.textHint,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (_, _, _) => Container(
+                                color: AppColors.inputFill,
+                                child: Center(
+                                  child: Text(
+                                    initials,
+                                    style: AppTextStyles.heading1.copyWith(
+                                      color: AppColors.textHint,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Container(
                               color: AppColors.inputFill,
                               child: Center(
                                 child: Text(
@@ -90,29 +114,7 @@ class StaffDetailScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            errorWidget: (_, _, _) => Container(
-                              color: AppColors.inputFill,
-                              child: Center(
-                                child: Text(
-                                  initials,
-                                  style: AppTextStyles.heading1.copyWith(
-                                    color: AppColors.textHint,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(
-                            color: AppColors.inputFill,
-                            child: Center(
-                              child: Text(
-                                initials,
-                                style: AppTextStyles.heading1.copyWith(
-                                  color: AppColors.textHint,
-                                ),
-                              ),
-                            ),
-                          ),
+                    ),
                   ),
                 ),
               ),

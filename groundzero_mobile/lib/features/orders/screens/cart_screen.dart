@@ -41,10 +41,12 @@ class CartScreen extends ConsumerWidget {
         title: Text('Korpa', style: AppTextStyles.heading3),
       ),
       body: cart.items.isEmpty
-          ? const Center(
+          ? Center(
               child: EmptyState(
                 icon: Icons.shopping_cart_outlined,
                 message: 'Vaša korpa je prazna.',
+                actionLabel: 'Pogledajte shop',
+                onAction: () => context.go('/shop'),
               ),
             )
           : Column(

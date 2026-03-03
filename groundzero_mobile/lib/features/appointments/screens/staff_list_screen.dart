@@ -8,6 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/category_chip.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/staff_card.dart';
 import '../providers/staff_provider.dart';
 
@@ -148,8 +149,16 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
 
   Widget _buildStaffGrid(StaffListState state) {
     if (state.isLoading && state.staff.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.accent),
+      return GridView.builder(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.72,
+        ),
+        itemCount: 4,
+        itemBuilder: (_, _) => const StaffCardSkeleton(),
       );
     }
 
@@ -190,6 +199,7 @@ class _StaffListScreenState extends ConsumerState<StaffListScreen> {
 
         final member = state.staff[index];
         return StaffCard(
+          id: member.id,
           firstName: member.firstName,
           lastName: member.lastName,
           staffType: member.staffType,

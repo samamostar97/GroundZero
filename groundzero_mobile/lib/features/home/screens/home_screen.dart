@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/gamification_card.dart';
 import '../../../shared/widgets/product_card.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/staff_card.dart';
 import '../../appointments/providers/staff_provider.dart';
 import '../../auth/providers/user_provider.dart';
@@ -26,9 +27,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: userAsync.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.accent),
-          ),
+          loading: () => const ProfileSkeleton(),
           error: (error, _) => ErrorDisplay(
             message: 'Greška pri učitavanju profila.',
             onRetry: () =>
@@ -36,9 +35,7 @@ class HomeScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.accent),
-              );
+              return const ProfileSkeleton();
             }
 
             return RefreshIndicator(
@@ -69,20 +66,7 @@ class HomeScreen extends ConsumerWidget {
 
                   // Gamification card
                   gamificationAsync.when(
-                    loading: () => Container(
-                      height: 140,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accent,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    ),
+                    loading: () => const GamificationCardSkeleton(),
                     error: (_, _) => const SizedBox.shrink(),
                     data: (gamification) => GamificationCard(
                       level: gamification.level,
@@ -103,12 +87,15 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 14),
                   recommendationsAsync.when(
-                    loading: () => const SizedBox(
-                      height: 220,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accent,
-                          strokeWidth: 2,
+                    loading: () => SizedBox(
+                      height: 240,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (_, _) => const SizedBox(
+                          width: 160,
+                          child: ProductCardSkeleton(),
                         ),
                       ),
                     ),
@@ -183,12 +170,15 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 14),
                   staffAsync.when(
-                    loading: () => const SizedBox(
-                      height: 200,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accent,
-                          strokeWidth: 2,
+                    loading: () => SizedBox(
+                      height: 210,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (_, _) => const SizedBox(
+                          width: 150,
+                          child: StaffCardSkeleton(),
                         ),
                       ),
                     ),
@@ -223,6 +213,7 @@ class HomeScreen extends ConsumerWidget {
                             return SizedBox(
                               width: 150,
                               child: StaffCard(
+                                id: member.id,
                                 firstName: member.firstName,
                                 lastName: member.lastName,
                                 staffType: member.staffType,

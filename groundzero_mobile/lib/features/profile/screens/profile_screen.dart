@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/gamification_card.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/providers/user_provider.dart';
@@ -23,9 +24,7 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: userAsync.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.accent),
-          ),
+          loading: () => const ProfileSkeleton(),
           error: (error, _) => ErrorDisplay(
             message: 'Greška pri učitavanju profila.',
             onRetry: () =>
@@ -33,9 +32,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
           data: (user) {
             if (user == null) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.accent),
-              );
+              return const ProfileSkeleton();
             }
 
             return ListView(
@@ -72,20 +69,7 @@ class ProfileScreen extends ConsumerWidget {
 
                 // Gamification card
                 gamificationAsync.when(
-                  loading: () => Container(
-                    height: 140,
-                    decoration: BoxDecoration(
-                      color: AppColors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.border),
-                    ),
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.accent,
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  ),
+                  loading: () => const GamificationCardSkeleton(),
                   error: (_, _) => const SizedBox.shrink(),
                   data: (gamification) => GamificationCard(
                     level: gamification.level,

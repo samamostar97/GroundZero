@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/error_display.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../data/workout_repository.dart';
 import '../models/add_workout_day_request.dart';
 import '../models/add_workout_exercise_request.dart';
@@ -85,9 +86,7 @@ class WorkoutPlanDetailScreen extends ConsumerWidget {
         ],
       ),
       body: planAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.accent),
-        ),
+        loading: () => const WorkoutPlanDetailSkeleton(),
         error: (error, _) => ErrorDisplay(
           message: 'Greška pri učitavanju plana.',
           onRetry: () => ref.invalidate(workoutPlanDetailProvider(planId)),

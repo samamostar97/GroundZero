@@ -10,6 +10,7 @@ import '../../../shared/widgets/cart_badge.dart';
 import '../../../shared/widgets/category_chip.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/product_card.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../orders/providers/cart_provider.dart';
 import '../providers/categories_provider.dart';
 import '../providers/products_provider.dart';
@@ -180,8 +181,16 @@ class _ShopScreenState extends ConsumerState<ShopScreen> {
 
   Widget _buildProductGrid(ProductsState state) {
     if (state.isLoading && state.products.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.accent),
+      return GridView.builder(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.62,
+        ),
+        itemCount: 6,
+        itemBuilder: (_, _) => const ProductCardSkeleton(),
       );
     }
 

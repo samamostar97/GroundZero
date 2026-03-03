@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/providers/user_provider.dart';
 import '../models/leaderboard_entry_model.dart';
@@ -59,8 +60,11 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
 
   Widget _buildBody(LeaderboardState state, int? currentUserId) {
     if (state.isLoading && state.entries.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.accent),
+      return ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: 6,
+        separatorBuilder: (_, _) => const SizedBox(height: 8),
+        itemBuilder: (_, _) => const LeaderboardTileSkeleton(),
       );
     }
 
