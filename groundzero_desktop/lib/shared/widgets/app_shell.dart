@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/categories/screens/categories_screen.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
+import '../../features/membership_plans/screens/membership_plans_screen.dart';
+import '../../features/products/screens/products_screen.dart';
 import '../../features/staff/screens/staff_screen.dart';
 import '../../features/users/screens/users_screen.dart';
 import 'app_sidebar.dart';
@@ -86,11 +89,11 @@ class AppShell extends ConsumerWidget {
           case 1:
             return const StaffScreen();
           case 2:
-            return const PlaceholderScreen(title: 'Proizvodi');
+            return const ProductsScreen();
           case 3:
-            return const PlaceholderScreen(title: 'Kategorije');
+            return const CategoriesScreen();
           case 4:
-            return const PlaceholderScreen(title: 'Planovi članarina');
+            return const MembershipPlansScreen();
           default:
             return const PlaceholderScreen(title: 'Korisnici');
         }
