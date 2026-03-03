@@ -41,6 +41,8 @@ class ApiConstants {
   static const String reviews = '/reviews';
   static String productReviews(int productId) =>
       '/reviews/product/$productId';
+  static String staffReviews(int staffId) => '/reviews/staff/$staffId';
+  static String reviewById(int id) => '/reviews/$id';
 
   // Workouts
   static const String workoutPlans = '/workout-plans';

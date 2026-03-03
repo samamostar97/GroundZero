@@ -9,6 +9,8 @@ class ReviewCard extends StatelessWidget {
   final int rating;
   final String? comment;
   final DateTime createdAt;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const ReviewCard({
     super.key,
@@ -16,6 +18,8 @@ class ReviewCard extends StatelessWidget {
     required this.rating,
     this.comment,
     required this.createdAt,
+    this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -40,6 +44,33 @@ class ReviewCard extends StatelessWidget {
                   ),
                 ),
               ),
+              if (onEdit != null || onDelete != null) ...[
+                if (onEdit != null)
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: IconButton(
+                      onPressed: onEdit,
+                      icon: const Icon(Icons.edit_outlined, size: 16),
+                      padding: EdgeInsets.zero,
+                      color: AppColors.textHint,
+                      splashRadius: 16,
+                    ),
+                  ),
+                if (onDelete != null)
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: IconButton(
+                      onPressed: onDelete,
+                      icon: const Icon(Icons.delete_outline, size: 16),
+                      padding: EdgeInsets.zero,
+                      color: AppColors.error,
+                      splashRadius: 16,
+                    ),
+                  ),
+                const SizedBox(width: 4),
+              ],
               RatingStars(rating: rating.toDouble(), size: 14),
             ],
           ),

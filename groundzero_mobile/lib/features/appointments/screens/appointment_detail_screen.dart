@@ -3,8 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/appointment_status_badge.dart';
 import '../../../shared/widgets/error_display.dart';
+import '../../../shared/widgets/rating_stars.dart';
+import '../../shop/data/review_repository.dart';
+import '../../shop/models/create_review_request.dart';
 import '../models/appointment_model.dart';
 import '../providers/appointment_provider.dart';
 
@@ -175,6 +179,31 @@ class AppointmentDetailScreen extends ConsumerWidget {
                   ),
                 ),
               ],
+
+              // Review button for completed appointments
+              if (appointment.status == 'Completed') ...[
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        _showReviewSheet(context, ref, appointment.id),
+                    icon: const Icon(Icons.rate_review_outlined),
+                    label: Text(
+                      'Ostavi recenziju',
+                      style: AppTextStyles.button,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.accent,
+                      foregroundColor: AppColors.onAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           );
         },
@@ -268,6 +297,155 @@ class AppointmentDetailScreen extends ConsumerWidget {
             if (i < rows.length - 1) const SizedBox(height: 10),
           ],
         ],
+      ),
+    );
+  }
+
+  void _showReviewSheet(
+      BuildContext context, WidgetRef ref, int appointmentId) {
+    int selectedRating = 0;
+    final commentController = TextEditingController();
+    bool isSubmitting = false;
+    String? errorMessage;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            20 + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Ostavi recenziju', style: AppTextStyles.heading3),
+              const SizedBox(height: 16),
+
+              // Stars
+              Center(
+                child: RatingStars(
+                  rating: selectedRating.toDouble(),
+                  size: 36,
+                  interactive: true,
+                  onRatingChanged: (rating) {
+                    setSheetState(() => selectedRating = rating);
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Comment
+              TextField(
+                controller: commentController,
+                maxLines: 3,
+                style: AppTextStyles.input,
+                decoration: InputDecoration(
+                  hintText: 'Komentar (opcionalno)',
+                  hintStyle: AppTextStyles.inputHint,
+                  filled: true,
+                  fillColor: AppColors.inputFill,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+
+              // Error message
+              if (errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    errorMessage!,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.error,
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+
+              // Submit
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: selectedRating == 0 || isSubmitting
+                      ? null
+                      : () async {
+                          setSheetState(() => isSubmitting = true);
+                          try {
+                            final repo = ref.read(reviewRepositoryProvider);
+                            await repo.createReview(
+                              CreateReviewRequest(
+                                rating: selectedRating,
+                                comment: commentController.text.isNotEmpty
+                                    ? commentController.text
+                                    : null,
+                                reviewType: 1, // Appointment
+                                appointmentId: appointmentId,
+                              ),
+                            );
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Recenzija uspješno dodana!'),
+                                  backgroundColor: AppColors.success,
+                                ),
+                              );
+                            }
+                          } on ApiException catch (e) {
+                            setSheetState(() {
+                              isSubmitting = false;
+                              errorMessage = e.firstError;
+                            });
+                          } catch (_) {
+                            setSheetState(() {
+                              isSubmitting = false;
+                              errorMessage =
+                                  'Neočekivana greška. Pokušajte ponovo.';
+                            });
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: AppColors.onAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.onAccent,
+                          ),
+                        )
+                      : Text('Pošalji', style: AppTextStyles.button),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

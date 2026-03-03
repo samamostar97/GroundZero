@@ -7,6 +7,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_client.dart';
 import '../models/create_review_request.dart';
 import '../models/review_model.dart';
+import '../models/update_review_request.dart';
 
 class ReviewsWithRating {
   final double? averageRating;
@@ -56,6 +57,34 @@ class ReviewRepository {
     }
   }
 
+  Future<ReviewsWithRating> getStaffReviews(
+    int staffId, {
+    int pageNumber = 1,
+    int pageSize = 10,
+  }) async {
+    try {
+      final response = await _dio.get(
+        ApiConstants.staffReviews(staffId),
+        queryParameters: {
+          'pageNumber': pageNumber,
+          'pageSize': pageSize,
+        },
+      );
+      final data = response.data as Map<String, dynamic>;
+      return ReviewsWithRating(
+        averageRating: data['averageRating'] != null
+            ? (data['averageRating'] as num).toDouble()
+            : null,
+        reviews: PagedResult.fromJson(
+          data['reviews'] as Map<String, dynamic>,
+          (json) => ReviewModel.fromJson(json),
+        ),
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   Future<ReviewModel> createReview(CreateReviewRequest request) async {
     try {
       final response = await _dio.post(
@@ -63,6 +92,27 @@ class ReviewRepository {
         data: request.toJson(),
       );
       return ReviewModel.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  Future<ReviewModel> updateReview(
+      int id, UpdateReviewRequest request) async {
+    try {
+      final response = await _dio.put(
+        ApiConstants.reviewById(id),
+        data: request.toJson(),
+      );
+      return ReviewModel.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  Future<void> deleteReview(int id) async {
+    try {
+      await _dio.delete(ApiConstants.reviewById(id));
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

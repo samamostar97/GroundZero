@@ -10,9 +10,11 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/review_card.dart';
+import '../../auth/providers/user_provider.dart';
 import '../../orders/providers/cart_provider.dart';
 import '../data/review_repository.dart';
 import '../models/create_review_request.dart';
+import '../models/update_review_request.dart';
 import '../providers/product_detail_provider.dart';
 import '../providers/product_reviews_provider.dart';
 
@@ -26,6 +28,7 @@ class ProductDetailScreen extends ConsumerWidget {
     final productAsync = ref.watch(productDetailProvider(productId));
     final reviewsState =
         ref.watch(productReviewsNotifierProvider(productId));
+    final currentUserId = ref.watch(userNotifierProvider).valueOrNull?.id;
 
     return Scaffold(
       appBar: AppBar(
@@ -286,6 +289,16 @@ class ProductDetailScreen extends ConsumerWidget {
                             rating: review.rating,
                             comment: review.comment,
                             createdAt: review.createdAt,
+                            onEdit: currentUserId != null &&
+                                    review.userId == currentUserId
+                                ? () => _showEditReviewSheet(
+                                    context, ref, review)
+                                : null,
+                            onDelete: currentUserId != null &&
+                                    review.userId == currentUserId
+                                ? () => _confirmDeleteReview(
+                                    context, ref, review.id)
+                                : null,
                           ),
                         ),
                       ),
@@ -467,6 +480,225 @@ class ProductDetailScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showEditReviewSheet(
+      BuildContext context, WidgetRef ref, dynamic review) {
+    int selectedRating = review.rating;
+    final commentController =
+        TextEditingController(text: review.comment ?? '');
+    bool isSubmitting = false;
+    String? errorMessage;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            20 + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Uredi recenziju', style: AppTextStyles.heading3),
+              const SizedBox(height: 16),
+              Center(
+                child: RatingStars(
+                  rating: selectedRating.toDouble(),
+                  size: 36,
+                  interactive: true,
+                  onRatingChanged: (rating) {
+                    setSheetState(() => selectedRating = rating);
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: commentController,
+                maxLines: 3,
+                style: AppTextStyles.input,
+                decoration: InputDecoration(
+                  hintText: 'Komentar (opcionalno)',
+                  hintStyle: AppTextStyles.inputHint,
+                  filled: true,
+                  fillColor: AppColors.inputFill,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              if (errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    errorMessage!,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.error,
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: selectedRating == 0 || isSubmitting
+                      ? null
+                      : () async {
+                          setSheetState(() => isSubmitting = true);
+                          try {
+                            final repo = ref.read(reviewRepositoryProvider);
+                            await repo.updateReview(
+                              review.id,
+                              UpdateReviewRequest(
+                                rating: selectedRating,
+                                comment: commentController.text.isNotEmpty
+                                    ? commentController.text
+                                    : null,
+                              ),
+                            );
+                            ref.invalidate(
+                                productReviewsNotifierProvider(productId));
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Recenzija uspješno ažurirana!'),
+                                  backgroundColor: AppColors.success,
+                                ),
+                              );
+                            }
+                          } on ApiException catch (e) {
+                            setSheetState(() {
+                              isSubmitting = false;
+                              errorMessage = e.firstError;
+                            });
+                          } catch (_) {
+                            setSheetState(() {
+                              isSubmitting = false;
+                              errorMessage =
+                                  'Neočekivana greška. Pokušajte ponovo.';
+                            });
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent,
+                    foregroundColor: AppColors.onAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: isSubmitting
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.onAccent,
+                          ),
+                        )
+                      : Text('Sačuvaj', style: AppTextStyles.button),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteReview(
+      BuildContext context, WidgetRef ref, int reviewId) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(
+          'Obriši recenziju?',
+          style: AppTextStyles.heading3,
+        ),
+        content: Text(
+          'Da li ste sigurni da želite obrisati ovu recenziju?',
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Ne',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              try {
+                final repo = ref.read(reviewRepositoryProvider);
+                await repo.deleteReview(reviewId);
+                ref.invalidate(
+                    productReviewsNotifierProvider(productId));
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Recenzija uspješno obrisana.'),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                }
+              } on ApiException catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(e.firstError),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content:
+                          Text('Neočekivana greška. Pokušajte ponovo.'),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(
+              'Da, obriši',
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
