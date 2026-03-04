@@ -1,0 +1,132 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/network/api_exception.dart';
+import '../data/gym_visits_repository.dart';
+import '../models/gym_visit_model.dart';
+
+class GymVisitsState {
+  final List<GymVisitModel> visits;
+  final bool isLoading;
+  final bool isActionLoading;
+  final String? error;
+  final int currentPage;
+  final int totalPages;
+  final int totalCount;
+  final String search;
+
+  const GymVisitsState({
+    this.visits = const [],
+    this.isLoading = false,
+    this.isActionLoading = false,
+    this.error,
+    this.currentPage = 1,
+    this.totalPages = 1,
+    this.totalCount = 0,
+    this.search = '',
+  });
+
+  GymVisitsState copyWith({
+    List<GymVisitModel>? visits,
+    bool? isLoading,
+    bool? isActionLoading,
+    String? error,
+    int? currentPage,
+    int? totalPages,
+    int? totalCount,
+    String? search,
+  }) {
+    return GymVisitsState(
+      visits: visits ?? this.visits,
+      isLoading: isLoading ?? this.isLoading,
+      isActionLoading: isActionLoading ?? this.isActionLoading,
+      error: error,
+      currentPage: currentPage ?? this.currentPage,
+      totalPages: totalPages ?? this.totalPages,
+      totalCount: totalCount ?? this.totalCount,
+      search: search ?? this.search,
+    );
+  }
+}
+
+final gymVisitsNotifierProvider =
+    NotifierProvider<GymVisitsNotifier, GymVisitsState>(
+        GymVisitsNotifier.new);
+
+class GymVisitsNotifier extends Notifier<GymVisitsState> {
+  static const _pageSize = 10;
+
+  late final GymVisitsRepository _repository;
+
+  @override
+  GymVisitsState build() {
+    _repository = ref.watch(gymVisitsRepositoryProvider);
+    Future.microtask(() => loadPage(1));
+    return const GymVisitsState(isLoading: true);
+  }
+
+  Future<void> loadPage(int page) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final result = await _repository.getVisits(
+        pageNumber: page,
+        pageSize: _pageSize,
+        search: state.search,
+      );
+
+      state = state.copyWith(
+        visits: result.items,
+        isLoading: false,
+        currentPage: result.pageNumber,
+        totalPages: result.totalPages,
+        totalCount: result.totalCount,
+      );
+    } on ApiException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.firstError);
+    } catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Greška pri učitavanju posjeta.',
+      );
+    }
+  }
+
+  void setSearch(String search) {
+    state = state.copyWith(search: search);
+    loadPage(1);
+  }
+
+  Future<String?> checkIn(int userId) async {
+    state = state.copyWith(isActionLoading: true, error: null);
+    try {
+      await _repository.checkIn(userId);
+      state = state.copyWith(isActionLoading: false);
+      await loadPage(1);
+      return null;
+    } on ApiException catch (e) {
+      state = state.copyWith(isActionLoading: false);
+      return e.firstError;
+    } catch (_) {
+      state = state.copyWith(isActionLoading: false);
+      return 'Greška pri prijavi korisnika.';
+    }
+  }
+
+  Future<String?> checkOut(int userId) async {
+    state = state.copyWith(isActionLoading: true, error: null);
+    try {
+      await _repository.checkOut(userId);
+      state = state.copyWith(isActionLoading: false);
+      await loadPage(1);
+      return null;
+    } on ApiException catch (e) {
+      state = state.copyWith(isActionLoading: false);
+      return e.firstError;
+    } catch (_) {
+      state = state.copyWith(isActionLoading: false);
+      return 'Greška pri odjavi korisnika.';
+    }
+  }
+
+  void refresh() => loadPage(state.currentPage);
+}

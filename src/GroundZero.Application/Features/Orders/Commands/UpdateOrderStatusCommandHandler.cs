@@ -51,7 +51,7 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         {
             { OrderStatus.Pending, new[] { OrderStatus.Confirmed, OrderStatus.Cancelled } },
             { OrderStatus.Confirmed, new[] { OrderStatus.Shipped, OrderStatus.Cancelled } },
-            { OrderStatus.Shipped, new[] { OrderStatus.Delivered, OrderStatus.Cancelled } },
+            { OrderStatus.Shipped, new[] { OrderStatus.Delivered } },
             { OrderStatus.Delivered, Array.Empty<OrderStatus>() },
             { OrderStatus.Cancelled, Array.Empty<OrderStatus>() }
         };

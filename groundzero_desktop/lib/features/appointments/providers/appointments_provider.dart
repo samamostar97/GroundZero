@@ -1,0 +1,146 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/network/api_exception.dart';
+import '../data/appointments_repository.dart';
+import '../models/appointment_model.dart';
+
+class AppointmentsState {
+  final List<AppointmentModel> appointments;
+  final bool isLoading;
+  final String? error;
+  final int currentPage;
+  final int totalPages;
+  final int totalCount;
+  final String search;
+  final int? statusFilter;
+  final int? staffFilter;
+
+  const AppointmentsState({
+    this.appointments = const [],
+    this.isLoading = false,
+    this.error,
+    this.currentPage = 1,
+    this.totalPages = 1,
+    this.totalCount = 0,
+    this.search = '',
+    this.statusFilter,
+    this.staffFilter,
+  });
+
+  AppointmentsState copyWith({
+    List<AppointmentModel>? appointments,
+    bool? isLoading,
+    String? error,
+    int? currentPage,
+    int? totalPages,
+    int? totalCount,
+    String? search,
+    int? statusFilter,
+    bool clearStatusFilter = false,
+    int? staffFilter,
+    bool clearStaffFilter = false,
+  }) {
+    return AppointmentsState(
+      appointments: appointments ?? this.appointments,
+      isLoading: isLoading ?? this.isLoading,
+      error: error,
+      currentPage: currentPage ?? this.currentPage,
+      totalPages: totalPages ?? this.totalPages,
+      totalCount: totalCount ?? this.totalCount,
+      search: search ?? this.search,
+      statusFilter:
+          clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
+      staffFilter:
+          clearStaffFilter ? null : (staffFilter ?? this.staffFilter),
+    );
+  }
+}
+
+final appointmentsNotifierProvider =
+    NotifierProvider<AppointmentsNotifier, AppointmentsState>(
+        AppointmentsNotifier.new);
+
+class AppointmentsNotifier extends Notifier<AppointmentsState> {
+  static const _pageSize = 10;
+
+  late final AppointmentsRepository _repository;
+
+  @override
+  AppointmentsState build() {
+    _repository = ref.watch(appointmentsRepositoryProvider);
+    Future.microtask(() => loadPage(1));
+    return const AppointmentsState(isLoading: true);
+  }
+
+  Future<void> loadPage(int page) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final result = await _repository.getAppointments(
+        pageNumber: page,
+        pageSize: _pageSize,
+        search: state.search,
+        status: state.statusFilter,
+        staffId: state.staffFilter,
+      );
+
+      state = state.copyWith(
+        appointments: result.items,
+        isLoading: false,
+        currentPage: result.pageNumber,
+        totalPages: result.totalPages,
+        totalCount: result.totalCount,
+      );
+    } on ApiException catch (e) {
+      state = state.copyWith(isLoading: false, error: e.firstError);
+    } catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Greška pri učitavanju termina.',
+      );
+    }
+  }
+
+  void setSearch(String search) {
+    state = state.copyWith(search: search);
+    loadPage(1);
+  }
+
+  void setStatusFilter(int? status) {
+    state = state.copyWith(
+      statusFilter: status,
+      clearStatusFilter: status == null,
+    );
+    loadPage(1);
+  }
+
+  void setStaffFilter(int? staffId) {
+    state = state.copyWith(
+      staffFilter: staffId,
+      clearStaffFilter: staffId == null,
+    );
+    loadPage(1);
+  }
+
+  Future<String?> updateStatus(int id, int status) async {
+    try {
+      await _repository.updateStatus(id, status);
+      await loadPage(state.currentPage);
+      return null;
+    } on ApiException catch (e) {
+      return e.firstError;
+    }
+  }
+
+  Future<String?> cancel(int id) async {
+    try {
+      await _repository.cancel(id);
+      await loadPage(state.currentPage);
+      return null;
+    } on ApiException catch (e) {
+      return e.firstError;
+    }
+  }
+
+  void refresh() => loadPage(state.currentPage);
+}

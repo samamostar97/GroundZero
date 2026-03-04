@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/appointments/screens/appointments_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/categories/screens/categories_screen.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
+import '../../features/gym_visits/screens/gym_visits_screen.dart';
 import '../../features/membership_plans/screens/membership_plans_screen.dart';
+import '../../features/memberships/screens/memberships_screen.dart';
+import '../../features/orders/screens/orders_screen.dart';
 import '../../features/products/screens/products_screen.dart';
 import '../../features/staff/screens/staff_screen.dart';
 import '../../features/users/screens/users_screen.dart';
@@ -102,15 +106,15 @@ class AppShell extends ConsumerWidget {
       case 2:
         switch (tabIndex) {
           case 0:
-            return const PlaceholderScreen(title: 'Narudžbe');
+            return const OrdersScreen();
           case 1:
-            return const PlaceholderScreen(title: 'Termini');
+            return const AppointmentsScreen();
           case 2:
-            return const PlaceholderScreen(title: 'Check-in / Check-out');
+            return const GymVisitsScreen();
           case 3:
-            return const PlaceholderScreen(title: 'Članarine');
+            return const MembershipsScreen();
           default:
-            return const PlaceholderScreen(title: 'Narudžbe');
+            return const OrdersScreen();
         }
 
       // Izvještaji
