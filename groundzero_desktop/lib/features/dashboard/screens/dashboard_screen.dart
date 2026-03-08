@@ -575,6 +575,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Row(
                           children: [
+                            // Order # badge
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: AppColors.accent.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '#${order.id}',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.accent,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            // Info
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,6 +607,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       fontWeight: FontWeight.w500,
                                       color: AppColors.textPrimary,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
@@ -594,13 +616,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       fontSize: 11,
                                       color: AppColors.textHint,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
                             ),
                             const SizedBox(width: 8),
+                            // Action buttons
                             SizedBox(
-                              height: 30,
+                              height: 28,
                               child: ElevatedButton(
                                 onPressed: state.isActionLoading
                                     ? null
@@ -623,9 +647,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   foregroundColor: AppColors.success,
                                   elevation: 0,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
+                                      horizontal: 10),
+                                  minimumSize: Size.zero,
                                   textStyle: GoogleFonts.inter(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -637,7 +662,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ),
                             const SizedBox(width: 6),
                             SizedBox(
-                              height: 30,
+                              height: 28,
                               child: ElevatedButton(
                                 onPressed: state.isActionLoading
                                     ? null
@@ -660,9 +685,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   foregroundColor: AppColors.error,
                                   elevation: 0,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
+                                      horizontal: 10),
+                                  minimumSize: Size.zero,
                                   textStyle: GoogleFonts.inter(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                   ),
                                   shape: RoundedRectangleBorder(
@@ -684,7 +710,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 }
 
-class _StatCard extends StatelessWidget {
+class _StatCard extends StatefulWidget {
   final String label;
   final String value;
   final IconData icon;
@@ -696,42 +722,62 @@ class _StatCard extends StatelessWidget {
   });
 
   @override
+  State<_StatCard> createState() => _StatCardState();
+}
+
+class _StatCardState extends State<_StatCard> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border, width: 0.5),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: AppColors.accent, size: 20),
-                const Spacer(),
-              ],
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: _hovered ? AppColors.surfaceHigh : AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _hovered ? AppColors.accent.withValues(alpha: 0.3) : AppColors.border,
+              width: 0.5,
             ),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: GoogleFonts.barlowCondensed(
-                fontSize: 28,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Accent top line
+              Container(
+                width: 32,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: AppColors.accent,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: AppColors.textSecondary,
+              const SizedBox(height: 14),
+              Icon(widget.icon, color: AppColors.accent, size: 20),
+              const SizedBox(height: 12),
+              Text(
+                widget.value,
+                style: GoogleFonts.barlowCondensed(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                widget.label,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

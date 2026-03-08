@@ -15,31 +15,38 @@ public class RabbitMqPublisher : IMessagePublisher
 
     public async Task PublishAsync<T>(string queueName, T message, CancellationToken ct = default)
     {
-        var channel = await _connection.GetChannelAsync(ct);
-
-        await channel.QueueDeclareAsync(
-            queue: queueName,
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null,
-            cancellationToken: ct);
-
-        var json = JsonSerializer.Serialize(message);
-        var body = Encoding.UTF8.GetBytes(json);
-
-        var properties = new BasicProperties
+        try
         {
-            Persistent = true,
-            ContentType = "application/json"
-        };
+            var channel = await _connection.GetChannelAsync(ct);
 
-        await channel.BasicPublishAsync(
-            exchange: string.Empty,
-            routingKey: queueName,
-            mandatory: false,
-            basicProperties: properties,
-            body: body,
-            cancellationToken: ct);
+            await channel.QueueDeclareAsync(
+                queue: queueName,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null,
+                cancellationToken: ct);
+
+            var json = JsonSerializer.Serialize(message);
+            var body = Encoding.UTF8.GetBytes(json);
+
+            var properties = new BasicProperties
+            {
+                Persistent = true,
+                ContentType = "application/json"
+            };
+
+            await channel.BasicPublishAsync(
+                exchange: string.Empty,
+                routingKey: queueName,
+                mandatory: false,
+                basicProperties: properties,
+                body: body,
+                cancellationToken: ct);
+        }
+        catch (Exception)
+        {
+            // RabbitMQ unavailable — silently skip, don't break the main request
+        }
     }
 }
