@@ -57,6 +57,9 @@ class ApiConstants {
   static const String appointmentReportData = '/reports/appointments/data';
   static const String gamificationReportData = '/reports/gamification/data';
 
+  // Dashboard
+  static const String dashboard = '/dashboard';
+
   // Leaderboard
   static const String leaderboard = '/leaderboard';
 }
