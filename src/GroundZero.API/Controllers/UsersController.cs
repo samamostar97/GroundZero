@@ -36,6 +36,14 @@ public class UsersController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPatch("me/password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        await _mediator.Send(new ChangePasswordCommand { UserId = userId, Request = request });
+        return NoContent();
+    }
+
     [HttpGet("me/gamification")]
     public async Task<IActionResult> GetMyGamification()
     {

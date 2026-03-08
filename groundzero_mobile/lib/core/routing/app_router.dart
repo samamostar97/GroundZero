@@ -15,6 +15,7 @@ import '../../features/orders/screens/cart_screen.dart';
 import '../../features/orders/screens/my_orders_screen.dart';
 import '../../features/orders/screens/order_confirmation_screen.dart';
 import '../../features/orders/screens/order_detail_screen.dart';
+import '../../features/profile/screens/change_password_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/leaderboard_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
@@ -47,6 +48,7 @@ abstract class AppRoutes {
   static const String workouts = '/workouts';
   static const String workoutPlanDetail = '/workouts/:id';
   static const String membership = '/membership';
+  static const String changePassword = '/profile/change-password';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -230,6 +232,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _slideTransition(
           state: state,
           child: const EditProfileScreen(),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.changePassword,
+        parentNavigatorKey: _rootNavigatorKey,
+        pageBuilder: (context, state) => _slideTransition(
+          state: state,
+          child: const ChangePasswordScreen(),
         ),
       ),
       GoRoute(

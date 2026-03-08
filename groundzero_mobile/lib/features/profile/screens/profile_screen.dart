@@ -157,6 +157,12 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 10),
                 _MenuTile(
+                  icon: Icons.lock_outline_rounded,
+                  label: 'Promijeni lozinku',
+                  onTap: () => context.push(AppRoutes.changePassword),
+                ),
+                const SizedBox(height: 10),
+                _MenuTile(
                   icon: Icons.leaderboard_rounded,
                   label: 'Rang lista',
                   onTap: () => context.push(AppRoutes.leaderboard),

@@ -54,6 +54,20 @@ class ProfileRepository {
     }
   }
 
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    try {
+      await _dio.patch(
+        ApiConstants.changePassword,
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        },
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   Future<GamificationModel> getMyGamification() async {
     try {
       final response = await _dio.get(ApiConstants.myGamification);

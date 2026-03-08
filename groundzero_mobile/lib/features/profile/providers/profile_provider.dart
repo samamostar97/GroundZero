@@ -61,5 +61,19 @@ class ProfileActionNotifier extends Notifier<ProfileActionState> {
     }
   }
 
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    state = const ProfileActionState(isLoading: true);
+
+    try {
+      final repo = ref.read(profileRepositoryProvider);
+      await repo.changePassword(currentPassword, newPassword);
+      state = const ProfileActionState(success: true);
+      return true;
+    } catch (e) {
+      state = ProfileActionState(error: e.toString());
+      return false;
+    }
+  }
+
   void reset() => state = const ProfileActionState();
 }

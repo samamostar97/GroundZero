@@ -15,6 +15,7 @@ class ApiConstants {
   static const String updateProfile = '/users/me';
   static const String uploadProfilePicture = '/users/me/picture';
   static const String myGamification = '/users/me/gamification';
+  static const String changePassword = '/users/me/password';
   static const String users = '/users';
 
   // Staff
