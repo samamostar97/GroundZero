@@ -13,6 +13,8 @@ class GymVisitsState {
   final int totalPages;
   final int totalCount;
   final String search;
+  final String? sortBy;
+  final bool sortDescending;
 
   const GymVisitsState({
     this.visits = const [],
@@ -23,6 +25,8 @@ class GymVisitsState {
     this.totalPages = 1,
     this.totalCount = 0,
     this.search = '',
+    this.sortBy,
+    this.sortDescending = true,
   });
 
   GymVisitsState copyWith({
@@ -34,6 +38,9 @@ class GymVisitsState {
     int? totalPages,
     int? totalCount,
     String? search,
+    String? sortBy,
+    bool clearSortBy = false,
+    bool? sortDescending,
   }) {
     return GymVisitsState(
       visits: visits ?? this.visits,
@@ -44,6 +51,8 @@ class GymVisitsState {
       totalPages: totalPages ?? this.totalPages,
       totalCount: totalCount ?? this.totalCount,
       search: search ?? this.search,
+      sortBy: clearSortBy ? null : (sortBy ?? this.sortBy),
+      sortDescending: sortDescending ?? this.sortDescending,
     );
   }
 }
@@ -72,6 +81,8 @@ class GymVisitsNotifier extends Notifier<GymVisitsState> {
         pageNumber: page,
         pageSize: _pageSize,
         search: state.search,
+        sortBy: state.sortBy,
+        sortDescending: state.sortBy != null ? state.sortDescending : null,
       );
 
       state = state.copyWith(
@@ -93,6 +104,15 @@ class GymVisitsNotifier extends Notifier<GymVisitsState> {
 
   void setSearch(String search) {
     state = state.copyWith(search: search);
+    loadPage(1);
+  }
+
+  void setSort(String column) {
+    if (state.sortBy == column) {
+      state = state.copyWith(sortDescending: !state.sortDescending);
+    } else {
+      state = state.copyWith(sortBy: column, sortDescending: true);
+    }
     loadPage(1);
   }
 

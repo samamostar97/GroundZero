@@ -17,7 +17,7 @@ public class GetAllGymVisitsQueryHandler : IRequestHandler<GetAllGymVisitsQuery,
     public async Task<PagedResult<GymVisitResponse>> Handle(GetAllGymVisitsQuery query, CancellationToken cancellationToken)
     {
         var paged = await _gymVisitRepository.GetAllVisitsPagedAsync(
-            query.Search, query.PageNumber, query.PageSize, cancellationToken);
+            query.Search, query.SortBy, query.SortDescending, query.PageNumber, query.PageSize, cancellationToken);
 
         return new PagedResult<GymVisitResponse>
         {

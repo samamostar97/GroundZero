@@ -17,7 +17,7 @@ public class ProductRepository : Repository<Product>, IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
-    public async Task<PagedResult<Product>> GetPagedAsync(string? search, int? categoryId, decimal? minPrice, decimal? maxPrice, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Product>> GetPagedAsync(string? search, int? categoryId, decimal? minPrice, decimal? maxPrice, string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Include(p => p.Category).AsQueryable();
 
@@ -40,8 +40,17 @@ public class ProductRepository : Repository<Product>, IProductRepository
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(p => p.Id) : query.OrderBy(p => p.Id),
+            "name" => sortDescending ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name),
+            "categoryname" => sortDescending ? query.OrderByDescending(p => p.Category.Name) : query.OrderBy(p => p.Category.Name),
+            "price" => sortDescending ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+            "stockquantity" => sortDescending ? query.OrderByDescending(p => p.StockQuantity) : query.OrderBy(p => p.StockQuantity),
+            _ => sortDescending ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+        };
+
         var items = await query
-            .OrderByDescending(p => p.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

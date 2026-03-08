@@ -24,6 +24,8 @@ class ProductsRepository {
     int? categoryId,
     double? minPrice,
     double? maxPrice,
+    String? sortBy,
+    bool? sortDescending,
   }) async {
     try {
       final response = await _dio.get(
@@ -35,6 +37,8 @@ class ProductsRepository {
           if (categoryId != null) 'categoryId': categoryId,
           if (minPrice != null) 'minPrice': minPrice,
           if (maxPrice != null) 'maxPrice': maxPrice,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortDescending != null) 'sortDescending': sortDescending,
         },
       );
       return PagedResult.fromJson(

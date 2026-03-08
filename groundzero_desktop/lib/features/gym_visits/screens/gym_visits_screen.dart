@@ -379,6 +379,17 @@ class _GymVisitsScreenState extends ConsumerState<GymVisitsScreen> {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'userFullName' => 1,
+      'checkInAt' => 2,
+      'durationMinutes' => 4,
+      'xpEarned' => 5,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(
       BuildContext context, WidgetRef ref, GymVisitsState state) {
     if (state.isLoading) {
@@ -442,13 +453,15 @@ class _GymVisitsScreenState extends ConsumerState<GymVisitsScreen> {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Korisnik')),
-                DataColumn(label: Text('Prijava')),
-                DataColumn(label: Text('Odjava')),
-                DataColumn(label: Text('Trajanje')),
-                DataColumn(label: Text('XP')),
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(gymVisitsNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Korisnik'), onSort: (_, __) => ref.read(gymVisitsNotifierProvider.notifier).setSort('userFullName')),
+                DataColumn(label: const Text('Prijava'), onSort: (_, __) => ref.read(gymVisitsNotifierProvider.notifier).setSort('checkInAt')),
+                const DataColumn(label: Text('Odjava')),
+                DataColumn(label: const Text('Trajanje'), onSort: (_, __) => ref.read(gymVisitsNotifierProvider.notifier).setSort('durationMinutes')),
+                DataColumn(label: const Text('XP'), onSort: (_, __) => ref.read(gymVisitsNotifierProvider.notifier).setSort('xpEarned')),
               ],
               rows: state.visits.map((visit) {
                 final isActive = visit.checkOutAt == null;

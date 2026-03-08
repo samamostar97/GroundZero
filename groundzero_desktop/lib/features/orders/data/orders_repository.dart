@@ -23,6 +23,8 @@ class OrdersRepository {
     String? search,
     int? status,
     int? userId,
+    String? sortBy,
+    bool? sortDescending,
   }) async {
     try {
       final response = await _dio.get(
@@ -33,6 +35,8 @@ class OrdersRepository {
           if (search != null && search.isNotEmpty) 'search': search,
           if (status != null) 'status': status,
           if (userId != null) 'userId': userId,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortDescending != null) 'sortDescending': sortDescending,
         },
       );
       return PagedResult.fromJson(

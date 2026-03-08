@@ -11,5 +11,5 @@ public interface IMembershipRepository : IRepository<UserMembership>
     Task<PagedResult<UserMembership>> GetUserMembershipHistoryPagedAsync(int userId,
         int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<PagedResult<UserMembership>> GetAllMembershipsPagedAsync(string? search, MembershipStatus? status, int? userId,
-        int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+        string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 }

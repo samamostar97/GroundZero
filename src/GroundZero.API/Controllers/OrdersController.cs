@@ -48,7 +48,9 @@ public class OrdersController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
         [FromQuery] OrderStatus? status = null,
-        [FromQuery] int? userId = null)
+        [FromQuery] int? userId = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = true)
     {
         var result = await _mediator.Send(new GetAllOrdersQuery
         {
@@ -56,7 +58,9 @@ public class OrdersController : ControllerBase
             PageSize = pageSize,
             Search = search,
             Status = status,
-            UserId = userId
+            UserId = userId,
+            SortBy = sortBy,
+            SortDescending = sortDescending
         });
         return Ok(result);
     }

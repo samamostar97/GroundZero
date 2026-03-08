@@ -51,8 +51,8 @@ public class OrderRepository : Repository<Order>, IOrderRepository
     }
 
     public async Task<PagedResult<Order>> GetAllOrdersPagedAsync(
-        string? search, OrderStatus? status, int? userId, int pageNumber, int pageSize,
-        CancellationToken cancellationToken = default)
+        string? search, OrderStatus? status, int? userId, string? sortBy, bool sortDescending,
+        int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = _dbSet
             .Include(o => o.User)
@@ -77,8 +77,16 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(o => o.Id) : query.OrderBy(o => o.Id),
+            "userfullname" => sortDescending ? query.OrderByDescending(o => o.User.FirstName) : query.OrderBy(o => o.User.FirstName),
+            "totalamount" => sortDescending ? query.OrderByDescending(o => o.TotalAmount) : query.OrderBy(o => o.TotalAmount),
+            "status" => sortDescending ? query.OrderByDescending(o => o.Status) : query.OrderBy(o => o.Status),
+            _ => sortDescending ? query.OrderByDescending(o => o.CreatedAt) : query.OrderBy(o => o.CreatedAt),
+        };
+
         var items = await query
-            .OrderByDescending(o => o.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

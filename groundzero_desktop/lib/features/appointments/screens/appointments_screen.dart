@@ -206,6 +206,17 @@ class AppointmentsScreen extends ConsumerWidget {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'userFullName' => 1,
+      'staffFullName' => 2,
+      'scheduledAt' => 3,
+      'durationMinutes' => 4,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(
       BuildContext context, WidgetRef ref, AppointmentsState state) {
     if (state.isLoading) {
@@ -269,14 +280,16 @@ class AppointmentsScreen extends ConsumerWidget {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Korisnik')),
-                DataColumn(label: Text('Osoblje')),
-                DataColumn(label: Text('Termin')),
-                DataColumn(label: Text('Trajanje')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Akcije')),
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Korisnik'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('userFullName')),
+                DataColumn(label: const Text('Osoblje'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('staffFullName')),
+                DataColumn(label: const Text('Termin'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('scheduledAt')),
+                DataColumn(label: const Text('Trajanje'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('durationMinutes')),
+                const DataColumn(label: Text('Status')),
+                const DataColumn(label: Text('Akcije')),
               ],
               rows: state.appointments.map((appt) {
                 final statusLabel =

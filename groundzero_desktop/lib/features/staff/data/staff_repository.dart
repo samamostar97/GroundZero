@@ -22,6 +22,8 @@ class StaffRepository {
     int pageSize = 10,
     String? search,
     String? staffType,
+    String? sortBy,
+    bool? sortDescending,
   }) async {
     try {
       final response = await _dio.get(
@@ -31,6 +33,8 @@ class StaffRepository {
           'pageSize': pageSize,
           if (search != null && search.isNotEmpty) 'search': search,
           if (staffType != null && staffType.isNotEmpty) 'staffType': staffType,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortDescending != null) 'sortDescending': sortDescending,
         },
       );
       return PagedResult.fromJson(

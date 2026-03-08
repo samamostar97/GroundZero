@@ -18,7 +18,7 @@ public class GetAllOrdersQueryHandler : IRequestHandler<GetAllOrdersQuery, Paged
     {
         var paged = await _orderRepository.GetAllOrdersPagedAsync(
             query.Search, query.Status, query.UserId,
-            query.PageNumber, query.PageSize, cancellationToken);
+            query.SortBy, query.SortDescending, query.PageNumber, query.PageSize, cancellationToken);
 
         return new PagedResult<OrderResponse>
         {

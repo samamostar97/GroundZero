@@ -16,7 +16,7 @@ public class GetAllStaffQueryHandler : IRequestHandler<GetAllStaffQuery, PagedRe
 
     public async Task<PagedResult<StaffResponse>> Handle(GetAllStaffQuery query, CancellationToken cancellationToken)
     {
-        var pagedStaff = await _staffRepository.GetPagedAsync(query.Search, query.StaffType, query.PageNumber, query.PageSize, cancellationToken);
+        var pagedStaff = await _staffRepository.GetPagedAsync(query.Search, query.StaffType, query.SortBy, query.SortDescending, query.PageNumber, query.PageSize, cancellationToken);
 
         var result = new PagedResult<StaffResponse>
         {

@@ -28,32 +28,6 @@ class ProductsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductsScreenState extends ConsumerState<ProductsScreen> {
-  int _sortColumnIndex = 0;
-  bool _sortAscending = true;
-
-  List<ProductModel> _sorted(List<ProductModel> list) {
-    final sorted = List<ProductModel>.from(list);
-    sorted.sort((a, b) {
-      final result = switch (_sortColumnIndex) {
-        0 => a.id.compareTo(b.id),
-        1 => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
-        2 => a.categoryName.toLowerCase().compareTo(b.categoryName.toLowerCase()),
-        3 => a.price.compareTo(b.price),
-        4 => a.stockQuantity.compareTo(b.stockQuantity),
-        _ => 0,
-      };
-      return _sortAscending ? result : -result;
-    });
-    return sorted;
-  }
-
-  void _onSort(int columnIndex, bool ascending) {
-    setState(() {
-      _sortColumnIndex = columnIndex;
-      _sortAscending = ascending;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(productsNotifierProvider);
@@ -150,6 +124,17 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'name' => 1,
+      'categoryName' => 2,
+      'price' => 3,
+      'stockQuantity' => 4,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(ProductsState state) {
     if (state.isLoading) {
       return const Center(
@@ -186,8 +171,6 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       );
     }
 
-    final products = _sorted(state.products);
-
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -205,17 +188,17 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              sortColumnIndex: _sortColumnIndex,
-              sortAscending: _sortAscending,
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
               columns: [
-                DataColumn(label: const Text('ID'), onSort: _onSort),
-                DataColumn(label: const Text('Naziv'), onSort: _onSort),
-                DataColumn(label: const Text('Kategorija'), onSort: _onSort),
-                DataColumn(label: const Text('Cijena'), onSort: _onSort, numeric: true),
-                DataColumn(label: const Text('Stanje'), onSort: _onSort, numeric: true),
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(productsNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Naziv'), onSort: (_, __) => ref.read(productsNotifierProvider.notifier).setSort('name')),
+                DataColumn(label: const Text('Kategorija'), onSort: (_, __) => ref.read(productsNotifierProvider.notifier).setSort('categoryName')),
+                DataColumn(label: const Text('Cijena'), numeric: true, onSort: (_, __) => ref.read(productsNotifierProvider.notifier).setSort('price')),
+                DataColumn(label: const Text('Stanje'), numeric: true, onSort: (_, __) => ref.read(productsNotifierProvider.notifier).setSort('stockQuantity')),
                 const DataColumn(label: Text('Akcije')),
               ],
-              rows: products.map((p) {
+              rows: state.products.map((p) {
                 return DataRow(cells: [
                   DataCell(Text('#${p.id}')),
                   DataCell(Row(

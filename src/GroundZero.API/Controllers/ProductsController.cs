@@ -26,7 +26,9 @@ public class ProductsController : ControllerBase
         [FromQuery] string? search = null,
         [FromQuery] int? categoryId = null,
         [FromQuery] decimal? minPrice = null,
-        [FromQuery] decimal? maxPrice = null)
+        [FromQuery] decimal? maxPrice = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = true)
     {
         var result = await _mediator.Send(new GetAllProductsQuery
         {
@@ -35,7 +37,9 @@ public class ProductsController : ControllerBase
             Search = search,
             CategoryId = categoryId,
             MinPrice = minPrice,
-            MaxPrice = maxPrice
+            MaxPrice = maxPrice,
+            SortBy = sortBy,
+            SortDescending = sortDescending
         });
         return Ok(result);
     }

@@ -68,7 +68,8 @@ public class MembershipRepository : Repository<UserMembership>, IMembershipRepos
 
     public async Task<PagedResult<UserMembership>> GetAllMembershipsPagedAsync(
         string? search, MembershipStatus? status, int? userId,
-        int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+        string? sortBy, bool sortDescending, int pageNumber, int pageSize,
+        CancellationToken cancellationToken = default)
     {
         var query = _dbSet
             .Include(m => m.User)
@@ -93,8 +94,18 @@ public class MembershipRepository : Repository<UserMembership>, IMembershipRepos
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(m => m.Id) : query.OrderBy(m => m.Id),
+            "userfullname" => sortDescending ? query.OrderByDescending(m => m.User.FirstName) : query.OrderBy(m => m.User.FirstName),
+            "planname" => sortDescending ? query.OrderByDescending(m => m.MembershipPlan.Name) : query.OrderBy(m => m.MembershipPlan.Name),
+            "planprice" => sortDescending ? query.OrderByDescending(m => m.MembershipPlan.Price) : query.OrderBy(m => m.MembershipPlan.Price),
+            "startdate" => sortDescending ? query.OrderByDescending(m => m.StartDate) : query.OrderBy(m => m.StartDate),
+            "enddate" => sortDescending ? query.OrderByDescending(m => m.EndDate) : query.OrderBy(m => m.EndDate),
+            _ => sortDescending ? query.OrderByDescending(m => m.CreatedAt) : query.OrderBy(m => m.CreatedAt),
+        };
+
         var items = await query
-            .OrderByDescending(m => m.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

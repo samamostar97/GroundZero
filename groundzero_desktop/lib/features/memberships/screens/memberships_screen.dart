@@ -169,6 +169,18 @@ class MembershipsScreen extends ConsumerWidget {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'userFullName' => 1,
+      'planName' => 2,
+      'planPrice' => 3,
+      'startDate' => 4,
+      'endDate' => 5,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(
       BuildContext context, WidgetRef ref, MembershipsState state) {
     if (state.isLoading) {
@@ -232,15 +244,17 @@ class MembershipsScreen extends ConsumerWidget {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Korisnik')),
-                DataColumn(label: Text('Plan')),
-                DataColumn(label: Text('Cijena')),
-                DataColumn(label: Text('Početak')),
-                DataColumn(label: Text('Kraj')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Akcije')),
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Korisnik'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('userFullName')),
+                DataColumn(label: const Text('Plan'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('planName')),
+                DataColumn(label: const Text('Cijena'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('planPrice')),
+                DataColumn(label: const Text('Početak'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('startDate')),
+                DataColumn(label: const Text('Kraj'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('endDate')),
+                const DataColumn(label: Text('Status')),
+                const DataColumn(label: Text('Akcije')),
               ],
               rows: state.memberships.map((m) {
                 final statusLabel = _statusLabels[m.status] ?? m.status;

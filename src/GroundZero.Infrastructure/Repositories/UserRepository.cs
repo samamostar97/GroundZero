@@ -21,7 +21,7 @@ public class UserRepository : Repository<User>, IUserRepository
         return await _dbSet.AnyAsync(u => u.Email == email.ToLower(), cancellationToken);
     }
 
-    public async Task<PagedResult<User>> GetPagedAsync(string? search, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<User>> GetPagedAsync(string? search, string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Where(u => u.Role == Role.User);
 
@@ -36,8 +36,17 @@ public class UserRepository : Repository<User>, IUserRepository
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(u => u.Id) : query.OrderBy(u => u.Id),
+            "firstname" => sortDescending ? query.OrderByDescending(u => u.FirstName) : query.OrderBy(u => u.FirstName),
+            "email" => sortDescending ? query.OrderByDescending(u => u.Email) : query.OrderBy(u => u.Email),
+            "level" => sortDescending ? query.OrderByDescending(u => u.Level) : query.OrderBy(u => u.Level),
+            "xp" => sortDescending ? query.OrderByDescending(u => u.XP) : query.OrderBy(u => u.XP),
+            _ => sortDescending ? query.OrderByDescending(u => u.CreatedAt) : query.OrderBy(u => u.CreatedAt),
+        };
+
         var items = await query
-            .OrderByDescending(u => u.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

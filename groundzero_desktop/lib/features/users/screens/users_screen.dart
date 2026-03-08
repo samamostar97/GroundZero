@@ -86,6 +86,18 @@ class UsersScreen extends ConsumerWidget {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'firstName' => 1,
+      'email' => 2,
+      'level' => 3,
+      'xp' => 4,
+      'createdAt' => 5,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(BuildContext context, WidgetRef ref, UsersState state) {
     if (state.isLoading) {
       return const Center(
@@ -148,14 +160,16 @@ class UsersScreen extends ConsumerWidget {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Ime i prezime')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Level')),
-                DataColumn(label: Text('XP')),
-                DataColumn(label: Text('Registrovan')),
-                DataColumn(label: Text('Akcije')),
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(usersNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Ime i prezime'), onSort: (_, __) => ref.read(usersNotifierProvider.notifier).setSort('firstName')),
+                DataColumn(label: const Text('Email'), onSort: (_, __) => ref.read(usersNotifierProvider.notifier).setSort('email')),
+                DataColumn(label: const Text('Level'), onSort: (_, __) => ref.read(usersNotifierProvider.notifier).setSort('level')),
+                DataColumn(label: const Text('XP'), onSort: (_, __) => ref.read(usersNotifierProvider.notifier).setSort('xp')),
+                DataColumn(label: const Text('Registrovan'), onSort: (_, __) => ref.read(usersNotifierProvider.notifier).setSort('createdAt')),
+                const DataColumn(label: Text('Akcije')),
               ],
               rows: state.users.map((user) {
                 return DataRow(

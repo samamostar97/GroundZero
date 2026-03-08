@@ -23,6 +23,8 @@ class AppointmentsRepository {
     String? search,
     int? status,
     int? staffId,
+    String? sortBy,
+    bool? sortDescending,
   }) async {
     try {
       final response = await _dio.get(
@@ -33,6 +35,8 @@ class AppointmentsRepository {
           if (search != null && search.isNotEmpty) 'search': search,
           if (status != null) 'status': status,
           if (staffId != null) 'staffId': staffId,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortDescending != null) 'sortDescending': sortDescending,
         },
       );
       return PagedResult.fromJson(

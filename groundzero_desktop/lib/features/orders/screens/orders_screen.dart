@@ -126,6 +126,17 @@ class OrdersScreen extends ConsumerWidget {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'userFullName' => 1,
+      'totalAmount' => 2,
+      'status' => 3,
+      'createdAt' => 4,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(
       BuildContext context, WidgetRef ref, OrdersState state) {
     if (state.isLoading) {
@@ -189,13 +200,15 @@ class OrdersScreen extends ConsumerWidget {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Korisnik')),
-                DataColumn(label: Text('Iznos (KM)')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Datum')),
-                DataColumn(label: Text('Akcije')),
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(ordersNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Korisnik'), onSort: (_, __) => ref.read(ordersNotifierProvider.notifier).setSort('userFullName')),
+                DataColumn(label: const Text('Iznos (KM)'), onSort: (_, __) => ref.read(ordersNotifierProvider.notifier).setSort('totalAmount')),
+                DataColumn(label: const Text('Status'), onSort: (_, __) => ref.read(ordersNotifierProvider.notifier).setSort('status')),
+                DataColumn(label: const Text('Datum'), onSort: (_, __) => ref.read(ordersNotifierProvider.notifier).setSort('createdAt')),
+                const DataColumn(label: Text('Akcije')),
               ],
               rows: state.orders.map((order) {
                 return DataRow(

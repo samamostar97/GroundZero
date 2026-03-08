@@ -13,4 +13,6 @@ public class GetAllOrdersQuery : IRequest<PagedResult<OrderResponse>>
     public string? Search { get; set; }
     public OrderStatus? Status { get; set; }
     public int? UserId { get; set; }
+    public string? SortBy { get; set; }
+    public bool SortDescending { get; set; } = true;
 }

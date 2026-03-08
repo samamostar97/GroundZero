@@ -21,7 +21,7 @@ public class StaffRepository : Repository<Staff>, IStaffRepository
         return await query.AnyAsync(cancellationToken);
     }
 
-    public async Task<PagedResult<Staff>> GetPagedAsync(string? search, StaffType? staffType, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<Staff>> GetPagedAsync(string? search, StaffType? staffType, string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.AsQueryable();
 
@@ -39,8 +39,16 @@ public class StaffRepository : Repository<Staff>, IStaffRepository
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(s => s.Id) : query.OrderBy(s => s.Id),
+            "firstname" => sortDescending ? query.OrderByDescending(s => s.FirstName) : query.OrderBy(s => s.FirstName),
+            "email" => sortDescending ? query.OrderByDescending(s => s.Email) : query.OrderBy(s => s.Email),
+            "stafftype" => sortDescending ? query.OrderByDescending(s => s.StaffType) : query.OrderBy(s => s.StaffType),
+            _ => sortDescending ? query.OrderByDescending(s => s.CreatedAt) : query.OrderBy(s => s.CreatedAt),
+        };
+
         var items = await query
-            .OrderByDescending(s => s.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

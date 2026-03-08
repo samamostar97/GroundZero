@@ -47,7 +47,7 @@ public class GymVisitRepository : Repository<GymVisit>, IGymVisitRepository
         };
     }
 
-    public async Task<PagedResult<GymVisit>> GetAllVisitsPagedAsync(string? search, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<GymVisit>> GetAllVisitsPagedAsync(string? search, string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Include(g => g.User).AsQueryable();
 
@@ -61,8 +61,16 @@ public class GymVisitRepository : Repository<GymVisit>, IGymVisitRepository
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(g => g.Id) : query.OrderBy(g => g.Id),
+            "userfullname" => sortDescending ? query.OrderByDescending(g => g.User.FirstName) : query.OrderBy(g => g.User.FirstName),
+            "durationminutes" => sortDescending ? query.OrderByDescending(g => g.DurationMinutes) : query.OrderBy(g => g.DurationMinutes),
+            "xpearned" => sortDescending ? query.OrderByDescending(g => g.DurationMinutes) : query.OrderBy(g => g.DurationMinutes),
+            _ => sortDescending ? query.OrderByDescending(g => g.CheckInAt) : query.OrderBy(g => g.CheckInAt),
+        };
+
         var items = await query
-            .OrderByDescending(g => g.CheckInAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

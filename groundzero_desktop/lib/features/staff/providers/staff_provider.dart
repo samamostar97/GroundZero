@@ -13,6 +13,8 @@ class StaffState {
   final int totalCount;
   final String search;
   final String? staffTypeFilter;
+  final String? sortBy;
+  final bool sortDescending;
 
   const StaffState({
     this.staff = const [],
@@ -23,6 +25,8 @@ class StaffState {
     this.totalCount = 0,
     this.search = '',
     this.staffTypeFilter,
+    this.sortBy,
+    this.sortDescending = true,
   });
 
   StaffState copyWith({
@@ -35,6 +39,9 @@ class StaffState {
     String? search,
     String? staffTypeFilter,
     bool clearStaffTypeFilter = false,
+    String? sortBy,
+    bool clearSortBy = false,
+    bool? sortDescending,
   }) {
     return StaffState(
       staff: staff ?? this.staff,
@@ -46,6 +53,8 @@ class StaffState {
       search: search ?? this.search,
       staffTypeFilter:
           clearStaffTypeFilter ? null : (staffTypeFilter ?? this.staffTypeFilter),
+      sortBy: clearSortBy ? null : (sortBy ?? this.sortBy),
+      sortDescending: sortDescending ?? this.sortDescending,
     );
   }
 }
@@ -74,6 +83,8 @@ class StaffNotifier extends Notifier<StaffState> {
         pageSize: _pageSize,
         search: state.search,
         staffType: state.staffTypeFilter,
+        sortBy: state.sortBy,
+        sortDescending: state.sortBy != null ? state.sortDescending : null,
       );
 
       state = state.copyWith(
@@ -95,6 +106,15 @@ class StaffNotifier extends Notifier<StaffState> {
 
   void setSearch(String search) {
     state = state.copyWith(search: search);
+    loadPage(1);
+  }
+
+  void setSort(String column) {
+    if (state.sortBy == column) {
+      state = state.copyWith(sortDescending: !state.sortDescending);
+    } else {
+      state = state.copyWith(sortBy: column, sortDescending: true);
+    }
     loadPage(1);
   }
 

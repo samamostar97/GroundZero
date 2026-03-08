@@ -44,7 +44,9 @@ public class MembershipsController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
         [FromQuery] MembershipStatus? status = null,
-        [FromQuery] int? userId = null)
+        [FromQuery] int? userId = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = true)
     {
         var result = await _mediator.Send(new GetAllMembershipsQuery
         {
@@ -52,7 +54,9 @@ public class MembershipsController : ControllerBase
             PageSize = pageSize,
             Search = search,
             Status = status,
-            UserId = userId
+            UserId = userId,
+            SortBy = sortBy,
+            SortDescending = sortDescending
         });
         return Ok(result);
     }

@@ -14,6 +14,8 @@ class AppointmentsState {
   final String search;
   final int? statusFilter;
   final int? staffFilter;
+  final String? sortBy;
+  final bool sortDescending;
 
   const AppointmentsState({
     this.appointments = const [],
@@ -25,6 +27,8 @@ class AppointmentsState {
     this.search = '',
     this.statusFilter,
     this.staffFilter,
+    this.sortBy,
+    this.sortDescending = true,
   });
 
   AppointmentsState copyWith({
@@ -39,6 +43,9 @@ class AppointmentsState {
     bool clearStatusFilter = false,
     int? staffFilter,
     bool clearStaffFilter = false,
+    String? sortBy,
+    bool clearSortBy = false,
+    bool? sortDescending,
   }) {
     return AppointmentsState(
       appointments: appointments ?? this.appointments,
@@ -52,6 +59,8 @@ class AppointmentsState {
           clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
       staffFilter:
           clearStaffFilter ? null : (staffFilter ?? this.staffFilter),
+      sortBy: clearSortBy ? null : (sortBy ?? this.sortBy),
+      sortDescending: sortDescending ?? this.sortDescending,
     );
   }
 }
@@ -82,6 +91,8 @@ class AppointmentsNotifier extends Notifier<AppointmentsState> {
         search: state.search,
         status: state.statusFilter,
         staffId: state.staffFilter,
+        sortBy: state.sortBy,
+        sortDescending: state.sortBy != null ? state.sortDescending : null,
       );
 
       state = state.copyWith(
@@ -103,6 +114,15 @@ class AppointmentsNotifier extends Notifier<AppointmentsState> {
 
   void setSearch(String search) {
     state = state.copyWith(search: search);
+    loadPage(1);
+  }
+
+  void setSort(String column) {
+    if (state.sortBy == column) {
+      state = state.copyWith(sortDescending: !state.sortDescending);
+    } else {
+      state = state.copyWith(sortBy: column, sortDescending: true);
+    }
     loadPage(1);
   }
 

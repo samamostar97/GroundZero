@@ -21,6 +21,8 @@ class GymVisitsRepository {
     int pageNumber = 1,
     int pageSize = 10,
     String? search,
+    String? sortBy,
+    bool? sortDescending,
   }) async {
     try {
       final response = await _dio.get(
@@ -29,6 +31,8 @@ class GymVisitsRepository {
           'pageNumber': pageNumber,
           'pageSize': pageSize,
           if (search != null && search.isNotEmpty) 'search': search,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortDescending != null) 'sortDescending': sortDescending,
         },
       );
       return PagedResult.fromJson(

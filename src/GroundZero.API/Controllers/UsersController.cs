@@ -58,13 +58,20 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllUsers([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
+    public async Task<IActionResult> GetAllUsers(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? search = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = true)
     {
         var result = await _mediator.Send(new GetAllUsersQuery
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
-            Search = search
+            Search = search,
+            SortBy = sortBy,
+            SortDescending = sortDescending
         });
         return Ok(result);
     }

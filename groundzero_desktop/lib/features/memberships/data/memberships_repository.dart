@@ -22,6 +22,8 @@ class MembershipsRepository {
     int pageSize = 10,
     String? search,
     String? status,
+    String? sortBy,
+    bool? sortDescending,
   }) async {
     try {
       final response = await _dio.get(
@@ -31,6 +33,8 @@ class MembershipsRepository {
           'pageSize': pageSize,
           if (search != null && search.isNotEmpty) 'search': search,
           if (status != null) 'status': status,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortDescending != null) 'sortDescending': sortDescending,
         },
       );
       return PagedResult.fromJson(

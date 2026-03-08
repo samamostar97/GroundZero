@@ -15,6 +15,8 @@ public class GetAllAppointmentsQuery : IRequest<PagedResult<AppointmentResponse>
     public AppointmentStatus? Status { get; set; }
     public int? StaffId { get; set; }
     public int? UserId { get; set; }
+    public string? SortBy { get; set; }
+    public bool SortDescending { get; set; } = true;
 }
 
 public class GetAllAppointmentsQueryHandler : IRequestHandler<GetAllAppointmentsQuery, PagedResult<AppointmentResponse>>
@@ -30,7 +32,7 @@ public class GetAllAppointmentsQueryHandler : IRequestHandler<GetAllAppointments
     {
         var result = await _appointmentRepository.GetAllAppointmentsPagedAsync(
             query.Search, query.Status, query.StaffId, query.UserId,
-            query.PageNumber, query.PageSize, cancellationToken);
+            query.SortBy, query.SortDescending, query.PageNumber, query.PageSize, cancellationToken);
 
         return new PagedResult<AppointmentResponse>
         {

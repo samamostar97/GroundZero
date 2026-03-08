@@ -50,7 +50,8 @@ public class AppointmentRepository : Repository<Appointment>, IAppointmentReposi
 
     public async Task<PagedResult<Appointment>> GetAllAppointmentsPagedAsync(
         string? search, AppointmentStatus? status, int? staffId, int? userId,
-        int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+        string? sortBy, bool sortDescending, int pageNumber, int pageSize,
+        CancellationToken cancellationToken = default)
     {
         var query = _dbSet
             .Include(a => a.User)
@@ -78,8 +79,16 @@ public class AppointmentRepository : Repository<Appointment>, IAppointmentReposi
 
         var totalCount = await query.CountAsync(cancellationToken);
 
+        query = sortBy?.ToLower() switch
+        {
+            "id" => sortDescending ? query.OrderByDescending(a => a.Id) : query.OrderBy(a => a.Id),
+            "userfullname" => sortDescending ? query.OrderByDescending(a => a.User.FirstName) : query.OrderBy(a => a.User.FirstName),
+            "stafffullname" => sortDescending ? query.OrderByDescending(a => a.Staff.FirstName) : query.OrderBy(a => a.Staff.FirstName),
+            "durationminutes" => sortDescending ? query.OrderByDescending(a => a.DurationMinutes) : query.OrderBy(a => a.DurationMinutes),
+            _ => sortDescending ? query.OrderByDescending(a => a.ScheduledAt) : query.OrderBy(a => a.ScheduledAt),
+        };
+
         var items = await query
-            .OrderByDescending(a => a.ScheduledAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

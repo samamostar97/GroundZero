@@ -8,5 +8,5 @@ public interface IGymVisitRepository : IRepository<GymVisit>
     Task<GymVisit?> GetActiveVisitByUserIdAsync(int userId, CancellationToken cancellationToken = default);
     Task<GymVisit?> GetByIdWithUserAsync(int id, CancellationToken cancellationToken = default);
     Task<PagedResult<GymVisit>> GetUserVisitsPagedAsync(int userId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
-    Task<PagedResult<GymVisit>> GetAllVisitsPagedAsync(string? search, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<PagedResult<GymVisit>> GetAllVisitsPagedAsync(string? search, string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 }

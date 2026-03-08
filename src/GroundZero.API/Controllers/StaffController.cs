@@ -25,14 +25,18 @@ public class StaffController : ControllerBase
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
-        [FromQuery] StaffType? staffType = null)
+        [FromQuery] StaffType? staffType = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = true)
     {
         var result = await _mediator.Send(new GetAllStaffQuery
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
             Search = search,
-            StaffType = staffType
+            StaffType = staffType,
+            SortBy = sortBy,
+            SortDescending = sortDescending
         });
         return Ok(result);
     }

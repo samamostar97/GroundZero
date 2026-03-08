@@ -104,6 +104,17 @@ class StaffScreen extends ConsumerWidget {
     );
   }
 
+  int? _sortColumnIndex(String? sortBy) {
+    return switch (sortBy) {
+      'id' => 0,
+      'firstName' => 1,
+      'email' => 2,
+      'staffType' => 4,
+      'createdAt' => 5,
+      _ => null,
+    };
+  }
+
   Widget _buildContent(BuildContext context, WidgetRef ref, StaffState state) {
     if (state.isLoading) {
       return const Center(child: CircularProgressIndicator(color: AppColors.accent));
@@ -150,14 +161,16 @@ class StaffScreen extends ConsumerWidget {
               dataRowMaxHeight: 52,
               columnSpacing: 24,
               horizontalMargin: 20,
-              columns: const [
-                DataColumn(label: Text('ID')),
-                DataColumn(label: Text('Ime i prezime')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Telefon')),
-                DataColumn(label: Text('Tip')),
-                DataColumn(label: Text('Status')),
-                DataColumn(label: Text('Akcije')),
+              sortColumnIndex: _sortColumnIndex(state.sortBy),
+              sortAscending: !state.sortDescending,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(staffNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Ime i prezime'), onSort: (_, __) => ref.read(staffNotifierProvider.notifier).setSort('firstName')),
+                DataColumn(label: const Text('Email'), onSort: (_, __) => ref.read(staffNotifierProvider.notifier).setSort('email')),
+                const DataColumn(label: Text('Telefon')),
+                DataColumn(label: const Text('Tip'), onSort: (_, __) => ref.read(staffNotifierProvider.notifier).setSort('staffType')),
+                const DataColumn(label: Text('Status')),
+                const DataColumn(label: Text('Akcije')),
               ],
               rows: state.staff.map((s) {
                 return DataRow(cells: [

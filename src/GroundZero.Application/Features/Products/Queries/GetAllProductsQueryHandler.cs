@@ -18,7 +18,7 @@ public class GetAllProductsQueryHandler : IRequestHandler<GetAllProductsQuery, P
     {
         var paged = await _productRepository.GetPagedAsync(
             query.Search, query.CategoryId, query.MinPrice, query.MaxPrice,
-            query.PageNumber, query.PageSize, cancellationToken);
+            query.SortBy, query.SortDescending, query.PageNumber, query.PageSize, cancellationToken);
 
         var result = new PagedResult<ProductResponse>
         {

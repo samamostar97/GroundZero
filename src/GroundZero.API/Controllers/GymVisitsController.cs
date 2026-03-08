@@ -37,13 +37,17 @@ public class GymVisitsController : ControllerBase
     public async Task<IActionResult> GetAll(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
-        [FromQuery] string? search = null)
+        [FromQuery] string? search = null,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] bool sortDescending = true)
     {
         var result = await _mediator.Send(new GetAllGymVisitsQuery
         {
             PageNumber = pageNumber,
             PageSize = pageSize,
-            Search = search
+            Search = search,
+            SortBy = sortBy,
+            SortDescending = sortDescending
         });
         return Ok(result);
     }
