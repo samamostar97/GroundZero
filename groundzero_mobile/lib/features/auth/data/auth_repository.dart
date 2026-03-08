@@ -51,6 +51,32 @@ class AuthRepository {
     }
   }
 
+  Future<void> forgotPassword(String email) async {
+    try {
+      await _dio.post(
+        ApiConstants.forgotPassword,
+        data: {'email': email},
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  Future<void> resetPassword(String email, String code, String newPassword) async {
+    try {
+      await _dio.post(
+        ApiConstants.resetPassword,
+        data: {
+          'email': email,
+          'code': code,
+          'newPassword': newPassword,
+        },
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   Future<UserModel> getCurrentUser() async {
     try {
       final response = await _dio.get(ApiConstants.currentUser);

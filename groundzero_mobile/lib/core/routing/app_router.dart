@@ -9,7 +9,9 @@ import '../../features/appointments/screens/staff_detail_screen.dart';
 import '../../features/appointments/screens/staff_list_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
+import '../../features/auth/screens/reset_password_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/orders/screens/cart_screen.dart';
 import '../../features/orders/screens/my_orders_screen.dart';
@@ -49,6 +51,8 @@ abstract class AppRoutes {
   static const String workoutPlanDetail = '/workouts/:id';
   static const String membership = '/membership';
   static const String changePassword = '/profile/change-password';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -115,7 +119,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final location = state.matchedLocation;
 
       final isOnAuthPage =
-          location == AppRoutes.login || location == AppRoutes.register;
+          location == AppRoutes.login ||
+          location == AppRoutes.register ||
+          location == AppRoutes.forgotPassword ||
+          location == AppRoutes.resetPassword;
       final isOnSplash = location == AppRoutes.splash;
 
       // While checking tokens, stay on splash
@@ -147,6 +154,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.register,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return ResetPasswordScreen(email: email);
+        },
       ),
 
       // Bottom navigation shell

@@ -25,6 +25,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Level> Levels => Set<Level>();
     public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
     public DbSet<UserMembership> UserMemberships => Set<UserMembership>();
+    public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

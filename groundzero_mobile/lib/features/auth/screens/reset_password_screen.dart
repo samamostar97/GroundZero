@@ -9,42 +9,75 @@ import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../providers/auth_provider.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends ConsumerStatefulWidget {
+  final String email;
+
+  const ResetPasswordScreen({super.key, required this.email});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<ResetPasswordScreen> createState() =>
+      _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _codeController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _isLoading = false;
+  String? _error;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _codeController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _onLogin() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    ref.read(authNotifierProvider.notifier).login(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    final error = await ref
+        .read(authNotifierProvider.notifier)
+        .resetPassword(
+          widget.email,
+          _codeController.text.trim(),
+          _passwordController.text,
         );
+
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    if (error != null) {
+      setState(() => _error = error);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Lozinka uspješno resetovana!'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+      context.go(AppRoutes.login);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authNotifierProvider);
-    final isLoading = authState is AuthLoading;
-    final error =
-        authState is AuthUnauthenticated ? authState.error : null;
-
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -56,17 +89,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'GROUNDZERO',
+                    'Reset lozinke',
                     style: AppTextStyles.heading1.copyWith(
-                      fontSize: 40,
                       color: AppColors.accent,
-                      letterSpacing: 4,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
-                    'Prijavite se na svoj račun',
+                    'Unesite kod koji ste primili na email i novu lozinku.',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -74,8 +105,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Error banner
-                  if (error != null) ...[
+                  if (_error != null) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -95,7 +125,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              error,
+                              _error!,
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.error,
                               ),
@@ -107,86 +137,63 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 20),
                   ],
 
-                  // Email
                   CustomTextField(
-                    controller: _emailController,
-                    label: 'Email',
-                    hintText: 'vas@email.com',
-                    keyboardType: TextInputType.emailAddress,
+                    controller: _codeController,
+                    label: 'Kod',
+                    hintText: '1234',
+                    keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Email je obavezan.';
+                        return 'Kod je obavezan.';
                       }
-                      if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$')
-                          .hasMatch(value.trim())) {
-                        return 'Unesite ispravan email.';
+                      if (value.trim().length != 4 ||
+                          int.tryParse(value.trim()) == null) {
+                        return 'Kod mora biti 4-cifreni broj.';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 16),
 
-                  // Password
                   CustomTextField(
                     controller: _passwordController,
-                    label: 'Lozinka',
-                    hintText: 'Unesite lozinku',
+                    label: 'Nova lozinka',
+                    hintText: 'Unesite novu lozinku',
                     isPassword: true,
-                    textInputAction: TextInputAction.done,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Lozinka je obavezna.';
+                        return 'Nova lozinka je obavezna.';
+                      }
+                      if (value.length < 6) {
+                        return 'Nova lozinka mora imati najmanje 6 karaktera.';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
-                  // Forgot password link
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () => context.push(AppRoutes.forgotPassword),
-                      child: Text(
-                        'Zaboravljena lozinka?',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                  CustomTextField(
+                    controller: _confirmPasswordController,
+                    label: 'Potvrdi lozinku',
+                    hintText: 'Ponovite novu lozinku',
+                    isPassword: true,
+                    textInputAction: TextInputAction.done,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Potvrda lozinke je obavezna.';
+                      }
+                      if (value != _passwordController.text) {
+                        return 'Lozinke se ne podudaraju.';
+                      }
+                      return null;
+                    },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 28),
 
-                  // Login button
                   PrimaryButton(
-                    label: 'Prijava',
-                    onPressed: _onLogin,
-                    isLoading: isLoading,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Register link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Nemate račun? ',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => context.go(AppRoutes.register),
-                        child: Text(
-                          'Registrujte se',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+                    label: 'Resetuj lozinku',
+                    onPressed: _submit,
+                    isLoading: _isLoading,
                   ),
                 ],
               ),

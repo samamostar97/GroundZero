@@ -66,6 +66,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDashboardRepository, DashboardRepository>();
         services.AddScoped<IPdfReportService, PdfReportService>();
         services.AddScoped<IExcelReportService, ExcelReportService>();
+        services.AddScoped<IEmailService, EmailService>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 

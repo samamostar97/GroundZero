@@ -47,4 +47,18 @@ public class AuthController : ControllerBase
         await _mediator.Send(new LogoutCommand { UserId = userId });
         return NoContent();
     }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+    {
+        await _mediator.Send(new ForgotPasswordCommand { Request = request });
+        return Ok();
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        await _mediator.Send(new ResetPasswordCommand { Request = request });
+        return NoContent();
+    }
 }

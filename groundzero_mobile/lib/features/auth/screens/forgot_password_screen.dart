@@ -9,42 +9,62 @@ import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../providers/auth_provider.dart';
 
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() =>
+      _ForgotPasswordScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+  String? _error;
 
   @override
   void dispose() {
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  void _onLogin() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    ref.read(authNotifierProvider.notifier).login(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-        );
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    final error = await ref
+        .read(authNotifierProvider.notifier)
+        .forgotPassword(_emailController.text.trim());
+
+    if (!mounted) return;
+
+    setState(() => _isLoading = false);
+
+    if (error != null) {
+      setState(() => _error = error);
+    } else {
+      context.push(
+        AppRoutes.resetPassword,
+        extra: _emailController.text.trim(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authNotifierProvider);
-    final isLoading = authState is AuthLoading;
-    final error =
-        authState is AuthUnauthenticated ? authState.error : null;
-
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -56,17 +76,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'GROUNDZERO',
+                    'Zaboravljena lozinka?',
                     style: AppTextStyles.heading1.copyWith(
-                      fontSize: 40,
                       color: AppColors.accent,
-                      letterSpacing: 4,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
-                    'Prijavite se na svoj račun',
+                    'Unesite email adresu i poslat ćemo vam kod za reset lozinke.',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -74,8 +92,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Error banner
-                  if (error != null) ...[
+                  if (_error != null) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
@@ -95,7 +112,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              error,
+                              _error!,
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.error,
                               ),
@@ -107,7 +124,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 20),
                   ],
 
-                  // Email
                   CustomTextField(
                     controller: _emailController,
                     label: 'Email',
@@ -124,69 +140,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 28),
 
-                  // Password
-                  CustomTextField(
-                    controller: _passwordController,
-                    label: 'Lozinka',
-                    hintText: 'Unesite lozinku',
-                    isPassword: true,
-                    textInputAction: TextInputAction.done,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Lozinka je obavezna.';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Forgot password link
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () => context.push(AppRoutes.forgotPassword),
-                      child: Text(
-                        'Zaboravljena lozinka?',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Login button
                   PrimaryButton(
-                    label: 'Prijava',
-                    onPressed: _onLogin,
-                    isLoading: isLoading,
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Register link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Nemate račun? ',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () => context.go(AppRoutes.register),
-                        child: Text(
-                          'Registrujte se',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.accent,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
+                    label: 'Pošalji kod',
+                    onPressed: _submit,
+                    isLoading: _isLoading,
                   ),
                 ],
               ),

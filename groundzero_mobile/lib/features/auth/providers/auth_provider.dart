@@ -142,6 +142,28 @@ class AuthNotifier extends Notifier<AuthState> {
     state = const AuthUnauthenticated();
   }
 
+  Future<String?> forgotPassword(String email) async {
+    try {
+      await _authRepository.forgotPassword(email);
+      return null;
+    } on ApiException catch (e) {
+      return e.firstError;
+    } catch (_) {
+      return 'Neočekivana greška. Pokušajte ponovo.';
+    }
+  }
+
+  Future<String?> resetPassword(String email, String code, String newPassword) async {
+    try {
+      await _authRepository.resetPassword(email, code, newPassword);
+      return null;
+    } on ApiException catch (e) {
+      return e.firstError;
+    } catch (_) {
+      return 'Neočekivana greška. Pokušajte ponovo.';
+    }
+  }
+
   void _setUnauthenticated() {
     _storage.clearTokens();
     state = const AuthUnauthenticated(
