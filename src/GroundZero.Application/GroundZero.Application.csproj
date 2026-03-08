@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GroundZero.Domain\GroundZero.Domain.csproj" />
+    <ProjectReference Include="..\GroundZero.Messaging\GroundZero.Messaging.csproj" />
   </ItemGroup>
 
   <ItemGroup>

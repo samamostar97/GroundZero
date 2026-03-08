@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-GroundZero.Worker-5d85fddd-09c5-4a1e-b536-46f3caa9371c</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GroundZero.Messaging\GroundZero.Messaging.csproj" />
+    <ProjectReference Include="..\GroundZero.Infrastructure\GroundZero.Infrastructure.csproj" />
+    <ProjectReference Include="..\GroundZero.Application\GroundZero.Application.csproj" />
+  </ItemGroup>
+</Project>

@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using QuestPDF.Infrastructure;
 
-// Load .env file
-Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env"));
+// Load .env file (skipped in Docker — env vars injected via docker-compose env_file)
+var envPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", ".env");
+if (File.Exists(envPath))
+    Env.Load(envPath);
 
 // QuestPDF Community License
 QuestPDF.Settings.License = LicenseType.Community;

@@ -1,8 +1,11 @@
 class ApiConstants {
   ApiConstants._();
 
-  // Android emulator uses 10.0.2.2 to reach host localhost
-  static const String baseUrl = 'http://10.0.2.2:5147/api';
+  // Configurable via: flutter run --dart-define=API_URL=http://10.0.2.2:5147/api
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://10.0.2.2:5147/api',
+  );
 
   // Auth
   static const String login = '/auth/login';

@@ -1,8 +1,11 @@
 class ApiConstants {
   ApiConstants._();
 
-  // Desktop connects directly to localhost
-  static const String baseUrl = 'http://localhost:5147/api';
+  // Configurable via: flutter run --dart-define=API_URL=http://localhost:5147/api
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://localhost:5147/api',
+  );
 
   // Auth
   static const String login = '/auth/login';

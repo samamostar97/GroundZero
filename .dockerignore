@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+**/node_modules/
+.git/
+.gitignore
+*.md
+*.sln.DotSettings*
+groundzero_mobile/
+groundzero_desktop/
+tests/
+docs/
+uploads/
+.claude/

@@ -4,6 +4,8 @@ using GroundZero.Application.IRepositories;
 using GroundZero.Application.IServices;
 using GroundZero.Domain.Entities;
 using GroundZero.Domain.Enums;
+using GroundZero.Messaging;
+using GroundZero.Messaging.Events;
 using MediatR;
 
 namespace GroundZero.Application.Features.Orders.Commands;
@@ -15,19 +17,22 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     private readonly ICurrentUserService _currentUserService;
     private readonly IStripeService _stripeService;
     private readonly IUserRepository _userRepository;
+    private readonly IMessagePublisher _messagePublisher;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
         IProductRepository productRepository,
         ICurrentUserService currentUserService,
         IStripeService stripeService,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IMessagePublisher messagePublisher)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
         _currentUserService = currentUserService;
         _stripeService = stripeService;
         _userRepository = userRepository;
+        _messagePublisher = messagePublisher;
     }
 
     public async Task<OrderResponse> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
@@ -98,6 +103,19 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         {
             item.Product = products.First(p => p.Id == item.ProductId);
         }
+
+        await _messagePublisher.PublishAsync(QueueNames.OrderCreated, new OrderCreatedEvent
+        {
+            Email = user.Email,
+            OrderId = order.Id,
+            TotalAmount = totalAmount,
+            Items = order.Items.Select(i => new OrderItemInfo
+            {
+                ProductName = products.First(p => p.Id == i.ProductId).Name,
+                Quantity = i.Quantity,
+                UnitPrice = i.UnitPrice
+            }).ToList()
+        }, cancellationToken);
 
         return order.ToResponse(clientSecret);
     }

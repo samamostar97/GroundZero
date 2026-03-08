@@ -1,0 +1,74 @@
+services:
+  groundzero-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: groundzero-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "1401:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  groundzero-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: groundzero-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  groundzero-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: groundzero-api
+    ports:
+      - "5147:5147"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=groundzero-db
+      - RABBITMQ_HOST=groundzero-rabbitmq
+      - FILE_STORAGE_PATH=/app/uploads
+    volumes:
+      - api-uploads:/app/uploads
+    depends_on:
+      groundzero-db:
+        condition: service_healthy
+      groundzero-rabbitmq:
+        condition: service_healthy
+
+  groundzero-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: groundzero-worker
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_HOST=groundzero-rabbitmq
+    depends_on:
+      groundzero-rabbitmq:
+        condition: service_healthy
+
+volumes:
+  sqlserver-data:
+  rabbitmq-data:
+  api-uploads:

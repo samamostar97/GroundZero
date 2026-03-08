@@ -4,6 +4,8 @@ using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Appointments.DTOs;
 using GroundZero.Application.IRepositories;
 using GroundZero.Domain.Enums;
+using GroundZero.Messaging;
+using GroundZero.Messaging.Events;
 using MediatR;
 
 namespace GroundZero.Application.Features.Appointments.Commands;
@@ -30,10 +32,14 @@ public class UpdateAppointmentStatusCommandValidator : AbstractValidator<UpdateA
 public class UpdateAppointmentStatusCommandHandler : IRequestHandler<UpdateAppointmentStatusCommand, AppointmentResponse>
 {
     private readonly IAppointmentRepository _appointmentRepository;
+    private readonly IMessagePublisher _messagePublisher;
 
-    public UpdateAppointmentStatusCommandHandler(IAppointmentRepository appointmentRepository)
+    public UpdateAppointmentStatusCommandHandler(
+        IAppointmentRepository appointmentRepository,
+        IMessagePublisher messagePublisher)
     {
         _appointmentRepository = appointmentRepository;
+        _messagePublisher = messagePublisher;
     }
 
     public async Task<AppointmentResponse> Handle(UpdateAppointmentStatusCommand command, CancellationToken cancellationToken)
@@ -46,6 +52,14 @@ public class UpdateAppointmentStatusCommandHandler : IRequestHandler<UpdateAppoi
         appointment.Status = command.Request.Status;
         _appointmentRepository.Update(appointment);
         await _appointmentRepository.SaveChangesAsync(cancellationToken);
+
+        await _messagePublisher.PublishAsync(QueueNames.AppointmentStatusChanged, new AppointmentStatusChangedEvent
+        {
+            Email = appointment.User.Email,
+            StaffName = $"{appointment.Staff.FirstName} {appointment.Staff.LastName}",
+            ScheduledAt = appointment.ScheduledAt,
+            NewStatus = command.Request.Status.ToString()
+        }, cancellationToken);
 
         return appointment.ToResponse();
     }

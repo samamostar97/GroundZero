@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Copy csproj files and restore
+COPY src/GroundZero.Domain/GroundZero.Domain.csproj GroundZero.Domain/
+COPY src/GroundZero.Application/GroundZero.Application.csproj GroundZero.Application/
+COPY src/GroundZero.Infrastructure/GroundZero.Infrastructure.csproj GroundZero.Infrastructure/
+COPY src/GroundZero.Messaging/GroundZero.Messaging.csproj GroundZero.Messaging/
+COPY src/GroundZero.Worker/GroundZero.Worker.csproj GroundZero.Worker/
+RUN dotnet restore GroundZero.Worker/GroundZero.Worker.csproj
+
+# Copy source and build
+COPY src/ .
+RUN dotnet publish GroundZero.Worker/GroundZero.Worker.csproj -c Release -o /app/publish --no-restore
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "GroundZero.Worker.dll"]

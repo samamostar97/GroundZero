@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using GroundZero.Messaging;
 using QuestPDF.Infrastructure;
 
 namespace GroundZero.API.Extensions;
@@ -67,6 +68,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPdfReportService, PdfReportService>();
         services.AddScoped<IExcelReportService, ExcelReportService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddSingleton<RabbitMqConnection>();
+        services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 

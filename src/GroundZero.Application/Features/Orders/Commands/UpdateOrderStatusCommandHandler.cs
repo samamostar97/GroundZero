@@ -2,6 +2,8 @@ using GroundZero.Application.Exceptions;
 using GroundZero.Application.Features.Orders.DTOs;
 using GroundZero.Application.IRepositories;
 using GroundZero.Domain.Enums;
+using GroundZero.Messaging;
+using GroundZero.Messaging.Events;
 using MediatR;
 
 namespace GroundZero.Application.Features.Orders.Commands;
@@ -10,11 +12,16 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
+    private readonly IMessagePublisher _messagePublisher;
 
-    public UpdateOrderStatusCommandHandler(IOrderRepository orderRepository, IProductRepository productRepository)
+    public UpdateOrderStatusCommandHandler(
+        IOrderRepository orderRepository,
+        IProductRepository productRepository,
+        IMessagePublisher messagePublisher)
     {
         _orderRepository = orderRepository;
         _productRepository = productRepository;
+        _messagePublisher = messagePublisher;
     }
 
     public async Task<OrderResponse> Handle(UpdateOrderStatusCommand command, CancellationToken cancellationToken)
@@ -41,6 +48,13 @@ public class UpdateOrderStatusCommandHandler : IRequestHandler<UpdateOrderStatus
         order.Status = command.Request.Status;
         _orderRepository.Update(order);
         await _orderRepository.SaveChangesAsync(cancellationToken);
+
+        await _messagePublisher.PublishAsync(QueueNames.OrderStatusChanged, new OrderStatusChangedEvent
+        {
+            Email = order.User.Email,
+            OrderId = order.Id,
+            NewStatus = command.Request.Status.ToString()
+        }, cancellationToken);
 
         return order.ToResponse();
     }
