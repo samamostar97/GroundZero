@@ -18,6 +18,8 @@ public class ReportsController : ControllerBase
         _mediator = mediator;
     }
 
+    // ── File export endpoints ──────────────────────────────────────
+
     [HttpGet("revenue")]
     public async Task<IActionResult> GetRevenueReport(
         [FromQuery] DateTime? from = null,
@@ -73,5 +75,58 @@ public class ReportsController : ControllerBase
     {
         var result = await _mediator.Send(new GetGamificationReportQuery { From = from, To = to, Format = format });
         return File(result.FileBytes, result.ContentType, result.FileName);
+    }
+
+    // ── JSON data endpoints ────────────────────────────────────────
+
+    [HttpGet("revenue/data")]
+    public async Task<IActionResult> GetRevenueReportData(
+        [FromQuery] DateTime? from = null,
+        [FromQuery] DateTime? to = null)
+    {
+        var result = await _mediator.Send(new GetRevenueReportDataQuery { From = from, To = to });
+        return Ok(result);
+    }
+
+    [HttpGet("products/data")]
+    public async Task<IActionResult> GetProductReportData(
+        [FromQuery] DateTime? from = null,
+        [FromQuery] DateTime? to = null,
+        [FromQuery] int lowStockThreshold = 10)
+    {
+        var result = await _mediator.Send(new GetProductReportDataQuery
+        {
+            From = from,
+            To = to,
+            LowStockThreshold = lowStockThreshold
+        });
+        return Ok(result);
+    }
+
+    [HttpGet("users/data")]
+    public async Task<IActionResult> GetUserReportData(
+        [FromQuery] DateTime? from = null,
+        [FromQuery] DateTime? to = null)
+    {
+        var result = await _mediator.Send(new GetUserReportDataQuery { From = from, To = to });
+        return Ok(result);
+    }
+
+    [HttpGet("appointments/data")]
+    public async Task<IActionResult> GetAppointmentReportData(
+        [FromQuery] DateTime? from = null,
+        [FromQuery] DateTime? to = null)
+    {
+        var result = await _mediator.Send(new GetAppointmentReportDataQuery { From = from, To = to });
+        return Ok(result);
+    }
+
+    [HttpGet("gamification/data")]
+    public async Task<IActionResult> GetGamificationReportData(
+        [FromQuery] DateTime? from = null,
+        [FromQuery] DateTime? to = null)
+    {
+        var result = await _mediator.Send(new GetGamificationReportDataQuery { From = from, To = to });
+        return Ok(result);
     }
 }

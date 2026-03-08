@@ -10,10 +10,14 @@ import '../../features/membership_plans/screens/membership_plans_screen.dart';
 import '../../features/memberships/screens/memberships_screen.dart';
 import '../../features/orders/screens/orders_screen.dart';
 import '../../features/products/screens/products_screen.dart';
+import '../../features/reports/screens/appointment_report_screen.dart';
+import '../../features/reports/screens/gamification_report_screen.dart';
+import '../../features/reports/screens/product_report_screen.dart';
+import '../../features/reports/screens/revenue_report_screen.dart';
+import '../../features/reports/screens/user_report_screen.dart';
 import '../../features/staff/screens/staff_screen.dart';
 import '../../features/users/screens/users_screen.dart';
 import 'app_sidebar.dart';
-import 'placeholder_screen.dart';
 import 'top_tab_bar.dart';
 
 // Current sidebar section
@@ -99,7 +103,7 @@ class AppShell extends ConsumerWidget {
           case 4:
             return const MembershipPlansScreen();
           default:
-            return const PlaceholderScreen(title: 'Korisnici');
+            return const UsersScreen();
         }
 
       // Operacije
@@ -121,17 +125,17 @@ class AppShell extends ConsumerWidget {
       case 3:
         switch (tabIndex) {
           case 0:
-            return const PlaceholderScreen(title: 'Izvještaj — Prihodi');
+            return const RevenueReportScreen();
           case 1:
-            return const PlaceholderScreen(title: 'Izvještaj — Proizvodi');
+            return const ProductReportScreen();
           case 2:
-            return const PlaceholderScreen(title: 'Izvještaj — Korisnici');
+            return const UserReportScreen();
           case 3:
-            return const PlaceholderScreen(title: 'Izvještaj — Termini');
+            return const AppointmentReportScreen();
           case 4:
-            return const PlaceholderScreen(title: 'Izvještaj — Gamifikacija');
+            return const GamificationReportScreen();
           default:
-            return const PlaceholderScreen(title: 'Izvještaj — Prihodi');
+            return const RevenueReportScreen();
         }
 
       default:

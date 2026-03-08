@@ -43,12 +43,19 @@ class ApiConstants {
   static const String membershipPlans = '/membership-plans';
   static String cancelMembership(int id) => '/memberships/$id/cancel';
 
-  // Reports
+  // Reports (file export)
   static const String revenueReport = '/reports/revenue';
   static const String productReport = '/reports/products';
   static const String userReport = '/reports/users';
   static const String appointmentReport = '/reports/appointments';
   static const String gamificationReport = '/reports/gamification';
+
+  // Reports (JSON data)
+  static const String revenueReportData = '/reports/revenue/data';
+  static const String productReportData = '/reports/products/data';
+  static const String userReportData = '/reports/users/data';
+  static const String appointmentReportData = '/reports/appointments/data';
+  static const String gamificationReportData = '/reports/gamification/data';
 
   // Leaderboard
   static const String leaderboard = '/leaderboard';

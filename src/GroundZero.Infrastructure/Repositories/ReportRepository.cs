@@ -177,15 +177,18 @@ public class ReportRepository : IReportRepository
             .Where(gv => gv.CheckInAt >= from && gv.CheckInAt <= to && gv.DurationMinutes.HasValue)
             .ToListAsync();
 
+        var activeUserSet = users.Select(u => u.Id).ToHashSet();
+
         var mostActiveUsers = gymVisitsInPeriod
+            .Where(gv => activeUserSet.Contains(gv.UserId))
             .GroupBy(gv => gv.UserId)
             .Select(g =>
             {
-                var user = users.FirstOrDefault(u => u.Id == g.Key);
+                var user = users.First(u => u.Id == g.Key);
                 return new UserActivityItem
                 {
-                    FullName = user != null ? $"{user.FirstName} {user.LastName}" : "Nepoznat",
-                    Email = user?.Email ?? "",
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    Email = user.Email,
                     GymVisits = g.Count(),
                     TotalMinutes = g.Sum(gv => gv.DurationMinutes ?? 0)
                 };
