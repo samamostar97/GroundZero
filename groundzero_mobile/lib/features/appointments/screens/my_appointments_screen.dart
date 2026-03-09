@@ -176,6 +176,14 @@ class _MyAppointmentsScreenState
 
         return _AppointmentListTile(
           appointment: state.appointments[index],
+          onTap: () async {
+            await context.push(
+              '/appointments/${state.appointments[index].id}',
+            );
+            ref
+                .read(myAppointmentsNotifierProvider.notifier)
+                .loadInitial();
+          },
         );
       },
     );
@@ -184,13 +192,14 @@ class _MyAppointmentsScreenState
 
 class _AppointmentListTile extends StatelessWidget {
   final AppointmentModel appointment;
+  final VoidCallback? onTap;
 
-  const _AppointmentListTile({required this.appointment});
+  const _AppointmentListTile({required this.appointment, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push('/appointments/${appointment.id}'),
+      onTap: onTap ?? () => context.push('/appointments/${appointment.id}'),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(

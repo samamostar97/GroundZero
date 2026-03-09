@@ -9,6 +9,7 @@ import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/skeletons.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../models/workout_plan_model.dart';
 import '../providers/workout_plans_provider.dart';
 
@@ -161,13 +162,7 @@ class _WorkoutPlansScreenState extends ConsumerState<WorkoutPlansScreen> {
                             notifier.reset();
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Plan treninga uspješno kreiran!'),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
+                              showSuccessSnackBar(context, 'Plan treninga uspješno kreiran!');
                             }
                           } else if (state is CreateWorkoutPlanError) {
                             setSheetState(() {

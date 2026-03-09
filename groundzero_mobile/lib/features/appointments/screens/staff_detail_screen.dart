@@ -14,6 +14,7 @@ import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/review_card.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../auth/providers/user_provider.dart';
 import '../../shop/data/review_repository.dart';
 import '../../shop/models/review_model.dart';
@@ -421,13 +422,7 @@ class StaffDetailScreen extends ConsumerWidget {
                                 staffReviewsNotifierProvider(staffId));
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Recenzija uspješno ažurirana!'),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
+                              showSuccessSnackBar(context, 'Recenzija uspješno ažurirana!');
                             }
                           } on ApiException catch (e) {
                             setSheetState(() {
@@ -502,31 +497,15 @@ class StaffDetailScreen extends ConsumerWidget {
                 await repo.deleteReview(reviewId);
                 ref.invalidate(staffReviewsNotifierProvider(staffId));
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Recenzija uspješno obrisana.'),
-                      backgroundColor: AppColors.success,
-                    ),
-                  );
+                  showSuccessSnackBar(context, 'Recenzija uspješno obrisana.');
                 }
               } on ApiException catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.firstError),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, e.firstError);
                 }
               } catch (_) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('Neočekivana greška. Pokušajte ponovo.'),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, 'Neočekivana greška. Pokušajte ponovo.');
                 }
               }
             },

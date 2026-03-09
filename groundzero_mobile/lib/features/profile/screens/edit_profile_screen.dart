@@ -6,6 +6,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/providers/user_provider.dart';
 import '../providers/profile_provider.dart';
@@ -54,12 +55,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final success =
         await ref.read(profileActionNotifierProvider.notifier).uploadPicture(image);
     if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profilna slika ažurirana!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      showSuccessSnackBar(context, 'Profilna slika ažurirana!');
     }
   }
 
@@ -74,12 +70,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         );
 
     if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Profil uspješno ažuriran!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      showSuccessSnackBar(context, 'Profil uspješno ažuriran!');
       Navigator.of(context).pop();
     }
   }

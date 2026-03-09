@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/skeletons.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../data/workout_repository.dart';
 import '../models/add_workout_day_request.dart';
 import '../models/add_workout_exercise_request.dart';
@@ -131,19 +132,9 @@ class WorkoutPlanDetailScreen extends ConsumerWidget {
               if (state is DeleteWorkoutPlanSuccess && context.mounted) {
                 notifier.reset();
                 Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Plan treninga uspješno obrisan.'),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
+                showSuccessSnackBar(context, 'Plan treninga uspješno obrisan.');
               } else if (state is DeleteWorkoutPlanError && context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
+                showErrorSnackBar(context, state.message);
               }
             },
             child: Text(
@@ -591,22 +582,11 @@ class _DayCardState extends ConsumerState<_DayCard> {
                     workoutPlanDetailProvider(widget.planId));
               } on ApiException catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.firstError),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, e.firstError);
                 }
               } catch (_) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('Neočekivana greška. Pokušajte ponovo.'),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, 'Neočekivana greška. Pokušajte ponovo.');
                 }
               }
             },
@@ -912,22 +892,11 @@ class _ExerciseTile extends ConsumerWidget {
                 ref.invalidate(workoutPlanDetailProvider(planId));
               } on ApiException catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.firstError),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, e.firstError);
                 }
               } catch (_) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('Neočekivana greška. Pokušajte ponovo.'),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, 'Neočekivana greška. Pokušajte ponovo.');
                 }
               }
             },

@@ -9,6 +9,7 @@ import '../../../shared/widgets/appointment_status_badge.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/skeletons.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../shop/data/review_repository.dart';
 import '../../shop/models/create_review_request.dart';
 import '../models/appointment_model.dart';
@@ -27,31 +28,11 @@ class AppointmentDetailScreen extends ConsumerWidget {
 
     ref.listen(cancelAppointmentProvider, (prev, next) {
       if (next is CancelAppointmentSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Termin je uspješno otkazan.',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textPrimary,
-              ),
-            ),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        showSuccessSnackBar(context, 'Termin je uspješno otkazan.');
         ref.read(cancelAppointmentProvider.notifier).reset();
         ref.invalidate(appointmentDetailProvider(appointmentId));
       } else if (next is CancelAppointmentError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              next.message,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textPrimary,
-              ),
-            ),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        showErrorSnackBar(context, next.message);
         ref.read(cancelAppointmentProvider.notifier).reset();
       }
     });
@@ -403,13 +384,7 @@ class AppointmentDetailScreen extends ConsumerWidget {
                             );
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Recenzija uspješno dodana!'),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
+                              showSuccessSnackBar(context, 'Recenzija uspješno dodana!');
                             }
                           } on ApiException catch (e) {
                             setSheetState(() {

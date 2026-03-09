@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../providers/profile_provider.dart';
 
 class ChangePasswordScreen extends ConsumerStatefulWidget {
@@ -40,12 +41,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         );
 
     if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lozinka uspješno promijenjena!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      showSuccessSnackBar(context, 'Lozinka uspješno promijenjena!');
       Navigator.of(context).pop();
     }
   }

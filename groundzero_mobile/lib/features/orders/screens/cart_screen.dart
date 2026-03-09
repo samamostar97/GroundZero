@@ -7,6 +7,7 @@ import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/cart_item_tile.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
 
@@ -23,12 +24,7 @@ class CartScreen extends ConsumerWidget {
       if (next is CreateOrderSuccess) {
         context.go('/order-confirmation/${next.order.id}');
       } else if (next is CreateOrderError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.message),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        showErrorSnackBar(context, next.message);
       }
     });
 

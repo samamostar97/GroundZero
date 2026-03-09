@@ -7,6 +7,7 @@ import '../../../core/constants/app_shadows.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../providers/appointment_provider.dart';
 import '../providers/staff_provider.dart';
 
@@ -75,33 +76,13 @@ class _BookAppointmentScreenState
 
   void _submit() {
     if (_selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Odaberite vrijeme termina.',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      showErrorSnackBar(context, 'Odaberite vrijeme termina.');
       return;
     }
 
     final scheduledAt = _buildScheduledAt();
     if (scheduledAt.isBefore(DateTime.now().toUtc())) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Termin mora biti u budućnosti.',
-            style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.textPrimary,
-            ),
-          ),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      showErrorSnackBar(context, 'Termin mora biti u budućnosti.');
       return;
     }
 
@@ -125,31 +106,11 @@ class _BookAppointmentScreenState
 
     ref.listen(createAppointmentProvider, (prev, next) {
       if (next is CreateAppointmentSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Termin je uspješno zakazan!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textPrimary,
-              ),
-            ),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        showSuccessSnackBar(context, 'Termin je uspješno zakazan!');
         ref.read(createAppointmentProvider.notifier).reset();
         if (context.mounted) context.pop();
       } else if (next is CreateAppointmentError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              next.message,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textPrimary,
-              ),
-            ),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        showErrorSnackBar(context, next.message);
         ref.read(createAppointmentProvider.notifier).reset();
       }
     });

@@ -12,6 +12,7 @@ import '../../../shared/widgets/error_display.dart';
 import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/rating_stars.dart';
 import '../../../shared/widgets/review_card.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../auth/providers/user_provider.dart';
 import '../../orders/providers/cart_provider.dart';
 import '../data/review_repository.dart';
@@ -64,15 +65,7 @@ class ProductDetailScreen extends ConsumerWidget {
                         ref
                             .read(cartNotifierProvider.notifier)
                             .addItem(product);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${product.name} dodano u korpu.',
-                            ),
-                            backgroundColor: AppColors.success,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
+                        showSuccessSnackBar(context, '${product.name} dodano u korpu.');
                       },
                       icon: const Icon(Icons.add_shopping_cart_rounded),
                       label: Text(
@@ -437,14 +430,7 @@ class ProductDetailScreen extends ConsumerWidget {
                                     productId));
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Recenzija uspješno dodana!'),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
+                              showSuccessSnackBar(context, 'Recenzija uspješno dodana!');
                             }
                           } on ApiException catch (e) {
                             setSheetState(() {
@@ -581,13 +567,7 @@ class ProductDetailScreen extends ConsumerWidget {
                                 productReviewsNotifierProvider(productId));
                             if (context.mounted) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Recenzija uspješno ažurirana!'),
-                                  backgroundColor: AppColors.success,
-                                ),
-                              );
+                              showSuccessSnackBar(context, 'Recenzija uspješno ažurirana!');
                             }
                           } on ApiException catch (e) {
                             setSheetState(() {
@@ -663,31 +643,15 @@ class ProductDetailScreen extends ConsumerWidget {
                 ref.invalidate(
                     productReviewsNotifierProvider(productId));
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Recenzija uspješno obrisana.'),
-                      backgroundColor: AppColors.success,
-                    ),
-                  );
+                  showSuccessSnackBar(context, 'Recenzija uspješno obrisana.');
                 }
               } on ApiException catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.firstError),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, e.firstError);
                 }
               } catch (_) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text('Neočekivana greška. Pokušajte ponovo.'),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  showErrorSnackBar(context, 'Neočekivana greška. Pokušajte ponovo.');
                 }
               }
             },

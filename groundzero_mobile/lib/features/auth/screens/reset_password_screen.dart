@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/routing/app_router.dart';
 import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../providers/auth_provider.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -58,12 +59,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
     if (error != null) {
       setState(() => _error = error);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Lozinka uspješno resetovana!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      showSuccessSnackBar(context, 'Lozinka uspješno resetovana!');
       context.go(AppRoutes.login);
     }
   }
