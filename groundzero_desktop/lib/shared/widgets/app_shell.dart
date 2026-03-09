@@ -44,14 +44,39 @@ const _sectionTabs = <int, List<String>>{
   3: ['Prihodi', 'Proizvodi', 'Korisnici', 'Termini', 'Gamifikacija'],
 };
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  int _prevTabIndex = 0;
+  int _prevSidebarIndex = 0;
+
+  // +1 = sliding right, -1 = sliding left, 0 = fade (sidebar change)
+  int get _direction {
+    final sidebarIndex = ref.read(sidebarIndexProvider);
+    if (sidebarIndex != _prevSidebarIndex) return 0;
+    final tabIndex = ref.read(tabIndexProvider);
+    if (tabIndex > _prevTabIndex) return 1;
+    if (tabIndex < _prevTabIndex) return -1;
+    return 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final sidebarIndex = ref.watch(sidebarIndexProvider);
     final tabIndex = ref.watch(tabIndexProvider);
     final tabs = _sectionTabs[sidebarIndex];
+    final direction = _direction;
+
+    // Update previous indices after reading direction
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _prevSidebarIndex = sidebarIndex;
+      _prevTabIndex = tabIndex;
+    });
 
     return Scaffold(
       body: Row(
@@ -84,13 +109,17 @@ class AppShell extends ConsumerWidget {
                     },
                   ),
 
-                // Content with fade + slide up transition
+                // Content with directional slide transition
                 Expanded(
                   child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 250),
                     transitionBuilder: (child, animation) {
+                      // Horizontal slide for tab changes, fade for sidebar changes
+                      final begin = direction == 0
+                          ? const Offset(0, 0.03)
+                          : Offset(direction * 0.05, 0);
                       final offsetAnimation = Tween<Offset>(
-                        begin: const Offset(0, 0.03),
+                        begin: begin,
                         end: Offset.zero,
                       ).animate(CurvedAnimation(
                         parent: animation,

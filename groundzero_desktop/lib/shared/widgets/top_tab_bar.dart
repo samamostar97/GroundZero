@@ -18,7 +18,7 @@ class TopTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
+      height: 60,
       decoration: const BoxDecoration(
         color: AppColors.background,
         border: Border(
@@ -26,6 +26,7 @@ class TopTabBar extends StatelessWidget {
         ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(tabs.length, (index) {
           final isSelected = index == selectedIndex;
           return _TabItem(
@@ -65,30 +66,31 @@ class _TabItemState extends State<_TabItem> {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: widget.onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 4, right: 4, top: 14, bottom: 8),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              color: widget.isSelected
+                  ? AppColors.accent.withValues(alpha: 0.1)
+                  : _isHovered
+                      ? AppColors.surfaceHigh
+                      : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              widget.label,
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight:
+                    widget.isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: widget.isSelected
                     ? AppColors.accent
-                    : Colors.transparent,
-                width: 2,
+                    : _isHovered
+                        ? AppColors.textPrimary
+                        : AppColors.textSecondary,
               ),
-            ),
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            widget.label,
-            style: GoogleFonts.inter(
-              fontSize: 14,
-              fontWeight:
-                  widget.isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: widget.isSelected
-                  ? AppColors.accent
-                  : _isHovered
-                      ? AppColors.textPrimary
-                      : AppColors.textSecondary,
             ),
           ),
         ),
