@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_text_styles.dart';
 
 void showSuccessSnackBar(BuildContext context, String message) {
   ScaffoldMessenger.of(context)
@@ -16,8 +15,8 @@ void showSuccessSnackBar(BuildContext context, String message) {
             Expanded(
               child: Text(
                 message,
-                style: GoogleFonts.inter(
-                    fontSize: 14, color: AppColors.textPrimary),
+                style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textPrimary),
               ),
             ),
           ],
@@ -47,8 +46,8 @@ void showErrorSnackBar(BuildContext context, String message) {
             Expanded(
               child: Text(
                 message,
-                style: GoogleFonts.inter(
-                    fontSize: 14, color: AppColors.textPrimary),
+                style: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textPrimary),
               ),
             ),
           ],

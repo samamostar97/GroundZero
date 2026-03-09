@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:google_fonts/google_fonts.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/image_utils.dart';
 
@@ -47,7 +49,7 @@ class UserAvatar extends StatelessWidget {
       backgroundColor: AppColors.accent,
       child: Text(
         initials,
-        style: TextStyle(
+        style: GoogleFonts.inter(
           color: AppColors.onAccent,
           fontWeight: FontWeight.w700,
           fontSize: radius * 0.7,

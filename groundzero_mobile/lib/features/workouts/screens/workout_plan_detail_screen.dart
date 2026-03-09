@@ -175,12 +175,12 @@ class _PlanDetailBody extends ConsumerWidget {
 
         // Days
         if (plan.days.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24),
             child: Center(
               child: Text(
                 'Nema dodanih dana. Dodajte prvi dan!',
-                style: TextStyle(color: AppColors.textHint),
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
               ),
             ),
           )
