@@ -11,7 +11,6 @@ _$CreateAppointmentRequestImpl _$$CreateAppointmentRequestImplFromJson(
 ) => _$CreateAppointmentRequestImpl(
   staffId: (json['staffId'] as num).toInt(),
   scheduledAt: DateTime.parse(json['scheduledAt'] as String),
-  durationMinutes: (json['durationMinutes'] as num).toInt(),
   notes: json['notes'] as String?,
 );
 
@@ -20,6 +19,5 @@ Map<String, dynamic> _$$CreateAppointmentRequestImplToJson(
 ) => <String, dynamic>{
   'staffId': instance.staffId,
   'scheduledAt': instance.scheduledAt.toIso8601String(),
-  'durationMinutes': instance.durationMinutes,
   'notes': instance.notes,
 };

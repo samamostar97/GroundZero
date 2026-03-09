@@ -8,7 +8,6 @@ class CreateAppointmentRequest with _$CreateAppointmentRequest {
   const factory CreateAppointmentRequest({
     required int staffId,
     required DateTime scheduledAt,
-    required int durationMinutes,
     String? notes,
   }) = _CreateAppointmentRequest;
 

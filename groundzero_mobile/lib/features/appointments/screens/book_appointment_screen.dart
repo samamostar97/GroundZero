@@ -25,10 +25,7 @@ class _BookAppointmentScreenState
     extends ConsumerState<BookAppointmentScreen> {
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
   String? _selectedTime;
-  int _selectedDuration = 60;
   final _notesController = TextEditingController();
-
-  static const _durations = [30, 45, 60, 90];
 
   @override
   void dispose() {
@@ -52,7 +49,7 @@ class _BookAppointmentScreenState
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: now,
+      firstDate: now.add(const Duration(days: 1)),
       lastDate: now.add(const Duration(days: 90)),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
@@ -89,7 +86,6 @@ class _BookAppointmentScreenState
     ref.read(createAppointmentProvider.notifier).book(
           staffId: widget.staffId,
           scheduledAt: scheduledAt,
-          durationMinutes: _selectedDuration,
           notes: _notesController.text.isNotEmpty
               ? _notesController.text
               : null,
@@ -314,49 +310,6 @@ class _BookAppointmentScreenState
                     }).toList(),
                   );
                 },
-              ),
-              const SizedBox(height: 20),
-
-              // Duration
-              Text('Trajanje', style: AppTextStyles.inputLabel),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 10,
-                children: _durations.map((d) {
-                  final isSelected = _selectedDuration == d;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedDuration = d),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.accent
-                            : AppColors.inputFill,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: isSelected
-                              ? AppColors.accent
-                              : AppColors.border,
-                        ),
-                      ),
-                      child: Text(
-                        '$d min',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: isSelected
-                              ? AppColors.onAccent
-                              : AppColors.textPrimary,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
               ),
               const SizedBox(height: 20),
 

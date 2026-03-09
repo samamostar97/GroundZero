@@ -25,7 +25,6 @@ CreateAppointmentRequest _$CreateAppointmentRequestFromJson(
 mixin _$CreateAppointmentRequest {
   int get staffId => throw _privateConstructorUsedError;
   DateTime get scheduledAt => throw _privateConstructorUsedError;
-  int get durationMinutes => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
 
   /// Serializes this CreateAppointmentRequest to a JSON map.
@@ -45,12 +44,7 @@ abstract class $CreateAppointmentRequestCopyWith<$Res> {
     $Res Function(CreateAppointmentRequest) then,
   ) = _$CreateAppointmentRequestCopyWithImpl<$Res, CreateAppointmentRequest>;
   @useResult
-  $Res call({
-    int staffId,
-    DateTime scheduledAt,
-    int durationMinutes,
-    String? notes,
-  });
+  $Res call({int staffId, DateTime scheduledAt, String? notes});
 }
 
 /// @nodoc
@@ -73,7 +67,6 @@ class _$CreateAppointmentRequestCopyWithImpl<
   $Res call({
     Object? staffId = null,
     Object? scheduledAt = null,
-    Object? durationMinutes = null,
     Object? notes = freezed,
   }) {
     return _then(
@@ -86,10 +79,6 @@ class _$CreateAppointmentRequestCopyWithImpl<
                 ? _value.scheduledAt
                 : scheduledAt // ignore: cast_nullable_to_non_nullable
                       as DateTime,
-            durationMinutes: null == durationMinutes
-                ? _value.durationMinutes
-                : durationMinutes // ignore: cast_nullable_to_non_nullable
-                      as int,
             notes: freezed == notes
                 ? _value.notes
                 : notes // ignore: cast_nullable_to_non_nullable
@@ -109,12 +98,7 @@ abstract class _$$CreateAppointmentRequestImplCopyWith<$Res>
   ) = __$$CreateAppointmentRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    int staffId,
-    DateTime scheduledAt,
-    int durationMinutes,
-    String? notes,
-  });
+  $Res call({int staffId, DateTime scheduledAt, String? notes});
 }
 
 /// @nodoc
@@ -137,7 +121,6 @@ class __$$CreateAppointmentRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? staffId = null,
     Object? scheduledAt = null,
-    Object? durationMinutes = null,
     Object? notes = freezed,
   }) {
     return _then(
@@ -150,10 +133,6 @@ class __$$CreateAppointmentRequestImplCopyWithImpl<$Res>
             ? _value.scheduledAt
             : scheduledAt // ignore: cast_nullable_to_non_nullable
                   as DateTime,
-        durationMinutes: null == durationMinutes
-            ? _value.durationMinutes
-            : durationMinutes // ignore: cast_nullable_to_non_nullable
-                  as int,
         notes: freezed == notes
             ? _value.notes
             : notes // ignore: cast_nullable_to_non_nullable
@@ -169,7 +148,6 @@ class _$CreateAppointmentRequestImpl implements _CreateAppointmentRequest {
   const _$CreateAppointmentRequestImpl({
     required this.staffId,
     required this.scheduledAt,
-    required this.durationMinutes,
     this.notes,
   });
 
@@ -181,13 +159,11 @@ class _$CreateAppointmentRequestImpl implements _CreateAppointmentRequest {
   @override
   final DateTime scheduledAt;
   @override
-  final int durationMinutes;
-  @override
   final String? notes;
 
   @override
   String toString() {
-    return 'CreateAppointmentRequest(staffId: $staffId, scheduledAt: $scheduledAt, durationMinutes: $durationMinutes, notes: $notes)';
+    return 'CreateAppointmentRequest(staffId: $staffId, scheduledAt: $scheduledAt, notes: $notes)';
   }
 
   @override
@@ -198,15 +174,12 @@ class _$CreateAppointmentRequestImpl implements _CreateAppointmentRequest {
             (identical(other.staffId, staffId) || other.staffId == staffId) &&
             (identical(other.scheduledAt, scheduledAt) ||
                 other.scheduledAt == scheduledAt) &&
-            (identical(other.durationMinutes, durationMinutes) ||
-                other.durationMinutes == durationMinutes) &&
             (identical(other.notes, notes) || other.notes == notes));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, staffId, scheduledAt, durationMinutes, notes);
+  int get hashCode => Object.hash(runtimeType, staffId, scheduledAt, notes);
 
   /// Create a copy of CreateAppointmentRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -229,7 +202,6 @@ abstract class _CreateAppointmentRequest implements CreateAppointmentRequest {
   const factory _CreateAppointmentRequest({
     required final int staffId,
     required final DateTime scheduledAt,
-    required final int durationMinutes,
     final String? notes,
   }) = _$CreateAppointmentRequestImpl;
 
@@ -240,8 +212,6 @@ abstract class _CreateAppointmentRequest implements CreateAppointmentRequest {
   int get staffId;
   @override
   DateTime get scheduledAt;
-  @override
-  int get durationMinutes;
   @override
   String? get notes;
 

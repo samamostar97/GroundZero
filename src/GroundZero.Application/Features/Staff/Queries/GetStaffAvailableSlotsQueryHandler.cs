@@ -11,8 +11,8 @@ public class GetStaffAvailableSlotsQueryHandler : IRequestHandler<GetStaffAvaila
     private readonly IAppointmentRepository _appointmentRepository;
 
     private static readonly TimeSpan WorkdayStart = new(8, 0, 0);
-    private static readonly TimeSpan WorkdayEnd = new(21, 0, 0);
-    private static readonly int SlotIntervalMinutes = 30;
+    private static readonly TimeSpan WorkdayEnd = new(17, 0, 0);
+    private static readonly int SlotIntervalMinutes = 60;
 
     public GetStaffAvailableSlotsQueryHandler(
         IStaffRepository staffRepository,

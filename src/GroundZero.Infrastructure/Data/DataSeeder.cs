@@ -502,7 +502,7 @@ public static class DataSeeder
             new()
             {
                 UserId = selma, StaffId = nutritionists[0].Id, ScheduledAt = now.AddDays(-30).Date.AddHours(11),
-                DurationMinutes = 45, Status = AppointmentStatus.Completed,
+                DurationMinutes = 60, Status = AppointmentStatus.Completed,
                 Notes = "Konsultacija o ishrani za mršavljenje", CreatedAt = now.AddDays(-35)
             },
             new()
@@ -514,7 +514,7 @@ public static class DataSeeder
             new()
             {
                 UserId = edin, StaffId = nutritionists[1].Id, ScheduledAt = now.AddDays(-15).Date.AddHours(16),
-                DurationMinutes = 45, Status = AppointmentStatus.Completed,
+                DurationMinutes = 60, Status = AppointmentStatus.Completed,
                 Notes = "Plan ishrane za dobijanje mišićne mase", CreatedAt = now.AddDays(-20)
             },
             // Past — cancelled
@@ -534,7 +534,7 @@ public static class DataSeeder
             new()
             {
                 UserId = testUser, StaffId = nutritionists[0].Id, ScheduledAt = now.AddDays(3).Date.AddHours(13),
-                DurationMinutes = 45, Status = AppointmentStatus.Confirmed,
+                DurationMinutes = 60, Status = AppointmentStatus.Confirmed,
                 Notes = "Konsultacija o suplementaciji", CreatedAt = now.AddDays(-2)
             },
             // Upcoming — pending

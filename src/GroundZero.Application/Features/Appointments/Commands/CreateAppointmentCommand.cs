@@ -25,10 +25,6 @@ public class CreateAppointmentCommandValidator : AbstractValidator<CreateAppoint
         RuleFor(x => x.Request.ScheduledAt)
             .GreaterThan(DateTime.UtcNow).WithMessage("Termin mora biti zakazan u budućnosti.");
 
-        RuleFor(x => x.Request.DurationMinutes)
-            .GreaterThan(0).WithMessage("Trajanje mora biti veće od 0 minuta.")
-            .LessThanOrEqualTo(180).WithMessage("Trajanje ne može biti duže od 180 minuta.");
-
         RuleFor(x => x.Request.Notes)
             .MaximumLength(1000).WithMessage("Napomena ne može biti duža od 1000 karaktera.");
     }
@@ -67,7 +63,7 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
         var hasOverlap = await _appointmentRepository.HasOverlappingAppointmentAsync(
             command.Request.StaffId,
             command.Request.ScheduledAt,
-            command.Request.DurationMinutes,
+            60,
             cancellationToken: cancellationToken);
 
         if (hasOverlap)
@@ -78,7 +74,7 @@ public class CreateAppointmentCommandHandler : IRequestHandler<CreateAppointment
             UserId = userId,
             StaffId = command.Request.StaffId,
             ScheduledAt = command.Request.ScheduledAt,
-            DurationMinutes = command.Request.DurationMinutes,
+            DurationMinutes = 60,
             Notes = command.Request.Notes
         };
 

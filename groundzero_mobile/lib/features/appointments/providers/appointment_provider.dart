@@ -43,7 +43,6 @@ class CreateAppointmentNotifier extends Notifier<CreateAppointmentState> {
   Future<void> book({
     required int staffId,
     required DateTime scheduledAt,
-    required int durationMinutes,
     String? notes,
   }) async {
     state = const CreateAppointmentLoading();
@@ -53,7 +52,6 @@ class CreateAppointmentNotifier extends Notifier<CreateAppointmentState> {
       final request = CreateAppointmentRequest(
         staffId: staffId,
         scheduledAt: scheduledAt,
-        durationMinutes: durationMinutes,
         notes: notes,
       );
 
