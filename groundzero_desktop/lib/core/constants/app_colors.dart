@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Backgrounds (elevation levels)
-  static const Color background = Color(0xFF0A0A0A);
-  static const Color surfaceLow = Color(0xFF121212);
-  static const Color surface = Color(0xFF161616);
-  static const Color surfaceHigh = Color(0xFF1E1E1E);
-  static const Color inputFill = Color(0xFF1E1E1E);
+  // Backgrounds (elevation levels) — slight cool/blue undertone for depth
+  static const Color background = Color(0xFF0B0D11);
+  static const Color surfaceLow = Color(0xFF111318);
+  static const Color surface = Color(0xFF15171D);
+  static const Color surfaceHigh = Color(0xFF1C1E25);
+  static const Color inputFill = Color(0xFF1C1E25);
 
   // Sidebar
-  static const Color sidebarBg = Color(0xFF0E0E0E);
-  static const Color sidebarActive = Color(0xFF1A1A1A);
+  static const Color sidebarBg = Color(0xFF0D0F14);
+  static const Color sidebarActive = Color(0xFF191B21);
 
   // Accent
   static const Color accent = Color(0xFFCCFF00);
@@ -24,8 +24,8 @@ class AppColors {
   static const Color textSecondary = Color(0xFFB0B0B0);
   static const Color textHint = Color(0xFF707070);
 
-  // Borders
-  static const Color border = Color(0xFF333333);
+  // Borders — softer, with slight transparency
+  static const Color border = Color(0xFF2A2D35);
   static const Color borderFocused = accent;
 
   // Status
