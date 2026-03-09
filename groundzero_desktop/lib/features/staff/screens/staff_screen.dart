@@ -259,9 +259,7 @@ class StaffScreen extends ConsumerWidget {
             }
           } on ApiException catch (e) {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.firstError)),
-              );
+              showErrorSnackBar(context, e.firstError);
             }
           }
         },

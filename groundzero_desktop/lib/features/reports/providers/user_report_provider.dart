@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/api_constants.dart';
 import '../../../core/network/api_exception.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../data/reports_repository.dart';
 import '../models/user_report_model.dart';
 
@@ -111,21 +112,15 @@ class UserReportNotifier extends Notifier<UserReportState> {
       );
       await File(path).writeAsBytes(bytes);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Izvještaj uspješno sačuvan.')),
-        );
+        showSuccessSnackBar(context, 'Izvještaj uspješno sačuvan.');
       }
     } on ApiException catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.firstError)),
-        );
+        showErrorSnackBar(context, e.firstError);
       }
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Greška pri preuzimanju izvještaja.')),
-        );
+        showErrorSnackBar(context, 'Greška pri preuzimanju izvještaja.');
       }
     } finally {
       state = state.copyWith(isExporting: false);
