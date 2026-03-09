@@ -21,8 +21,9 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Create uploads directory
-RUN mkdir -p /app/uploads/products /app/uploads/profiles /app/uploads/staff
+# Create uploads directory and copy seed images
+RUN mkdir -p /app/uploads/products /app/uploads/profiles /app/uploads/staff /app/uploads/seed
+COPY src/GroundZero.API/uploads/seed/ /app/seed-images/
 
 ENV ASPNETCORE_URLS=http://+:5147
 ENTRYPOINT ["dotnet", "GroundZero.API.dll"]

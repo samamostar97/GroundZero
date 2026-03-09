@@ -43,7 +43,7 @@ public class DashboardRepository : IDashboardRepository
                 UserId = o.UserId,
                 UserFullName = o.User.FirstName + " " + o.User.LastName,
                 TotalAmount = o.TotalAmount,
-                ItemCount = o.Items.Count,
+                ItemCount = o.Items.Sum(i => i.Quantity),
                 CreatedAt = o.CreatedAt
             })
             .ToListAsync(cancellationToken);

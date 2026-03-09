@@ -41,8 +41,19 @@ public class RabbitMqConnection : IAsyncDisposable
                     Password = _password
                 };
 
-                // Try to connect once — if it fails, caller handles the error
-                _connection = await factory.CreateConnectionAsync(ct);
+                // Retry up to 5 times with 2s delay (handles Docker startup order)
+                for (var attempt = 1; attempt <= 5; attempt++)
+                {
+                    try
+                    {
+                        _connection = await factory.CreateConnectionAsync(ct);
+                        break;
+                    }
+                    catch when (attempt < 5)
+                    {
+                        await Task.Delay(2000, ct);
+                    }
+                }
             }
 
             _channel = await _connection!.CreateChannelAsync(cancellationToken: ct);

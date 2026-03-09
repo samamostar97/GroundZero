@@ -225,7 +225,7 @@ class _OrderInfoCard extends StatelessWidget {
           const SizedBox(height: 8),
           _InfoRow(
             label: 'Stavke',
-            value: '${order.items.length}',
+            value: '${order.items.fold(0, (sum, i) => sum + i.quantity)}',
           ),
         ],
       ),

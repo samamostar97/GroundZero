@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
@@ -43,13 +45,31 @@ class DashboardNotifier extends Notifier<DashboardState> {
   late final GymVisitsRepository _gymVisitsRepo;
   late final OrdersRepository _ordersRepo;
 
+  Timer? _pollTimer;
+
   @override
   DashboardState build() {
     _dashboardRepo = ref.watch(dashboardRepositoryProvider);
     _gymVisitsRepo = ref.watch(gymVisitsRepositoryProvider);
     _ordersRepo = ref.watch(ordersRepositoryProvider);
     Future.microtask(() => loadData());
+
+    // Poll every 30 seconds for fresh data
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) => _refresh());
+
+    ref.onDispose(() => _pollTimer?.cancel());
+
     return const DashboardState(isLoading: true);
+  }
+
+  Future<void> _refresh() async {
+    try {
+      final data = await _dashboardRepo.getDashboard();
+      state = state.copyWith(data: data);
+    } catch (_) {
+      // Silent refresh — don't show error on background poll
+    }
   }
 
   Future<void> loadData() async {

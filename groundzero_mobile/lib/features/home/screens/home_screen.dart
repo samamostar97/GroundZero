@@ -109,7 +109,45 @@ class HomeScreen extends ConsumerWidget {
                   // Membership status card
                   membershipAsync.when(
                     loading: () => const SizedBox.shrink(),
-                    error: (_, _) => const SizedBox.shrink(),
+                    error: (_, _) {
+                      return GestureDetector(
+                        onTap: () => context.push(AppRoutes.membership),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: AppShadows.card,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.card_membership_rounded,
+                                color: AppColors.textHint,
+                                size: 22,
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Text(
+                                  'Nema aktivne članarine',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                color: AppColors.textHint,
+                                size: 22,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                     data: (membership) {
                       final isActive = membership != null &&
                           membership.status == 'Active';

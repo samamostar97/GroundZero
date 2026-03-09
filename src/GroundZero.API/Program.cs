@@ -49,6 +49,20 @@ app.UseHttpsRedirection();
 var storagePath = Environment.GetEnvironmentVariable("FILE_STORAGE_PATH") ?? "./uploads";
 var uploadsPath = Path.GetFullPath(storagePath);
 Directory.CreateDirectory(uploadsPath);
+
+// Copy seed images to uploads if missing (handles Docker volume mount)
+var seedSource = Path.Combine(AppContext.BaseDirectory, "seed-images");
+var seedDest = Path.Combine(uploadsPath, "seed");
+if (Directory.Exists(seedSource))
+{
+    Directory.CreateDirectory(seedDest);
+    foreach (var file in Directory.GetFiles(seedSource))
+    {
+        var dest = Path.Combine(seedDest, Path.GetFileName(file));
+        if (!File.Exists(dest))
+            File.Copy(file, dest);
+    }
+}
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),

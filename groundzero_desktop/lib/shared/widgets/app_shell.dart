@@ -1,21 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/appointments/providers/appointments_provider.dart';
 import '../../features/appointments/screens/appointments_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/categories/providers/categories_provider.dart';
 import '../../features/categories/screens/categories_screen.dart';
+import '../../features/dashboard/providers/dashboard_provider.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
+import '../../features/gym_visits/providers/gym_visits_provider.dart';
 import '../../features/gym_visits/screens/gym_visits_screen.dart';
+import '../../features/membership_plans/providers/membership_plans_provider.dart';
 import '../../features/membership_plans/screens/membership_plans_screen.dart';
+import '../../features/memberships/providers/memberships_provider.dart';
 import '../../features/memberships/screens/memberships_screen.dart';
+import '../../features/orders/providers/orders_provider.dart';
 import '../../features/orders/screens/orders_screen.dart';
+import '../../features/products/providers/products_provider.dart';
 import '../../features/products/screens/products_screen.dart';
 import '../../features/reports/screens/appointment_report_screen.dart';
 import '../../features/reports/screens/gamification_report_screen.dart';
 import '../../features/reports/screens/product_report_screen.dart';
 import '../../features/reports/screens/revenue_report_screen.dart';
 import '../../features/reports/screens/user_report_screen.dart';
+import '../../features/staff/providers/staff_provider.dart';
 import '../../features/staff/screens/staff_screen.dart';
+import '../../features/users/providers/users_provider.dart';
 import '../../features/users/screens/users_screen.dart';
 import 'app_sidebar.dart';
 import 'top_tab_bar.dart';
@@ -52,6 +62,7 @@ class AppShell extends ConsumerWidget {
             onItemSelected: (index) {
               ref.read(sidebarIndexProvider.notifier).state = index;
               ref.read(tabIndexProvider.notifier).state = 0;
+              _refreshForTab(ref, index, 0);
             },
             onLogout: () {
               ref.read(authNotifierProvider.notifier).logout();
@@ -69,6 +80,7 @@ class AppShell extends ConsumerWidget {
                     selectedIndex: tabIndex,
                     onTabSelected: (index) {
                       ref.read(tabIndexProvider.notifier).state = index;
+                      _refreshForTab(ref, sidebarIndex, index);
                     },
                   ),
 
@@ -104,6 +116,40 @@ class AppShell extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  void _refreshForTab(WidgetRef ref, int sidebarIndex, int tabIndex) {
+    switch (sidebarIndex) {
+      case 0:
+        ref.read(dashboardNotifierProvider.notifier).loadData();
+        break;
+      case 1:
+        switch (tabIndex) {
+          case 0:
+            ref.read(usersNotifierProvider.notifier).loadPage(1);
+          case 1:
+            ref.read(staffNotifierProvider.notifier).loadPage(1);
+          case 2:
+            ref.read(productsNotifierProvider.notifier).loadPage(1);
+          case 3:
+            ref.read(categoriesNotifierProvider.notifier).load();
+          case 4:
+            ref.read(membershipPlansNotifierProvider.notifier).load();
+        }
+        break;
+      case 2:
+        switch (tabIndex) {
+          case 0:
+            ref.read(ordersNotifierProvider.notifier).loadPage(1);
+          case 1:
+            ref.read(appointmentsNotifierProvider.notifier).loadPage(1);
+          case 2:
+            ref.read(gymVisitsNotifierProvider.notifier).loadPage(1);
+          case 3:
+            ref.read(membershipsNotifierProvider.notifier).loadPage(1);
+        }
+        break;
+    }
   }
 
   Widget _buildContent(int sidebarIndex, int tabIndex) {

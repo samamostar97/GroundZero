@@ -146,12 +146,16 @@ class _OrderListTile extends StatelessWidget {
             const SizedBox(height: 8),
 
             // Items summary
-            Text(
-              '${order.items.length} ${order.items.length == 1 ? 'stavka' : order.items.length < 5 ? 'stavke' : 'stavki'}',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
+            Builder(builder: (_) {
+              final totalQty = order.items.fold(0, (sum, i) => sum + i.quantity);
+              final label = totalQty == 1 ? 'stavka' : totalQty < 5 ? 'stavke' : 'stavki';
+              return Text(
+                '$totalQty $label',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              );
+            }),
             const SizedBox(height: 8),
 
             // Footer: total + date

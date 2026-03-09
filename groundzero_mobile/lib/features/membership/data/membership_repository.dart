@@ -21,7 +21,9 @@ class MembershipRepository {
   Future<UserMembershipModel?> getMyMembership() async {
     try {
       final response = await _dio.get(ApiConstants.myMembership);
-      if (response.data == null) return null;
+      if (response.data == null || response.data is! Map<String, dynamic>) {
+        return null;
+      }
       return UserMembershipModel.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
