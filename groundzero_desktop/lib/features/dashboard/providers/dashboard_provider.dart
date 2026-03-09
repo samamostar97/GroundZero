@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../gym_visits/data/gym_visits_repository.dart';
-import '../../orders/data/orders_repository.dart';
 import '../data/dashboard_repository.dart';
 import '../models/dashboard_model.dart';
 
@@ -43,15 +42,12 @@ final dashboardNotifierProvider =
 class DashboardNotifier extends Notifier<DashboardState> {
   late final DashboardRepository _dashboardRepo;
   late final GymVisitsRepository _gymVisitsRepo;
-  late final OrdersRepository _ordersRepo;
-
   Timer? _pollTimer;
 
   @override
   DashboardState build() {
     _dashboardRepo = ref.watch(dashboardRepositoryProvider);
     _gymVisitsRepo = ref.watch(gymVisitsRepositoryProvider);
-    _ordersRepo = ref.watch(ordersRepositoryProvider);
     Future.microtask(() => loadData());
 
     // Poll every 30 seconds for fresh data
@@ -119,35 +115,4 @@ class DashboardNotifier extends Notifier<DashboardState> {
     }
   }
 
-  Future<String?> confirmOrder(int orderId) async {
-    state = state.copyWith(isActionLoading: true, clearError: true);
-    try {
-      await _ordersRepo.updateStatus(orderId, 1); // Confirmed
-      state = state.copyWith(isActionLoading: false);
-      await loadData();
-      return null;
-    } on ApiException catch (e) {
-      state = state.copyWith(isActionLoading: false);
-      return e.firstError;
-    } catch (_) {
-      state = state.copyWith(isActionLoading: false);
-      return 'Greška pri potvrdi narudžbe.';
-    }
-  }
-
-  Future<String?> cancelOrder(int orderId) async {
-    state = state.copyWith(isActionLoading: true, clearError: true);
-    try {
-      await _ordersRepo.updateStatus(orderId, 4); // Cancelled
-      state = state.copyWith(isActionLoading: false);
-      await loadData();
-      return null;
-    } on ApiException catch (e) {
-      state = state.copyWith(isActionLoading: false);
-      return e.firstError;
-    } catch (_) {
-      state = state.copyWith(isActionLoading: false);
-      return 'Greška pri otkazivanju narudžbe.';
-    }
-  }
 }

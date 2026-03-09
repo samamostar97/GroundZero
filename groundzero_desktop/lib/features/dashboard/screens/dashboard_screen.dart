@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../shared/widgets/app_shell.dart';
 import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../users/data/users_repository.dart';
 import '../../users/models/user_model.dart';
@@ -623,89 +624,42 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            // Action buttons
-                            SizedBox(
-                              height: 28,
-                              child: ElevatedButton(
-                                onPressed: state.isActionLoading
-                                    ? null
-                                    : () async {
-                                        final error = await ref
-                                            .read(dashboardNotifierProvider
-                                                .notifier)
-                                            .confirmOrder(order.id);
-                                        if (!mounted) return;
-                                        if (error != null) {
-                                          showErrorSnackBar(context, error);
-                                        } else {
-                                          showSuccessSnackBar(context,
-                                              'Narudžba #${order.id} potvrđena.');
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.success
-                                      .withValues(alpha: 0.15),
-                                  foregroundColor: AppColors.success,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  minimumSize: Size.zero,
-                                  textStyle: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: const Text('Potvrdi'),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            SizedBox(
-                              height: 28,
-                              child: ElevatedButton(
-                                onPressed: state.isActionLoading
-                                    ? null
-                                    : () async {
-                                        final error = await ref
-                                            .read(dashboardNotifierProvider
-                                                .notifier)
-                                            .cancelOrder(order.id);
-                                        if (!mounted) return;
-                                        if (error != null) {
-                                          showErrorSnackBar(context, error);
-                                        } else {
-                                          showSuccessSnackBar(context,
-                                              'Narudžba #${order.id} otkazana.');
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      AppColors.error.withValues(alpha: 0.15),
-                                  foregroundColor: AppColors.error,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  minimumSize: Size.zero,
-                                  textStyle: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: const Text('Otkaži'),
-                              ),
-                            ),
                           ],
                         ),
                       );
                     },
                   ),
           ),
+
+          // "Pregledaj sve" button
+          if (orders.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: SizedBox(
+                width: double.infinity,
+                height: 36,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigate to Operations > Narudžbe tab
+                    ref.read(sidebarIndexProvider.notifier).state = 2;
+                    ref.read(tabIndexProvider.notifier).state = 0;
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accent.withValues(alpha: 0.1),
+                    foregroundColor: AppColors.accent,
+                    elevation: 0,
+                    textStyle: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Pregledaj sve'),
+                ),
+              ),
+            ),
         ],
       ),
     );
