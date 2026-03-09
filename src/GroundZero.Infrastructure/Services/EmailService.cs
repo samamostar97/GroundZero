@@ -116,6 +116,36 @@ public class EmailService : IEmailService
         await SendEmailAsync(message, ct);
     }
 
+    public async Task SendMembershipExpiredAsync(string toEmail, string userName, string planName, DateTime expiredAt, CancellationToken ct = default)
+    {
+        var message = CreateMessage(toEmail, "Članarina istekla - GroundZero", $@"
+            <div style='font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;'>
+                <h2 style='color: #333; text-align: center;'>GroundZero</h2>
+                <p>Poštovani <strong>{userName}</strong>,</p>
+                <p>Vaša članarina <strong>{planName}</strong> je istekla dana <strong>{expiredAt:dd.MM.yyyy}</strong>.</p>
+                <p>Da biste nastavili koristiti usluge teretane, obnovite svoju članarinu.</p>
+                <hr style='border:none;border-top:1px solid #eee;margin:20px 0;'/>
+                <p style='color:#999;font-size:12px;text-align:center;'>GroundZero Gym Management</p>
+            </div>");
+
+        await SendEmailAsync(message, ct);
+    }
+
+    public async Task SendMembershipCancelledAsync(string toEmail, string userName, string planName, DateTime cancelledAt, CancellationToken ct = default)
+    {
+        var message = CreateMessage(toEmail, "Članarina otkazana - GroundZero", $@"
+            <div style='font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;'>
+                <h2 style='color: #333; text-align: center;'>GroundZero</h2>
+                <p>Poštovani <strong>{userName}</strong>,</p>
+                <p>Vaša članarina <strong>{planName}</strong> je otkazana dana <strong>{cancelledAt:dd.MM.yyyy}</strong>.</p>
+                <p>Za više informacija, kontaktirajte administraciju teretane.</p>
+                <hr style='border:none;border-top:1px solid #eee;margin:20px 0;'/>
+                <p style='color:#999;font-size:12px;text-align:center;'>GroundZero Gym Management</p>
+            </div>");
+
+        await SendEmailAsync(message, ct);
+    }
+
     private MimeMessage CreateMessage(string toEmail, string subject, string htmlBody)
     {
         var message = new MimeMessage();

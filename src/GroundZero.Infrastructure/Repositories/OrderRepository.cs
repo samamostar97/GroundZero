@@ -52,7 +52,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
     public async Task<PagedResult<Order>> GetAllOrdersPagedAsync(
         string? search, OrderStatus? status, int? userId, string? sortBy, bool sortDescending,
-        int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+        int pageNumber, int pageSize, string? excludeStatuses = null, CancellationToken cancellationToken = default)
     {
         var query = _dbSet
             .Include(o => o.User)
@@ -74,6 +74,14 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
         if (userId.HasValue)
             query = query.Where(o => o.UserId == userId.Value);
+
+        if (!string.IsNullOrWhiteSpace(excludeStatuses))
+        {
+            var excluded = excludeStatuses.Split(',')
+                .Select(s => Enum.Parse<OrderStatus>(s.Trim()))
+                .ToList();
+            query = query.Where(o => !excluded.Contains(o.Status));
+        }
 
         var totalCount = await query.CountAsync(cancellationToken);
 

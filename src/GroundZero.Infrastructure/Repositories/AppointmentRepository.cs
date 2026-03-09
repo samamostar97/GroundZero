@@ -51,7 +51,7 @@ public class AppointmentRepository : Repository<Appointment>, IAppointmentReposi
     public async Task<PagedResult<Appointment>> GetAllAppointmentsPagedAsync(
         string? search, AppointmentStatus? status, int? staffId, int? userId,
         string? sortBy, bool sortDescending, int pageNumber, int pageSize,
-        CancellationToken cancellationToken = default)
+        string? excludeStatuses = null, CancellationToken cancellationToken = default)
     {
         var query = _dbSet
             .Include(a => a.User)
@@ -76,6 +76,14 @@ public class AppointmentRepository : Repository<Appointment>, IAppointmentReposi
 
         if (userId.HasValue)
             query = query.Where(a => a.UserId == userId.Value);
+
+        if (!string.IsNullOrWhiteSpace(excludeStatuses))
+        {
+            var excluded = excludeStatuses.Split(',')
+                .Select(s => Enum.Parse<AppointmentStatus>(s.Trim()))
+                .ToList();
+            query = query.Where(a => !excluded.Contains(a.Status));
+        }
 
         var totalCount = await query.CountAsync(cancellationToken);
 

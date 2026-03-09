@@ -63,8 +63,11 @@ services:
     env_file:
       - .env
     environment:
+      - DB_HOST=groundzero-db
       - RABBITMQ_HOST=groundzero-rabbitmq
     depends_on:
+      groundzero-db:
+        condition: service_healthy
       groundzero-rabbitmq:
         condition: service_healthy
 

@@ -9,4 +9,6 @@ public interface IEmailService
     Task SendOrderStatusChangedAsync(string toEmail, int orderId, string newStatus, CancellationToken ct = default);
     Task SendAppointmentStatusAsync(string toEmail, string staffName, DateTime scheduledAt, string newStatus, CancellationToken ct = default);
     Task SendLevelUpAsync(string toEmail, string userName, int newLevel, CancellationToken ct = default);
+    Task SendMembershipExpiredAsync(string toEmail, string userName, string planName, DateTime expiredAt, CancellationToken ct = default);
+    Task SendMembershipCancelledAsync(string toEmail, string userName, string planName, DateTime cancelledAt, CancellationToken ct = default);
 }

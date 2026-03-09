@@ -51,7 +51,8 @@ public class AppointmentsController : ControllerBase
         [FromQuery] int? staffId = null,
         [FromQuery] int? userId = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = true)
+        [FromQuery] bool sortDescending = true,
+        [FromQuery] string? excludeStatuses = null)
     {
         var result = await _mediator.Send(new GetAllAppointmentsQuery
         {
@@ -62,7 +63,8 @@ public class AppointmentsController : ControllerBase
             StaffId = staffId,
             UserId = userId,
             SortBy = sortBy,
-            SortDescending = sortDescending
+            SortDescending = sortDescending,
+            ExcludeStatuses = excludeStatuses
         });
         return Ok(result);
     }

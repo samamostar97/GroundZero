@@ -50,7 +50,8 @@ public class OrdersController : ControllerBase
         [FromQuery] OrderStatus? status = null,
         [FromQuery] int? userId = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = true)
+        [FromQuery] bool sortDescending = true,
+        [FromQuery] string? excludeStatuses = null)
     {
         var result = await _mediator.Send(new GetAllOrdersQuery
         {
@@ -60,7 +61,8 @@ public class OrdersController : ControllerBase
             Status = status,
             UserId = userId,
             SortBy = sortBy,
-            SortDescending = sortDescending
+            SortDescending = sortDescending,
+            ExcludeStatuses = excludeStatuses
         });
         return Ok(result);
     }

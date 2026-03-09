@@ -15,4 +15,5 @@ public class GetAllOrdersQuery : IRequest<PagedResult<OrderResponse>>
     public int? UserId { get; set; }
     public string? SortBy { get; set; }
     public bool SortDescending { get; set; } = true;
+    public string? ExcludeStatuses { get; set; }
 }

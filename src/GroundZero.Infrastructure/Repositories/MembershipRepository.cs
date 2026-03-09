@@ -21,9 +21,6 @@ public class MembershipRepository : Repository<UserMembership>, IMembershipRepos
 
     public async Task<UserMembership?> GetCurrentMembershipForUserAsync(int userId, CancellationToken cancellationToken = default)
     {
-        // Auto-expire overdue memberships for this user
-        await ExpireOverdueMembershipsAsync(cancellationToken);
-
         // Try to find an active membership first
         var active = await _dbSet
             .Include(m => m.User)
@@ -69,30 +66,11 @@ public class MembershipRepository : Repository<UserMembership>, IMembershipRepos
         };
     }
 
-    public async Task ExpireOverdueMembershipsAsync(CancellationToken cancellationToken = default)
-    {
-        var now = DateTime.UtcNow;
-        var overdue = await _dbSet
-            .Where(m => m.Status == MembershipStatus.Active && m.EndDate < now)
-            .ToListAsync(cancellationToken);
-
-        if (overdue.Count > 0)
-        {
-            foreach (var m in overdue)
-                m.Status = MembershipStatus.Expired;
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-    }
-
     public async Task<PagedResult<UserMembership>> GetAllMembershipsPagedAsync(
         string? search, MembershipStatus? status, MembershipStatus? excludeStatus, int? userId,
         string? sortBy, bool sortDescending, int pageNumber, int pageSize,
         CancellationToken cancellationToken = default)
     {
-        // Auto-expire overdue memberships before querying
-        await ExpireOverdueMembershipsAsync(cancellationToken);
-
         var query = _dbSet
             .Include(m => m.User)
             .Include(m => m.MembershipPlan)
