@@ -140,9 +140,9 @@ class AppShell extends ConsumerWidget {
       case 2:
         switch (tabIndex) {
           case 0:
-            ref.read(ordersNotifierProvider.notifier).loadPage(1);
+            ref.read(ordersNotifierProvider.notifier).switchView(excludeStatuses: const {3, 4});
           case 1:
-            ref.read(appointmentsNotifierProvider.notifier).loadPage(1);
+            ref.read(appointmentsNotifierProvider.notifier).switchView(excludeStatuses: const {2, 3});
           case 2:
             ref.read(checkinNotifierProvider.notifier).loadActive();
           case 3:

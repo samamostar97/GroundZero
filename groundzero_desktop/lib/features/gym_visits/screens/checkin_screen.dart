@@ -25,11 +25,10 @@ class _CheckinScreenState extends ConsumerState<CheckinScreen> {
 
   void _onViewChanged(int index) {
     setState(() => _viewIndex = index);
-    // Clear search on both providers when switching views
     ref.read(checkinNotifierProvider.notifier).setSearch('');
-    ref.read(gymVisitsNotifierProvider.notifier).setSearch('');
     if (index == 1) {
-      ref.read(gymVisitsNotifierProvider.notifier).loadPage(1);
+      // Reset search and load history (single loadPage call)
+      ref.read(gymVisitsNotifierProvider.notifier).setSearch('');
     }
   }
 

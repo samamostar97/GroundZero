@@ -45,20 +45,9 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   void _onViewChanged(int index) {
     setState(() => _viewIndex = index);
     final notifier = ref.read(ordersNotifierProvider.notifier);
-    notifier.setSearch('');
-    if (index == 0) {
-      notifier.setExcludeStatuses(_historyStatuses);
-    } else {
-      notifier.setExcludeStatuses(_activeStatuses);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      ref.read(ordersNotifierProvider.notifier).setExcludeStatuses(_historyStatuses);
-    });
+    notifier.switchView(
+      excludeStatuses: index == 0 ? _historyStatuses : _activeStatuses,
+    );
   }
 
   @override

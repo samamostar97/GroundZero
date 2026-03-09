@@ -31,9 +31,9 @@ class _ActiveMembershipsScreenState
   void _onViewChanged(int index) {
     setState(() => _viewIndex = index);
     ref.read(activeMembershipsNotifierProvider.notifier).setSearch('');
-    ref.read(membershipsNotifierProvider.notifier).setSearch('');
     if (index == 1) {
-      ref.read(membershipsNotifierProvider.notifier).loadPage(1);
+      // Reset search and load history (single loadPage call via setSearch)
+      ref.read(membershipsNotifierProvider.notifier).setSearch('');
     }
   }
 

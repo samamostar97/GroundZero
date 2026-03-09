@@ -52,20 +52,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   void _onViewChanged(int index) {
     setState(() => _viewIndex = index);
     final notifier = ref.read(appointmentsNotifierProvider.notifier);
-    notifier.setSearch('');
-    if (index == 0) {
-      notifier.setExcludeStatuses(_activeExclude);
-    } else {
-      notifier.setExcludeStatuses(_historyExclude);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      ref.read(appointmentsNotifierProvider.notifier).setExcludeStatuses(_activeExclude);
-    });
+    notifier.switchView(
+      excludeStatuses: index == 0 ? _activeExclude : _historyExclude,
+    );
   }
 
   @override

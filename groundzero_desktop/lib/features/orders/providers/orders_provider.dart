@@ -74,8 +74,7 @@ class OrdersNotifier extends Notifier<OrdersState> {
   @override
   OrdersState build() {
     _repository = ref.watch(ordersRepositoryProvider);
-    Future.microtask(() => loadPage(1));
-    return const OrdersState(isLoading: true);
+    return const OrdersState(isLoading: true, excludeStatuses: '3,4');
   }
 
   Future<void> loadPage(int page) async {
@@ -136,6 +135,17 @@ class OrdersNotifier extends Notifier<OrdersState> {
     state = state.copyWith(
       excludeStatuses: excludeStr,
       clearStatusFilter: true,
+    );
+    loadPage(1);
+  }
+
+  void switchView({required Set<int> excludeStatuses}) {
+    final excludeStr = excludeStatuses.isEmpty ? null : excludeStatuses.join(',');
+    state = state.copyWith(
+      search: '',
+      excludeStatuses: excludeStr,
+      clearStatusFilter: true,
+      clearSortBy: true,
     );
     loadPage(1);
   }

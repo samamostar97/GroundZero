@@ -81,8 +81,7 @@ class AppointmentsNotifier extends Notifier<AppointmentsState> {
   @override
   AppointmentsState build() {
     _repository = ref.watch(appointmentsRepositoryProvider);
-    Future.microtask(() => loadPage(1));
-    return const AppointmentsState(isLoading: true);
+    return const AppointmentsState(isLoading: true, excludeStatuses: '2,3');
   }
 
   Future<void> loadPage(int page) async {
@@ -144,6 +143,18 @@ class AppointmentsNotifier extends Notifier<AppointmentsState> {
     state = state.copyWith(
       excludeStatuses: excludeStr,
       clearStatusFilter: true,
+    );
+    loadPage(1);
+  }
+
+  void switchView({required Set<int> excludeStatuses}) {
+    final excludeStr = excludeStatuses.isEmpty ? null : excludeStatuses.join(',');
+    state = state.copyWith(
+      search: '',
+      excludeStatuses: excludeStr,
+      clearStatusFilter: true,
+      clearStaffFilter: true,
+      clearSortBy: true,
     );
     loadPage(1);
   }
