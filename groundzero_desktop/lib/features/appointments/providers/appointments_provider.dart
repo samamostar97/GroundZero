@@ -13,6 +13,7 @@ class AppointmentsState {
   final int totalCount;
   final String search;
   final int? statusFilter;
+  final String? excludeStatuses;
   final int? staffFilter;
   final String? sortBy;
   final bool sortDescending;
@@ -26,6 +27,7 @@ class AppointmentsState {
     this.totalCount = 0,
     this.search = '',
     this.statusFilter,
+    this.excludeStatuses,
     this.staffFilter,
     this.sortBy,
     this.sortDescending = true,
@@ -41,6 +43,7 @@ class AppointmentsState {
     String? search,
     int? statusFilter,
     bool clearStatusFilter = false,
+    String? excludeStatuses,
     int? staffFilter,
     bool clearStaffFilter = false,
     String? sortBy,
@@ -57,6 +60,7 @@ class AppointmentsState {
       search: search ?? this.search,
       statusFilter:
           clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
+      excludeStatuses: excludeStatuses ?? this.excludeStatuses,
       staffFilter:
           clearStaffFilter ? null : (staffFilter ?? this.staffFilter),
       sortBy: clearSortBy ? null : (sortBy ?? this.sortBy),
@@ -93,6 +97,7 @@ class AppointmentsNotifier extends Notifier<AppointmentsState> {
         staffId: state.staffFilter,
         sortBy: state.sortBy,
         sortDescending: state.sortBy != null ? state.sortDescending : null,
+        excludeStatuses: state.excludeStatuses,
       );
 
       state = state.copyWith(
@@ -130,6 +135,15 @@ class AppointmentsNotifier extends Notifier<AppointmentsState> {
     state = state.copyWith(
       statusFilter: status,
       clearStatusFilter: status == null,
+    );
+    loadPage(1);
+  }
+
+  void setExcludeStatuses(Set<int> statuses) {
+    final excludeStr = statuses.isEmpty ? null : statuses.join(',');
+    state = state.copyWith(
+      excludeStatuses: excludeStr,
+      clearStatusFilter: true,
     );
     loadPage(1);
   }

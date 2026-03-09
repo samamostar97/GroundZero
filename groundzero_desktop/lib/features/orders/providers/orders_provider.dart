@@ -13,6 +13,7 @@ class OrdersState {
   final int totalCount;
   final String search;
   final int? statusFilter;
+  final String? excludeStatuses;
   final String? sortBy;
   final bool sortDescending;
 
@@ -25,6 +26,7 @@ class OrdersState {
     this.totalCount = 0,
     this.search = '',
     this.statusFilter,
+    this.excludeStatuses,
     this.sortBy,
     this.sortDescending = true,
   });
@@ -39,6 +41,7 @@ class OrdersState {
     String? search,
     int? statusFilter,
     bool clearStatusFilter = false,
+    String? excludeStatuses,
     String? sortBy,
     bool clearSortBy = false,
     bool? sortDescending,
@@ -53,6 +56,7 @@ class OrdersState {
       search: search ?? this.search,
       statusFilter:
           clearStatusFilter ? null : (statusFilter ?? this.statusFilter),
+      excludeStatuses: excludeStatuses ?? this.excludeStatuses,
       sortBy: clearSortBy ? null : (sortBy ?? this.sortBy),
       sortDescending: sortDescending ?? this.sortDescending,
     );
@@ -85,6 +89,7 @@ class OrdersNotifier extends Notifier<OrdersState> {
         status: state.statusFilter,
         sortBy: state.sortBy,
         sortDescending: state.sortBy != null ? state.sortDescending : null,
+        excludeStatuses: state.excludeStatuses,
       );
 
       state = state.copyWith(
@@ -122,6 +127,15 @@ class OrdersNotifier extends Notifier<OrdersState> {
     state = state.copyWith(
       statusFilter: status,
       clearStatusFilter: status == null,
+    );
+    loadPage(1);
+  }
+
+  void setExcludeStatuses(Set<int> statuses) {
+    final excludeStr = statuses.isEmpty ? null : statuses.join(',');
+    state = state.copyWith(
+      excludeStatuses: excludeStr,
+      clearStatusFilter: true,
     );
     loadPage(1);
   }

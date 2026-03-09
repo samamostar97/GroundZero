@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/pagination_controls.dart';
+import '../../../shared/widgets/pill_toggle.dart';
 import '../../../shared/widgets/search_input.dart';
 import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../staff/providers/staff_provider.dart';
@@ -33,13 +34,53 @@ const _statusIntToString = {
   3: 'Cancelled',
 };
 
-class AppointmentsScreen extends ConsumerWidget {
+// Active = Pending, Confirmed
+const _activeExclude = {2, 3}; // exclude Completed, Cancelled
+// History = Completed, Cancelled
+const _historyExclude = {0, 1}; // exclude Pending, Confirmed
+
+class AppointmentsScreen extends ConsumerStatefulWidget {
   const AppointmentsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppointmentsScreen> createState() => _AppointmentsScreenState();
+}
+
+class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
+  int _viewIndex = 0; // 0 = Aktivni, 1 = Historija
+
+  void _onViewChanged(int index) {
+    setState(() => _viewIndex = index);
+    final notifier = ref.read(appointmentsNotifierProvider.notifier);
+    notifier.setSearch('');
+    if (index == 0) {
+      notifier.setExcludeStatuses(_activeExclude);
+    } else {
+      notifier.setExcludeStatuses(_historyExclude);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(appointmentsNotifierProvider.notifier).setExcludeStatuses(_activeExclude);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(appointmentsNotifierProvider);
     final staffState = ref.watch(staffNotifierProvider);
+    final isHistory = _viewIndex == 1;
+
+    // Filter dropdown items based on view
+    final statusFilterItems = <int?, String>{null: 'Svi statusi'};
+    if (!isHistory) {
+      statusFilterItems.addAll({0: 'Na čekanju', 1: 'Potvrđeno'});
+    } else {
+      statusFilterItems.addAll({2: 'Završeno', 3: 'Otkazano'});
+    }
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -63,7 +104,9 @@ class AppointmentsScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Pregled i upravljanje terminima',
+                    isHistory
+                        ? 'Pregled završenih i otkazanih termina'
+                        : 'Pregled i upravljanje terminima',
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       color: AppColors.textSecondary,
@@ -71,114 +114,115 @@ class AppointmentsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  // Staff filter
-                  Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.inputFill,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.border, width: 0.5),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int?>(
-                        value: state.staffFilter,
-                        dropdownColor: AppColors.surfaceHigh,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: AppColors.textPrimary,
-                        ),
-                        icon: const Icon(Icons.keyboard_arrow_down,
-                            color: AppColors.textHint, size: 20),
-                        hint: Text(
-                          'Svo osoblje',
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                        items: [
-                          DropdownMenuItem<int?>(
-                            value: null,
-                            child: Text('Svo osoblje'),
-                          ),
-                          ...staffState.staff.map(
-                            (s) => DropdownMenuItem<int?>(
-                              value: s.id,
-                              child: Text(
-                                  '${s.firstName} ${s.lastName}'),
-                            ),
-                          ),
-                        ],
-                        onChanged: (v) {
-                          ref
-                              .read(appointmentsNotifierProvider.notifier)
-                              .setStaffFilter(v);
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Status filter
-                  Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.inputFill,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.border, width: 0.5),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int?>(
-                        value: state.statusFilter,
-                        dropdownColor: AppColors.surfaceHigh,
-                        style: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: AppColors.textPrimary,
-                        ),
-                        icon: const Icon(Icons.keyboard_arrow_down,
-                            color: AppColors.textHint, size: 20),
-                        items: [
-                          DropdownMenuItem<int?>(
-                            value: null,
-                            child: Text('Svi statusi'),
-                          ),
-                          ..._statusIntToString.entries.map(
-                            (e) => DropdownMenuItem<int?>(
-                              value: e.key,
-                              child: Text(
-                                  _statusLabels[e.value] ?? e.value),
-                            ),
-                          ),
-                        ],
-                        onChanged: (v) {
-                          ref
-                              .read(appointmentsNotifierProvider.notifier)
-                              .setStatusFilter(v);
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SearchInput(
-                    hint: 'Pretraži termine...',
-                    onChanged: (value) {
-                      ref
-                          .read(appointmentsNotifierProvider.notifier)
-                          .setSearch(value);
-                    },
-                  ),
-                ],
+              PillToggle(
+                labels: const ['Aktivni', 'Historija'],
+                selectedIndex: _viewIndex,
+                onChanged: _onViewChanged,
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+
+          // Filters
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Staff filter
+              Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.inputFill,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.border, width: 0.5),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int?>(
+                    value: state.staffFilter,
+                    dropdownColor: AppColors.surfaceHigh,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.textPrimary,
+                    ),
+                    icon: const Icon(Icons.keyboard_arrow_down,
+                        color: AppColors.textHint, size: 20),
+                    hint: Text(
+                      'Svo osoblje',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    items: [
+                      DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text('Svo osoblje'),
+                      ),
+                      ...staffState.staff.map(
+                        (s) => DropdownMenuItem<int?>(
+                          value: s.id,
+                          child: Text('${s.firstName} ${s.lastName}'),
+                        ),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      ref
+                          .read(appointmentsNotifierProvider.notifier)
+                          .setStaffFilter(v);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Status filter
+              Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.inputFill,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.border, width: 0.5),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<int?>(
+                    value: state.statusFilter,
+                    dropdownColor: AppColors.surfaceHigh,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.textPrimary,
+                    ),
+                    icon: const Icon(Icons.keyboard_arrow_down,
+                        color: AppColors.textHint, size: 20),
+                    items: statusFilterItems.entries.map(
+                      (e) => DropdownMenuItem<int?>(
+                        value: e.key,
+                        child: Text(e.value),
+                      ),
+                    ).toList(),
+                    onChanged: (v) {
+                      ref
+                          .read(appointmentsNotifierProvider.notifier)
+                          .setStatusFilter(v);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              SearchInput(
+                hint: 'Pretraži termine...',
+                onChanged: (value) {
+                  ref
+                      .read(appointmentsNotifierProvider.notifier)
+                      .setSearch(value);
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
 
           // Table
           Expanded(
-            child: _buildContent(context, ref, state),
+            child: _buildContent(context, ref, state, isHistory),
           ),
 
           // Pagination
@@ -218,7 +262,7 @@ class AppointmentsScreen extends ConsumerWidget {
   }
 
   Widget _buildContent(
-      BuildContext context, WidgetRef ref, AppointmentsState state) {
+      BuildContext context, WidgetRef ref, AppointmentsState state, bool isHistory) {
     if (state.isLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.accent),
@@ -289,7 +333,7 @@ class AppointmentsScreen extends ConsumerWidget {
                 DataColumn(label: const Text('Termin'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('scheduledAt')),
                 DataColumn(label: const Text('Trajanje'), onSort: (_, __) => ref.read(appointmentsNotifierProvider.notifier).setSort('durationMinutes')),
                 const DataColumn(label: Text('Status')),
-                const DataColumn(label: Text('Akcije')),
+                if (!isHistory) const DataColumn(label: Text('Akcije')),
               ],
               rows: state.appointments.map((appt) {
                 final statusLabel =
@@ -311,13 +355,14 @@ class AppointmentsScreen extends ConsumerWidget {
                       label: statusLabel,
                       color: statusColor,
                     )),
-                    DataCell(
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (appt.status != 'Cancelled' &&
-                              appt.status != 'Completed')
-                            PopupMenuButton<int>(
+                    if (!isHistory)
+                      DataCell(
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (appt.status != 'Cancelled' &&
+                                appt.status != 'Completed')
+                              PopupMenuButton<int>(
                               tooltip: 'Promijeni status',
                               icon: Icon(
                                 Icons.edit_outlined,

@@ -6,12 +6,15 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
+import '../../../shared/widgets/pagination_controls.dart';
+import '../../../shared/widgets/pill_toggle.dart';
 import '../../../shared/widgets/search_input.dart';
 import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../membership_plans/providers/membership_plans_provider.dart';
 import '../../users/data/users_repository.dart';
 import '../../users/models/user_model.dart';
 import '../providers/active_memberships_provider.dart';
+import '../providers/memberships_provider.dart';
 
 class ActiveMembershipsScreen extends ConsumerStatefulWidget {
   const ActiveMembershipsScreen({super.key});
@@ -23,8 +26,26 @@ class ActiveMembershipsScreen extends ConsumerStatefulWidget {
 
 class _ActiveMembershipsScreenState
     extends ConsumerState<ActiveMembershipsScreen> {
+  int _viewIndex = 0; // 0 = Aktivne, 1 = Historija
+
+  void _onViewChanged(int index) {
+    setState(() => _viewIndex = index);
+    ref.read(activeMembershipsNotifierProvider.notifier).setSearch('');
+    ref.read(membershipsNotifierProvider.notifier).setSearch('');
+    if (index == 1) {
+      ref.read(membershipsNotifierProvider.notifier).loadPage(1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_viewIndex == 1) {
+      return _buildHistoryView(context);
+    }
+    return _buildActiveView(context);
+  }
+
+  Widget _buildActiveView(BuildContext context) {
     final state = ref.watch(activeMembershipsNotifierProvider);
     final memberships = state.filteredMemberships;
 
@@ -34,23 +55,38 @@ class _ActiveMembershipsScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          Text(
-            'Aktivne članarine',
-            style: GoogleFonts.barlowCondensed(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Članarine',
+                    style: GoogleFonts.barlowCondensed(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Korisnici sa trenutno aktivnom članarinom',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              PillToggle(
+                labels: const ['Aktivne', 'Historija'],
+                selectedIndex: _viewIndex,
+                onChanged: _onViewChanged,
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Korisnici sa trenutno aktivnom članarinom',
-            style: GoogleFonts.inter(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // Search + Assign button
           Row(
@@ -85,18 +121,245 @@ class _ActiveMembershipsScreenState
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Active memberships table
           Expanded(
-            child: _buildContent(context, ref, state, memberships),
+            child: _buildActiveContent(context, ref, state, memberships),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, WidgetRef ref,
+  Widget _buildHistoryView(BuildContext context) {
+    final state = ref.watch(membershipsNotifierProvider);
+
+    const statusLabels = {
+      'Expired': 'Istekla',
+      'Cancelled': 'Otkazana',
+    };
+    const statusColors = {
+      'Expired': AppColors.warning,
+      'Cancelled': AppColors.error,
+    };
+
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Članarine',
+                    style: GoogleFonts.barlowCondensed(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Pregled isteklih i otkazanih članarina',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              PillToggle(
+                labels: const ['Aktivne', 'Historija'],
+                selectedIndex: _viewIndex,
+                onChanged: _onViewChanged,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Filters
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.inputFill,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.border, width: 0.5),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String?>(
+                    value: state.statusFilter,
+                    dropdownColor: AppColors.surfaceHigh,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: AppColors.textPrimary,
+                    ),
+                    icon: const Icon(Icons.keyboard_arrow_down,
+                        color: AppColors.textHint, size: 20),
+                    items: [
+                      const DropdownMenuItem<String?>(
+                        value: null,
+                        child: Text('Svi statusi'),
+                      ),
+                      ...statusLabels.entries.map(
+                        (e) => DropdownMenuItem<String?>(
+                          value: e.key,
+                          child: Text(e.value),
+                        ),
+                      ),
+                    ],
+                    onChanged: (v) {
+                      ref
+                          .read(membershipsNotifierProvider.notifier)
+                          .setStatusFilter(v);
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              SearchInput(
+                hint: 'Pretraži historiju članarina...',
+                onChanged: (value) {
+                  ref
+                      .read(membershipsNotifierProvider.notifier)
+                      .setSearch(value);
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // History table
+          Expanded(
+            child: _buildHistoryContent(context, ref, state, statusLabels, statusColors),
+          ),
+
+          // Pagination
+          if (!state.isLoading && state.error == null)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: PaginationControls(
+                currentPage: state.currentPage,
+                totalPages: state.totalPages,
+                totalCount: state.totalCount,
+                onPrevious: () {
+                  ref
+                      .read(membershipsNotifierProvider.notifier)
+                      .loadPage(state.currentPage - 1);
+                },
+                onNext: () {
+                  ref
+                      .read(membershipsNotifierProvider.notifier)
+                      .loadPage(state.currentPage + 1);
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHistoryContent(BuildContext context, WidgetRef ref,
+      MembershipsState state, Map<String, String> statusLabels,
+      Map<String, Color> statusColors) {
+    if (state.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.accent),
+      );
+    }
+
+    if (state.error != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline_rounded,
+                size: 40, color: AppColors.error),
+            const SizedBox(height: 12),
+            Text(state.error!,
+                style: GoogleFonts.inter(
+                    fontSize: 14, color: AppColors.textSecondary)),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () =>
+                  ref.read(membershipsNotifierProvider.notifier).refresh(),
+              child: const Text('Pokušaj ponovo'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (state.memberships.isEmpty) {
+      return Center(
+        child: Text(
+          'Nema članarina u historiji.',
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            color: AppColors.textHint,
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border, width: 0.5),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SingleChildScrollView(
+          child: SizedBox(
+            width: double.infinity,
+            child: DataTable(
+              headingRowHeight: 48,
+              dataRowMinHeight: 52,
+              dataRowMaxHeight: 52,
+              columnSpacing: 24,
+              horizontalMargin: 20,
+              columns: [
+                DataColumn(label: const Text('ID'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('id')),
+                DataColumn(label: const Text('Korisnik'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('userFullName')),
+                DataColumn(label: const Text('Plan'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('planName')),
+                DataColumn(label: const Text('Cijena'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('planPrice')),
+                DataColumn(label: const Text('Početak'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('startDate')),
+                DataColumn(label: const Text('Kraj'), onSort: (_, __) => ref.read(membershipsNotifierProvider.notifier).setSort('endDate')),
+                const DataColumn(label: Text('Status')),
+              ],
+              rows: state.memberships.map((m) {
+                final label = statusLabels[m.status] ?? m.status;
+                final color = statusColors[m.status] ?? AppColors.textHint;
+                return DataRow(
+                  cells: [
+                    DataCell(Text('#${m.id}')),
+                    DataCell(Text(m.userFullName)),
+                    DataCell(Text(m.planName)),
+                    DataCell(Text('${m.planPrice.toStringAsFixed(2)} KM')),
+                    DataCell(Text(DateFormat('dd.MM.yyyy.').format(m.startDate))),
+                    DataCell(Text(DateFormat('dd.MM.yyyy.').format(m.endDate))),
+                    DataCell(_StatusBadge(label: label, color: color)),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActiveContent(BuildContext context, WidgetRef ref,
       ActiveMembershipsState state, List memberships) {
     if (state.isLoading) {
       return const Center(
