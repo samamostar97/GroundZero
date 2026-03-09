@@ -18,6 +18,7 @@ import '../../auth/providers/user_provider.dart';
 import '../../membership/providers/membership_provider.dart';
 import '../../profile/providers/gamification_provider.dart';
 import '../../shop/providers/recommendations_provider.dart';
+import '../../workouts/providers/workout_plans_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -29,6 +30,7 @@ class HomeScreen extends ConsumerWidget {
     final membershipAsync = ref.watch(currentMembershipProvider);
     final recommendationsAsync = ref.watch(recommendationsProvider);
     final staffAsync = ref.watch(featuredStaffProvider);
+    final workoutPlansAsync = ref.watch(homeWorkoutPlansProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -51,6 +53,7 @@ class HomeScreen extends ConsumerWidget {
                 ref.invalidate(currentMembershipProvider);
                 ref.invalidate(recommendationsProvider);
                 ref.invalidate(featuredStaffProvider);
+                ref.invalidate(homeWorkoutPlansProvider);
                 ref.read(userNotifierProvider.notifier).refresh();
               },
               child: ListView(
@@ -327,6 +330,187 @@ class HomeScreen extends ConsumerWidget {
                       );
                     },
                   ),
+
+                  const SizedBox(height: 28),
+
+                  // Workout plans section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Vaši treninzi',
+                        style: AppTextStyles.heading3,
+                      ),
+                      GestureDetector(
+                        onTap: () => _navigateToWorkoutsTab(context),
+                        child: Text(
+                          'Vidi sve',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  workoutPlansAsync.when(
+                    loading: () => SizedBox(
+                      height: 120,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (_, _) => Container(
+                          width: 200,
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    error: (_, _) => Text(
+                      'Nije moguće učitati planove.',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.textHint,
+                      ),
+                    ),
+                    data: (plans) {
+                      if (plans.isEmpty) {
+                        return GestureDetector(
+                          onTap: () => _navigateToWorkoutsTab(context),
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 24,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: AppShadows.card,
+                              border: Border.all(
+                                color: AppColors.accent.withValues(alpha: 0.15),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.fitness_center_rounded,
+                                  color: AppColors.accent,
+                                  size: 32,
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Kreirajte svoj prvi plan treninga',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Organizirajte vježbe po danima i pratite napredak',
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      return SizedBox(
+                        height: 120,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: plans.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(width: 12),
+                          itemBuilder: (context, index) {
+                            final plan = plans[index];
+                            final dayCount = plan.days.length;
+                            final exerciseCount = plan.days
+                                .fold(0, (sum, d) => sum + d.exercises.length);
+
+                            return GestureDetector(
+                              onTap: () => context.push(
+                                '/workouts/${plan.id}',
+                              ),
+                              child: Container(
+                                width: 200,
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: AppShadows.card,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.fitness_center_rounded,
+                                          color: AppColors.accent,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            plan.name,
+                                            style: AppTextStyles.bodyMedium
+                                                .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    if (plan.description != null &&
+                                        plan.description!.isNotEmpty)
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 8),
+                                        child: Text(
+                                          plan.description!,
+                                          style: AppTextStyles.bodySmall
+                                              .copyWith(
+                                            color: AppColors.textSecondary,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    Row(
+                                      children: [
+                                        _PlanStat(
+                                          icon: Icons.calendar_today_rounded,
+                                          label: '$dayCount dana',
+                                        ),
+                                        const SizedBox(width: 14),
+                                        _PlanStat(
+                                          icon: Icons.list_rounded,
+                                          label: '$exerciseCount vježbi',
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             );
@@ -337,4 +521,37 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+void _navigateToWorkoutsTab(BuildContext context) {
+  // Navigate to Workouts tab (index 2) in the bottom navigation
+  final shell = StatefulNavigationShell.maybeOf(context);
+  if (shell != null) {
+    shell.goBranch(2);
+  }
+}
+
 String _formatDate(DateTime date) => DateFormat('dd.MM.yyyy.').format(date);
+
+class _PlanStat extends StatelessWidget {
+  final IconData icon;
+  final String label;
+
+  const _PlanStat({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: AppColors.textHint),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: AppTextStyles.bodySmall.copyWith(
+            color: AppColors.textHint,
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+}

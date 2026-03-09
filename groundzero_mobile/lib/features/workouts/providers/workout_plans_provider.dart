@@ -4,6 +4,15 @@ import '../../../core/network/api_exception.dart';
 import '../data/workout_repository.dart';
 import '../models/workout_plan_model.dart';
 
+// --- Home screen: latest workout plans (top 5) ---
+
+final homeWorkoutPlansProvider =
+    FutureProvider<List<WorkoutPlanModel>>((ref) async {
+  final repo = ref.watch(workoutRepositoryProvider);
+  final result = await repo.getMyPlans(pageNumber: 1, pageSize: 5);
+  return result.items;
+});
+
 // --- Workout Plans (paginated + search) ---
 
 class WorkoutPlansState {
