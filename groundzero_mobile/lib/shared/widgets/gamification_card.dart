@@ -33,7 +33,9 @@ class GamificationCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: AppShadows.accentGlow,
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
