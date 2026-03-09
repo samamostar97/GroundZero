@@ -24,6 +24,9 @@ public class MembershipResolverJob : BackgroundService
     {
         _logger.LogInformation("MembershipResolverJob starting — runs every {Interval} minutes.", Interval.TotalMinutes);
 
+        // Wait for database to be ready (API runs migrations on startup)
+        await WaitForDatabaseAsync(stoppingToken);
+
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -37,6 +40,31 @@ public class MembershipResolverJob : BackgroundService
 
             await Task.Delay(Interval, stoppingToken);
         }
+    }
+
+    private async Task WaitForDatabaseAsync(CancellationToken ct)
+    {
+        const int maxRetries = 30;
+        const int delaySeconds = 5;
+
+        for (var i = 1; i <= maxRetries; i++)
+        {
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                await context.Database.CanConnectAsync(ct);
+                _logger.LogInformation("MembershipResolverJob — database is ready.");
+                return;
+            }
+            catch
+            {
+                _logger.LogWarning("MembershipResolverJob — database not ready, retry {Attempt}/{Max}...", i, maxRetries);
+                await Task.Delay(TimeSpan.FromSeconds(delaySeconds), ct);
+            }
+        }
+
+        _logger.LogError("MembershipResolverJob — database not available after {Max} retries.", maxRetries);
     }
 
     private async Task ExpireOverdueMembershipsAsync(CancellationToken ct)

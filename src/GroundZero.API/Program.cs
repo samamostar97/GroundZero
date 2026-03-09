@@ -23,6 +23,7 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices();
 builder.Services.AddJwtAuthentication();
 builder.Services.AddSwaggerServices();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -72,5 +73,6 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
