@@ -3,18 +3,20 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_exception.dart';
-import '../../gym_visits/data/gym_visits_repository.dart';
 import '../data/dashboard_repository.dart';
+import '../models/activity_feed_item.dart';
 import '../models/dashboard_model.dart';
 
 class DashboardState {
   final DashboardModel? data;
+  final List<ActivityFeedItem> activityFeed;
   final bool isLoading;
   final bool isActionLoading;
   final String? error;
 
   const DashboardState({
     this.data,
+    this.activityFeed = const [],
     this.isLoading = false,
     this.isActionLoading = false,
     this.error,
@@ -22,6 +24,7 @@ class DashboardState {
 
   DashboardState copyWith({
     DashboardModel? data,
+    List<ActivityFeedItem>? activityFeed,
     bool? isLoading,
     bool? isActionLoading,
     String? error,
@@ -29,6 +32,7 @@ class DashboardState {
   }) {
     return DashboardState(
       data: data ?? this.data,
+      activityFeed: activityFeed ?? this.activityFeed,
       isLoading: isLoading ?? this.isLoading,
       isActionLoading: isActionLoading ?? this.isActionLoading,
       error: clearError ? null : (error ?? this.error),
@@ -41,13 +45,11 @@ final dashboardNotifierProvider =
 
 class DashboardNotifier extends Notifier<DashboardState> {
   late final DashboardRepository _dashboardRepo;
-  late final GymVisitsRepository _gymVisitsRepo;
   Timer? _pollTimer;
 
   @override
   DashboardState build() {
     _dashboardRepo = ref.watch(dashboardRepositoryProvider);
-    _gymVisitsRepo = ref.watch(gymVisitsRepositoryProvider);
     Future.microtask(() => loadData());
 
     // Poll every 30 seconds for fresh data
@@ -61,8 +63,14 @@ class DashboardNotifier extends Notifier<DashboardState> {
 
   Future<void> _refresh() async {
     try {
-      final data = await _dashboardRepo.getDashboard();
-      state = state.copyWith(data: data);
+      final results = await Future.wait([
+        _dashboardRepo.getDashboard(),
+        _dashboardRepo.getActivityFeed(),
+      ]);
+      state = state.copyWith(
+        data: results[0] as DashboardModel,
+        activityFeed: results[1] as List<ActivityFeedItem>,
+      );
     } catch (_) {
       // Silent refresh — don't show error on background poll
     }
@@ -71,8 +79,15 @@ class DashboardNotifier extends Notifier<DashboardState> {
   Future<void> loadData() async {
     state = state.copyWith(isLoading: true, clearError: true);
     try {
-      final data = await _dashboardRepo.getDashboard();
-      state = state.copyWith(data: data, isLoading: false);
+      final results = await Future.wait([
+        _dashboardRepo.getDashboard(),
+        _dashboardRepo.getActivityFeed(),
+      ]);
+      state = state.copyWith(
+        data: results[0] as DashboardModel,
+        activityFeed: results[1] as List<ActivityFeedItem>,
+        isLoading: false,
+      );
     } on ApiException catch (e) {
       state = state.copyWith(isLoading: false, error: e.firstError);
     } catch (_) {
@@ -80,38 +95,6 @@ class DashboardNotifier extends Notifier<DashboardState> {
         isLoading: false,
         error: 'Greška pri učitavanju dashboard podataka.',
       );
-    }
-  }
-
-  Future<String?> checkIn(int userId) async {
-    state = state.copyWith(isActionLoading: true, clearError: true);
-    try {
-      await _gymVisitsRepo.checkIn(userId);
-      state = state.copyWith(isActionLoading: false);
-      await loadData();
-      return null;
-    } on ApiException catch (e) {
-      state = state.copyWith(isActionLoading: false);
-      return e.firstError;
-    } catch (_) {
-      state = state.copyWith(isActionLoading: false);
-      return 'Greška pri prijavi korisnika.';
-    }
-  }
-
-  Future<String?> checkOut(int userId) async {
-    state = state.copyWith(isActionLoading: true, clearError: true);
-    try {
-      await _gymVisitsRepo.checkOut(userId);
-      state = state.copyWith(isActionLoading: false);
-      await loadData();
-      return null;
-    } on ApiException catch (e) {
-      state = state.copyWith(isActionLoading: false);
-      return e.firstError;
-    } catch (_) {
-      state = state.copyWith(isActionLoading: false);
-      return 'Greška pri odjavi korisnika.';
     }
   }
 

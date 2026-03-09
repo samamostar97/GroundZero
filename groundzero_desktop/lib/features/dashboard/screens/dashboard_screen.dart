@@ -5,130 +5,19 @@ import 'package:intl/intl.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../shared/widgets/app_shell.dart';
-import '../../../shared/widgets/snackbar_helpers.dart';
-import '../../users/data/users_repository.dart';
-import '../../users/models/user_model.dart';
+import '../../appointments/providers/appointments_provider.dart';
+import '../../gym_visits/providers/checkin_provider.dart';
+import '../../memberships/providers/active_memberships_provider.dart';
+import '../../orders/providers/orders_provider.dart';
+import '../../products/providers/products_provider.dart';
+import '../models/activity_feed_item.dart';
 import '../providers/dashboard_provider.dart';
 
-class DashboardScreen extends ConsumerStatefulWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  final _searchController = TextEditingController();
-  UserModel? _selectedUser;
-  List<UserModel> _suggestions = [];
-  bool _showSuggestions = false;
-  final _focusNode = FocusNode();
-  final _layerLink = LayerLink();
-  OverlayEntry? _overlayEntry;
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _focusNode.dispose();
-    _removeOverlay();
-    super.dispose();
-  }
-
-  void _removeOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
-  void _showOverlay() {
-    _removeOverlay();
-    if (_suggestions.isEmpty || !_showSuggestions) return;
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        width: 300,
-        child: CompositedTransformFollower(
-          link: _layerLink,
-          showWhenUnlinked: false,
-          offset: const Offset(0, 44),
-          child: Material(
-            color: AppColors.surfaceHigh,
-            borderRadius: BorderRadius.circular(8),
-            elevation: 8,
-            child: Container(
-              constraints: const BoxConstraints(maxHeight: 200),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.border, width: 0.5),
-              ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.zero,
-                itemCount: _suggestions.length,
-                itemBuilder: (context, index) {
-                  final user = _suggestions[index];
-                  return ListTile(
-                    dense: true,
-                    title: Text(
-                      '${user.firstName} ${user.lastName}',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    subtitle: Text(
-                      user.email,
-                      style: GoogleFonts.inter(
-                        fontSize: 11,
-                        color: AppColors.textHint,
-                      ),
-                    ),
-                    hoverColor: AppColors.accent.withValues(alpha: 0.08),
-                    onTap: () {
-                      setState(() {
-                        _selectedUser = user;
-                        _searchController.text =
-                            '${user.firstName} ${user.lastName}';
-                        _showSuggestions = false;
-                      });
-                      _removeOverlay();
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-    Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  Future<void> _searchUsers(String query) async {
-    if (query.length < 2) {
-      setState(() {
-        _suggestions = [];
-        _showSuggestions = false;
-      });
-      _removeOverlay();
-      return;
-    }
-
-    try {
-      final result = await ref.read(usersRepositoryProvider).getUsers(
-            pageNumber: 1,
-            pageSize: 5,
-            search: query,
-          );
-      setState(() {
-        _suggestions = result.items;
-        _showSuggestions = true;
-      });
-      _showOverlay();
-    } catch (_) {}
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dashboardNotifierProvider);
 
     return Padding(
@@ -155,13 +44,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           const SizedBox(height: 24),
 
-          // KPI cards
+          // KPI cards — all clickable
           Row(
             children: [
               _StatCard(
                 label: 'Trenutno u teretani',
                 value: state.data?.currentlyInGym.toString() ?? '—',
                 icon: Icons.fitness_center_rounded,
+                accentBorder: (state.data?.currentlyInGym ?? 0) > 0,
+                onTap: () {
+                  ref.read(sidebarIndexProvider.notifier).state = 2;
+                  ref.read(tabIndexProvider.notifier).state = 2;
+                  ref.read(checkinNotifierProvider.notifier).loadActive();
+                },
               ),
               const SizedBox(width: 16),
               _StatCard(
@@ -169,6 +64,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 value: state.data?.lowStockProductCount.toString() ?? '—',
                 icon: Icons.inventory_2_rounded,
                 showIndicator: (state.data?.lowStockProductCount ?? 0) > 0,
+                onTap: () {
+                  ref.read(sidebarIndexProvider.notifier).state = 1;
+                  ref.read(tabIndexProvider.notifier).state = 2;
+                  ref.read(productsNotifierProvider.notifier).loadPage(1);
+                },
               ),
               const SizedBox(width: 16),
               _StatCard(
@@ -176,18 +76,29 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 value: state.data?.pendingAppointmentCount.toString() ?? '—',
                 icon: Icons.calendar_today_rounded,
                 showIndicator: (state.data?.pendingAppointmentCount ?? 0) > 0,
+                onTap: () {
+                  ref.read(sidebarIndexProvider.notifier).state = 2;
+                  ref.read(tabIndexProvider.notifier).state = 1;
+                  ref.read(appointmentsNotifierProvider.notifier).switchView(excludeStatuses: const {2, 3});
+                },
               ),
               const SizedBox(width: 16),
               _StatCard(
-                label: 'Novi korisnici (mjesec)',
-                value: state.data?.newUsersThisMonth.toString() ?? '—',
-                icon: Icons.person_add_rounded,
+                label: 'Pristigle narudžbe',
+                value: state.data?.pendingOrders.length.toString() ?? '—',
+                icon: Icons.shopping_bag_rounded,
+                showIndicator: (state.data?.pendingOrders.length ?? 0) > 0,
+                onTap: () {
+                  ref.read(sidebarIndexProvider.notifier).state = 2;
+                  ref.read(tabIndexProvider.notifier).state = 0;
+                  ref.read(ordersNotifierProvider.notifier).switchView(excludeStatuses: const {3, 4});
+                },
               ),
             ],
           ),
           const SizedBox(height: 24),
 
-          // Main content
+          // Activity feed
           if (state.isLoading && state.data == null)
             const Expanded(
               child: Center(
@@ -226,25 +137,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             )
           else
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left panel — Gym visits
-                  Expanded(child: _buildGymPanel(state)),
-                  const SizedBox(width: 16),
-                  // Right panel — Pending orders
-                  Expanded(child: _buildOrdersPanel(state)),
-                ],
-              ),
-            ),
+            Expanded(child: _buildActivityFeed(state)),
         ],
       ),
     );
   }
 
-  Widget _buildGymPanel(DashboardState state) {
-    final visits = state.data?.activeGymVisits ?? [];
+  Widget _buildActivityFeed(DashboardState state) {
+    final feed = state.activityFeed;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -256,14 +156,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Panel header
           Row(
             children: [
-              Icon(Icons.fitness_center_rounded,
-                  size: 18, color: AppColors.accent),
+              Icon(Icons.history_rounded, size: 18, color: AppColors.accent),
               const SizedBox(width: 8),
               Text(
-                'Trenutno u teretani',
+                'Posljednja aktivnost',
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -283,130 +181,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ],
           ),
           const SizedBox(height: 16),
-
-          // Search + Check-in
-          Row(
-            children: [
-              Expanded(
-                child: CompositedTransformTarget(
-                  link: _layerLink,
-                  child: SizedBox(
-                    height: 40,
-                    child: TextField(
-                      controller: _searchController,
-                      focusNode: _focusNode,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: AppColors.textPrimary,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Pretraži korisnika...',
-                        hintStyle: GoogleFonts.inter(
-                          fontSize: 13,
-                          color: AppColors.textHint,
-                        ),
-                        prefixIcon: const Icon(Icons.search,
-                            size: 18, color: AppColors.textHint),
-                        suffixIcon: _selectedUser != null
-                            ? IconButton(
-                                icon: const Icon(Icons.close,
-                                    size: 16, color: AppColors.textHint),
-                                onPressed: () {
-                                  setState(() {
-                                    _selectedUser = null;
-                                    _searchController.clear();
-                                    _suggestions = [];
-                                  });
-                                  _removeOverlay();
-                                },
-                              )
-                            : null,
-                        filled: true,
-                        fillColor: AppColors.inputFill,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: AppColors.border, width: 0.5),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: AppColors.border, width: 0.5),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: AppColors.accent, width: 1),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        _selectedUser = null;
-                        _searchUsers(value);
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              SizedBox(
-                height: 40,
-                child: ElevatedButton.icon(
-                  onPressed: state.isActionLoading || _selectedUser == null
-                      ? null
-                      : () async {
-                          final error = await ref
-                              .read(dashboardNotifierProvider.notifier)
-                              .checkIn(_selectedUser!.id);
-                          if (!mounted) return;
-                          if (error != null) {
-                            showErrorSnackBar(context, error);
-                          } else {
-                            showSuccessSnackBar(context,
-                                '${_selectedUser!.firstName} ${_selectedUser!.lastName} prijavljen/a.');
-                            setState(() {
-                              _selectedUser = null;
-                              _searchController.clear();
-                            });
-                          }
-                        },
-                  icon: const Icon(Icons.login, size: 16),
-                  label: const Text('PRIJAVI'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent,
-                    foregroundColor: AppColors.onAccent,
-                    textStyle: GoogleFonts.inter(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-              if (state.isActionLoading) ...[
-                const SizedBox(width: 10),
-                const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.accent,
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Active visits list
           Expanded(
-            child: visits.isEmpty
+            child: feed.isEmpty
                 ? Center(
                     child: Text(
-                      'Nema trenutno prijavljenih korisnika.',
+                      'Nema nedavne aktivnosti.',
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         color: AppColors.textHint,
@@ -414,255 +193,110 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                   )
                 : ListView.separated(
-                    itemCount: visits.length,
+                    itemCount: feed.length,
                     separatorBuilder: (_, __) =>
                         Divider(color: AppColors.border, height: 1),
-                    itemBuilder: (context, index) {
-                      final visit = visits[index];
-                      final checkInTime =
-                          DateFormat('HH:mm').format(visit.checkInAt.toLocal());
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color:
-                                    AppColors.accent.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  visit.userFullName
-                                      .split(' ')
-                                      .map((n) => n.isNotEmpty ? n[0] : '')
-                                      .take(2)
-                                      .join()
-                                      .toUpperCase(),
-                                  style: GoogleFonts.inter(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.accent,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    visit.userFullName,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Prijava: $checkInTime',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      color: AppColors.textHint,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 30,
-                              child: TextButton(
-                                onPressed: state.isActionLoading
-                                    ? null
-                                    : () async {
-                                        final error = await ref
-                                            .read(dashboardNotifierProvider
-                                                .notifier)
-                                            .checkOut(visit.userId);
-                                        if (!mounted) return;
-                                        if (error != null) {
-                                          showErrorSnackBar(context, error);
-                                        } else {
-                                          showSuccessSnackBar(context,
-                                              '${visit.userFullName} odjavljen/a.');
-                                        }
-                                      },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppColors.error,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12),
-                                  textStyle: GoogleFonts.inter(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                child: const Text('Odjavi'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                    itemBuilder: (context, index) =>
+                        _ActivityFeedTile(item: feed[index]),
                   ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildOrdersPanel(DashboardState state) {
-    final orders = state.data?.pendingOrders ?? [];
+class _ActivityFeedTile extends StatelessWidget {
+  final ActivityFeedItem item;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border, width: 0.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  const _ActivityFeedTile({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    final timeStr = _formatTimestamp(item.timestamp);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
         children: [
-          // Panel header
-          Row(
-            children: [
-              Icon(Icons.shopping_bag_rounded,
-                  size: 18, color: AppColors.accent),
-              const SizedBox(width: 8),
-              Text(
-                'Pristigle narudžbe',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const Spacer(),
-              if (state.isLoading && state.data != null)
-                const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.accent,
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-
-          // Orders list
-          Expanded(
-            child: orders.isEmpty
-                ? Center(
-                    child: Text(
-                      'Nema narudžbi na čekanju.',
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: AppColors.textHint,
-                      ),
-                    ),
-                  )
-                : ListView.separated(
-                    itemCount: orders.length,
-                    separatorBuilder: (_, __) =>
-                        Divider(color: AppColors.border, height: 1),
-                    itemBuilder: (context, index) {
-                      final order = orders[index];
-                      final dateStr = DateFormat('dd.MM.yyyy. HH:mm')
-                          .format(order.createdAt.toLocal());
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          children: [
-                            // Order # badge
-                            Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                color: AppColors.accent.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '#${order.id}',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.accent,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Info
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    order.userFullName,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '${order.totalAmount.toStringAsFixed(2)} KM  •  ${order.itemCount} stavki  •  $dateStr',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      color: AppColors.textHint,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-          ),
-
-          // "Pregledaj sve" button
-          if (orders.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: SizedBox(
-                width: double.infinity,
-                height: 36,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Navigate to Operations > Narudžbe tab
-                    ref.read(sidebarIndexProvider.notifier).state = 2;
-                    ref.read(tabIndexProvider.notifier).state = 0;
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accent.withValues(alpha: 0.1),
-                    foregroundColor: AppColors.accent,
-                    elevation: 0,
-                    textStyle: GoogleFonts.inter(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text('Pregledaj sve'),
-                ),
-              ),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: _iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
+            child: Icon(_icon, size: 16, color: _iconColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              item.message,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textPrimary,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            timeStr,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              color: AppColors.textHint,
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  IconData get _icon {
+    switch (item.type) {
+      case 'CheckIn':
+        return Icons.login_rounded;
+      case 'CheckOut':
+        return Icons.logout_rounded;
+      case 'Order':
+        return Icons.shopping_bag_rounded;
+      case 'Appointment':
+        return Icons.calendar_today_rounded;
+      case 'Registration':
+        return Icons.person_add_rounded;
+      default:
+        return Icons.info_rounded;
+    }
+  }
+
+  Color get _iconColor {
+    switch (item.type) {
+      case 'CheckIn':
+        return AppColors.success;
+      case 'CheckOut':
+        return AppColors.textSecondary;
+      case 'Order':
+        return AppColors.warning;
+      case 'Appointment':
+        return AppColors.accent;
+      case 'Registration':
+        return AppColors.accent;
+      default:
+        return AppColors.textHint;
+    }
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final local = timestamp.toLocal();
+    final diff = now.difference(local);
+
+    if (diff.inMinutes < 1) return 'upravo';
+    if (diff.inMinutes < 60) return 'prije ${diff.inMinutes} min';
+    if (diff.inHours < 24) return 'prije ${diff.inHours}h';
+    if (diff.inDays < 2) return 'jučer ${DateFormat('HH:mm').format(local)}';
+    return DateFormat('dd.MM. HH:mm').format(local);
   }
 }
 
@@ -671,12 +305,16 @@ class _StatCard extends StatefulWidget {
   final String value;
   final IconData icon;
   final bool showIndicator;
+  final bool accentBorder;
+  final VoidCallback? onTap;
 
   const _StatCard({
     required this.label,
     required this.value,
     required this.icon,
     this.showIndicator = false,
+    this.accentBorder = false,
+    this.onTap,
   });
 
   @override
@@ -684,14 +322,16 @@ class _StatCard extends StatefulWidget {
 }
 
 class _StatCardState extends State<_StatCard>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool _hovered = false;
   AnimationController? _pulseController;
+  AnimationController? _borderController;
 
   @override
   void initState() {
     super.initState();
     _initPulse();
+    _initBorderAnimation();
   }
 
   @override
@@ -699,6 +339,9 @@ class _StatCardState extends State<_StatCard>
     super.didUpdateWidget(oldWidget);
     if (widget.showIndicator != oldWidget.showIndicator) {
       _initPulse();
+    }
+    if (widget.accentBorder != oldWidget.accentBorder) {
+      _initBorderAnimation();
     }
   }
 
@@ -714,89 +357,154 @@ class _StatCardState extends State<_StatCard>
     }
   }
 
+  void _initBorderAnimation() {
+    if (widget.accentBorder) {
+      _borderController ??= AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 2000),
+      )..repeat(reverse: true);
+    } else {
+      _borderController?.dispose();
+      _borderController = null;
+    }
+  }
+
   @override
   void dispose() {
     _pulseController?.dispose();
+    _borderController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    final card = Expanded(
       child: MouseRegion(
         onEnter: (_) => setState(() => _hovered = true),
         onExit: (_) => setState(() => _hovered = false),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: _hovered ? AppColors.surfaceHigh : AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: _hovered ? AppColors.accent.withValues(alpha: 0.3) : AppColors.border,
-              width: 0.5,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Accent top line + blinking indicator
-              Row(
-                children: [
-                  Container(
-                    width: 32,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  if (widget.showIndicator && _pulseController != null) ...[
-                    const Spacer(),
-                    FadeTransition(
-                      opacity: _pulseController!,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: AppColors.warning,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.warning.withValues(alpha: 0.4),
-                              blurRadius: 6,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
+        cursor: widget.onTap != null
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: _buildCardBody(),
+        ),
+      ),
+    );
+    return card;
+  }
+
+  Widget _buildCardBody() {
+    if (widget.accentBorder && _borderController != null) {
+      return AnimatedBuilder(
+        animation: _borderController!,
+        builder: (context, child) {
+          final opacity = 0.15 + (_borderController!.value * 0.25);
+          return Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: _hovered ? AppColors.surfaceHigh : AppColors.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: _hovered
+                    ? AppColors.success.withValues(alpha: 0.5)
+                    : AppColors.success.withValues(alpha: opacity),
+                width: 1,
               ),
-              const SizedBox(height: 14),
-              Icon(widget.icon, color: AppColors.accent, size: 20),
-              const SizedBox(height: 12),
-              Text(
-                widget.value,
-                style: GoogleFonts.barlowCondensed(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+            ),
+            child: _buildCardContent(),
+          );
+        },
+      );
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _hovered ? AppColors.surfaceHigh : AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _hovered
+              ? AppColors.accent.withValues(alpha: 0.3)
+              : AppColors.border,
+          width: 0.5,
+        ),
+      ),
+      child: _buildCardContent(),
+    );
+  }
+
+  Widget _buildCardContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Accent top line + blinking indicator
+        Row(
+          children: [
+            Container(
+              width: 32,
+              height: 3,
+              decoration: BoxDecoration(
+                color: AppColors.accent,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            if (widget.showIndicator && _pulseController != null) ...[
+              const Spacer(),
+              FadeTransition(
+                opacity: _pulseController!,
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    color: AppColors.warning,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.warning.withValues(alpha: 0.4),
+                        blurRadius: 6,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
+            ],
+          ],
+        ),
+        const SizedBox(height: 14),
+        Icon(widget.icon, color: AppColors.accent, size: 20),
+        const SizedBox(height: 12),
+        Text(
+          widget.value,
+          style: GoogleFonts.barlowCondensed(
+            fontSize: 28,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
                 widget.label,
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   color: AppColors.textSecondary,
                 ),
               ),
-            ],
-          ),
+            ),
+            if (widget.onTap != null)
+              Icon(
+                Icons.arrow_forward_rounded,
+                size: 14,
+                color: AppColors.textHint,
+              ),
+          ],
         ),
-      ),
+      ],
     );
   }
 }

@@ -71,4 +71,92 @@ public class DashboardRepository : IDashboardRepository
             PendingOrders = pendingOrders
         };
     }
+
+    public async Task<List<ActivityFeedItemResponse>> GetActivityFeedAsync(int count = 20, CancellationToken cancellationToken = default)
+    {
+        var feed = new List<ActivityFeedItemResponse>();
+
+        // Recent check-ins (last 7 days)
+        var recentCheckIns = await _context.GymVisits
+            .Where(gv => gv.CheckInAt >= DateTime.UtcNow.AddDays(-7))
+            .Include(gv => gv.User)
+            .Select(gv => new { gv.User.FirstName, gv.User.LastName, gv.CheckInAt, gv.CheckOutAt })
+            .ToListAsync(cancellationToken);
+
+        foreach (var visit in recentCheckIns)
+        {
+            feed.Add(new ActivityFeedItemResponse
+            {
+                Type = "CheckIn",
+                Message = $"{visit.FirstName} {visit.LastName} se prijavio/la u teretanu.",
+                Timestamp = visit.CheckInAt
+            });
+
+            if (visit.CheckOutAt.HasValue)
+            {
+                feed.Add(new ActivityFeedItemResponse
+                {
+                    Type = "CheckOut",
+                    Message = $"{visit.FirstName} {visit.LastName} se odjavio/la iz teretane.",
+                    Timestamp = visit.CheckOutAt.Value
+                });
+            }
+        }
+
+        // Recent orders (last 7 days)
+        var recentOrders = await _context.Orders
+            .Where(o => o.CreatedAt >= DateTime.UtcNow.AddDays(-7))
+            .Include(o => o.User)
+            .Select(o => new { o.User.FirstName, o.User.LastName, o.Id, o.TotalAmount, o.CreatedAt })
+            .ToListAsync(cancellationToken);
+
+        foreach (var order in recentOrders)
+        {
+            feed.Add(new ActivityFeedItemResponse
+            {
+                Type = "Order",
+                Message = $"Nova narudžba #{order.Id} — {order.FirstName} {order.LastName} ({order.TotalAmount:F2} KM)",
+                Timestamp = order.CreatedAt
+            });
+        }
+
+        // Recent appointments (last 7 days)
+        var recentAppointments = await _context.Appointments
+            .Where(a => a.CreatedAt >= DateTime.UtcNow.AddDays(-7))
+            .Include(a => a.User)
+            .Include(a => a.Staff)
+            .Select(a => new { a.User.FirstName, a.User.LastName, StaffName = a.Staff.FirstName + " " + a.Staff.LastName, a.CreatedAt })
+            .ToListAsync(cancellationToken);
+
+        foreach (var apt in recentAppointments)
+        {
+            feed.Add(new ActivityFeedItemResponse
+            {
+                Type = "Appointment",
+                Message = $"Novi termin — {apt.FirstName} {apt.LastName} sa {apt.StaffName}",
+                Timestamp = apt.CreatedAt
+            });
+        }
+
+        // Recent registrations (last 7 days)
+        var recentUsers = await _context.Users
+            .Where(u => u.Role == Role.User && u.CreatedAt >= DateTime.UtcNow.AddDays(-7))
+            .Select(u => new { u.FirstName, u.LastName, u.CreatedAt })
+            .ToListAsync(cancellationToken);
+
+        foreach (var user in recentUsers)
+        {
+            feed.Add(new ActivityFeedItemResponse
+            {
+                Type = "Registration",
+                Message = $"Novi korisnik — {user.FirstName} {user.LastName} se registrovao/la.",
+                Timestamp = user.CreatedAt
+            });
+        }
+
+        return feed
+            .OrderByDescending(f => f.Timestamp)
+            .Take(count)
+            .ToList();
+    }
 }

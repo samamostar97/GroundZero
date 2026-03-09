@@ -1,4 +1,5 @@
 using GroundZero.Application.Features.Dashboard.Queries;
+using GroundZero.Application.Features.Dashboard.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,13 @@ public class DashboardController : ControllerBase
     public async Task<IActionResult> Get()
     {
         var result = await _mediator.Send(new GetDashboardQuery());
+        return Ok(result);
+    }
+
+    [HttpGet("activity-feed")]
+    public async Task<IActionResult> GetActivityFeed([FromQuery] int count = 20)
+    {
+        var result = await _mediator.Send(new GetActivityFeedQuery { Count = count });
         return Ok(result);
     }
 }

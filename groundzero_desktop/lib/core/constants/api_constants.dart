@@ -62,6 +62,7 @@ class ApiConstants {
 
   // Dashboard
   static const String dashboard = '/dashboard';
+  static const String activityFeed = '/dashboard/activity-feed';
 
   // Leaderboard
   static const String leaderboard = '/leaderboard';
