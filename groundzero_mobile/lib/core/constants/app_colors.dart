@@ -4,11 +4,11 @@ class AppColors {
   AppColors._();
 
   // Backgrounds (elevation levels)
-  static const Color background = Color(0xFF0A0A0A);
-  static const Color surfaceLow = Color(0xFF121212);
-  static const Color surface = Color(0xFF161616);
-  static const Color surfaceHigh = Color(0xFF1E1E1E);
-  static const Color inputFill = Color(0xFF1E1E1E);
+  static const Color background = Color(0xFF141414);
+  static const Color surfaceLow = Color(0xFF1A1A1A);
+  static const Color surface = Color(0xFF1E1E1E);
+  static const Color surfaceHigh = Color(0xFF252525);
+  static const Color inputFill = Color(0xFF252525);
 
   // Accent
   static const Color accent = Color(0xFFCCFF00);
@@ -21,7 +21,7 @@ class AppColors {
   static const Color textHint = Color(0xFF707070);
 
   // Borders
-  static const Color border = Color(0xFF333333);
+  static const Color border = Color(0xFF2A2A2A);
   static const Color borderFocused = accent;
 
   // Status
