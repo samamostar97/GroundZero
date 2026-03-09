@@ -72,9 +72,31 @@ class AppShell extends ConsumerWidget {
                     },
                   ),
 
-                // Content
+                // Content with fade + slide up transition
                 Expanded(
-                  child: _buildContent(sidebarIndex, tabIndex),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) {
+                      final offsetAnimation = Tween<Offset>(
+                        begin: const Offset(0, 0.03),
+                        end: Offset.zero,
+                      ).animate(CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOut,
+                      ));
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: KeyedSubtree(
+                      key: ValueKey('$sidebarIndex-$tabIndex'),
+                      child: _buildContent(sidebarIndex, tabIndex),
+                    ),
+                  ),
                 ),
               ],
             ),
