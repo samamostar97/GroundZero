@@ -4,7 +4,7 @@ public class DashboardResponse
 {
     public int CurrentlyInGym { get; set; }
     public int PendingOrderCount { get; set; }
-    public int TodayAppointments { get; set; }
+    public int PendingAppointmentCount { get; set; }
     public int NewUsersThisMonth { get; set; }
     public List<ActiveGymVisitItem> ActiveGymVisits { get; set; } = new();
     public List<PendingOrderItem> PendingOrders { get; set; } = new();

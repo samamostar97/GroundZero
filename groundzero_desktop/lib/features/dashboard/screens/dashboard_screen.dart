@@ -170,8 +170,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               const SizedBox(width: 16),
               _StatCard(
-                label: 'Termini danas',
-                value: state.data?.todayAppointments.toString() ?? '—',
+                label: 'Termini na čekanju',
+                value: state.data?.pendingAppointmentCount.toString() ?? '—',
                 icon: Icons.calendar_today_rounded,
               ),
               const SizedBox(width: 16),

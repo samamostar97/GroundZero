@@ -10,7 +10,7 @@ _$DashboardModelImpl _$$DashboardModelImplFromJson(Map<String, dynamic> json) =>
     _$DashboardModelImpl(
       currentlyInGym: (json['currentlyInGym'] as num).toInt(),
       pendingOrderCount: (json['pendingOrderCount'] as num).toInt(),
-      todayAppointments: (json['todayAppointments'] as num).toInt(),
+      pendingAppointmentCount: (json['pendingAppointmentCount'] as num).toInt(),
       newUsersThisMonth: (json['newUsersThisMonth'] as num).toInt(),
       activeGymVisits: (json['activeGymVisits'] as List<dynamic>)
           .map((e) => ActiveGymVisitItem.fromJson(e as Map<String, dynamic>))
@@ -25,7 +25,7 @@ Map<String, dynamic> _$$DashboardModelImplToJson(
 ) => <String, dynamic>{
   'currentlyInGym': instance.currentlyInGym,
   'pendingOrderCount': instance.pendingOrderCount,
-  'todayAppointments': instance.todayAppointments,
+  'pendingAppointmentCount': instance.pendingAppointmentCount,
   'newUsersThisMonth': instance.newUsersThisMonth,
   'activeGymVisits': instance.activeGymVisits,
   'pendingOrders': instance.pendingOrders,

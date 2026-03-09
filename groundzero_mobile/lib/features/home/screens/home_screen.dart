@@ -13,6 +13,7 @@ import '../../../shared/widgets/product_card.dart';
 import '../../../shared/widgets/skeletons.dart';
 import '../../../shared/widgets/staff_card.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import '../../appointments/providers/appointment_provider.dart';
 import '../../appointments/providers/staff_provider.dart';
 import '../../auth/providers/user_provider.dart';
 import '../../membership/providers/membership_provider.dart';
@@ -31,6 +32,7 @@ class HomeScreen extends ConsumerWidget {
     final recommendationsAsync = ref.watch(recommendationsProvider);
     final staffAsync = ref.watch(featuredStaffProvider);
     final workoutPlansAsync = ref.watch(homeWorkoutPlansProvider);
+    final upcomingAppointment = ref.watch(upcomingAppointmentReminderProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -54,6 +56,7 @@ class HomeScreen extends ConsumerWidget {
                 ref.invalidate(recommendationsProvider);
                 ref.invalidate(featuredStaffProvider);
                 ref.invalidate(homeWorkoutPlansProvider);
+                ref.invalidate(upcomingAppointmentReminderProvider);
                 ref.read(userNotifierProvider.notifier).refresh();
               },
               child: ListView(
@@ -212,6 +215,91 @@ class HomeScreen extends ConsumerWidget {
                                 size: 22,
                               ),
                             ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Appointment reminder (only visible if upcoming within 3 days)
+                  upcomingAppointment.when(
+                    loading: () => const SizedBox.shrink(),
+                    error: (_, _) => const SizedBox.shrink(),
+                    data: (appointment) {
+                      if (appointment == null) return const SizedBox.shrink();
+
+                      final now = DateTime.now();
+                      final diff = appointment.scheduledAt.difference(now);
+                      final String timeLabel;
+                      if (diff.inDays >= 1) {
+                        timeLabel = 'za ${diff.inDays} ${diff.inDays == 1 ? 'dan' : 'dana'}';
+                      } else if (diff.inHours >= 1) {
+                        timeLabel = 'za ${diff.inHours}h';
+                      } else {
+                        timeLabel = 'uskoro';
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: GestureDetector(
+                          onTap: () => context.push(
+                            '/appointments/${appointment.id}',
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: AppShadows.card,
+                              border: Border.all(
+                                color: AppColors.warning.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.warning.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.event_rounded,
+                                    color: AppColors.warning,
+                                    size: 22,
+                                  ),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Termin $timeLabel',
+                                        style: AppTextStyles.bodyMedium.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '${appointment.staffFullName} · ${DateFormat('dd.MM. u HH:mm').format(appointment.scheduledAt)}',
+                                        style: AppTextStyles.bodySmall.copyWith(
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  color: AppColors.textHint,
+                                  size: 22,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

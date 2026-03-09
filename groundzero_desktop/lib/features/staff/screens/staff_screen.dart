@@ -9,6 +9,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/image_utils.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
+import '../../../shared/widgets/snackbar_helpers.dart';
 import '../../../shared/widgets/pagination_controls.dart';
 import '../../../shared/widgets/search_input.dart';
 import '../data/staff_repository.dart';
@@ -248,6 +249,14 @@ class StaffScreen extends ConsumerWidget {
               ref.read(staffNotifierProvider.notifier).refresh();
             }
             if (context.mounted) Navigator.of(context).pop();
+            if (context.mounted) {
+              showSuccessSnackBar(
+                context,
+                staff != null
+                    ? 'Osoblje uspješno ažurirano.'
+                    : 'Osoblje uspješno kreirano.',
+              );
+            }
           } on ApiException catch (e) {
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -371,12 +380,26 @@ class _StaffFormDialogState extends State<_StaffFormDialog> {
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(labelText: 'Email'),
-                  validator: (v) => v == null || v.trim().isEmpty ? 'Unesite email.' : null,
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Unesite email.';
+                    if (!RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(v.trim())) {
+                      return 'Unesite ispravan email.';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _phoneController,
                   decoration: const InputDecoration(labelText: 'Telefon (opcionalno)'),
+                  validator: (v) {
+                    if (v != null && v.trim().isNotEmpty) {
+                      if (!RegExp(r'^[+]?[\d\s\-()]+$').hasMatch(v.trim())) {
+                        return 'Unesite validan broj telefona.';
+                      }
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

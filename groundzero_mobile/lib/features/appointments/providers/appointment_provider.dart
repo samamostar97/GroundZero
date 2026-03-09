@@ -190,6 +190,32 @@ class MyAppointmentsNotifier extends Notifier<MyAppointmentsState> {
   }
 }
 
+// --- Upcoming Appointment Reminder (within 3 days) ---
+
+final upcomingAppointmentReminderProvider =
+    FutureProvider<AppointmentModel?>((ref) async {
+  final repo = ref.watch(appointmentRepositoryProvider);
+  final result = await repo.getMyAppointments(
+    pageNumber: 1,
+    pageSize: 10,
+    status: 'Confirmed',
+  );
+
+  final now = DateTime.now();
+  final threeDaysFromNow = now.add(const Duration(days: 3));
+
+  final upcoming = result.items.where((a) {
+    return a.scheduledAt.isAfter(now) &&
+        a.scheduledAt.isBefore(threeDaysFromNow);
+  }).toList();
+
+  if (upcoming.isEmpty) return null;
+
+  // Return the soonest one
+  upcoming.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+  return upcoming.first;
+});
+
 // --- Appointment Detail ---
 
 final appointmentDetailProvider =

@@ -23,7 +23,7 @@ DashboardModel _$DashboardModelFromJson(Map<String, dynamic> json) {
 mixin _$DashboardModel {
   int get currentlyInGym => throw _privateConstructorUsedError;
   int get pendingOrderCount => throw _privateConstructorUsedError;
-  int get todayAppointments => throw _privateConstructorUsedError;
+  int get pendingAppointmentCount => throw _privateConstructorUsedError;
   int get newUsersThisMonth => throw _privateConstructorUsedError;
   List<ActiveGymVisitItem> get activeGymVisits =>
       throw _privateConstructorUsedError;
@@ -50,7 +50,7 @@ abstract class $DashboardModelCopyWith<$Res> {
   $Res call({
     int currentlyInGym,
     int pendingOrderCount,
-    int todayAppointments,
+    int pendingAppointmentCount,
     int newUsersThisMonth,
     List<ActiveGymVisitItem> activeGymVisits,
     List<PendingOrderItem> pendingOrders,
@@ -74,7 +74,7 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
   $Res call({
     Object? currentlyInGym = null,
     Object? pendingOrderCount = null,
-    Object? todayAppointments = null,
+    Object? pendingAppointmentCount = null,
     Object? newUsersThisMonth = null,
     Object? activeGymVisits = null,
     Object? pendingOrders = null,
@@ -89,9 +89,9 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
                 ? _value.pendingOrderCount
                 : pendingOrderCount // ignore: cast_nullable_to_non_nullable
                       as int,
-            todayAppointments: null == todayAppointments
-                ? _value.todayAppointments
-                : todayAppointments // ignore: cast_nullable_to_non_nullable
+            pendingAppointmentCount: null == pendingAppointmentCount
+                ? _value.pendingAppointmentCount
+                : pendingAppointmentCount // ignore: cast_nullable_to_non_nullable
                       as int,
             newUsersThisMonth: null == newUsersThisMonth
                 ? _value.newUsersThisMonth
@@ -123,7 +123,7 @@ abstract class _$$DashboardModelImplCopyWith<$Res>
   $Res call({
     int currentlyInGym,
     int pendingOrderCount,
-    int todayAppointments,
+    int pendingAppointmentCount,
     int newUsersThisMonth,
     List<ActiveGymVisitItem> activeGymVisits,
     List<PendingOrderItem> pendingOrders,
@@ -146,7 +146,7 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
   $Res call({
     Object? currentlyInGym = null,
     Object? pendingOrderCount = null,
-    Object? todayAppointments = null,
+    Object? pendingAppointmentCount = null,
     Object? newUsersThisMonth = null,
     Object? activeGymVisits = null,
     Object? pendingOrders = null,
@@ -161,9 +161,9 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
             ? _value.pendingOrderCount
             : pendingOrderCount // ignore: cast_nullable_to_non_nullable
                   as int,
-        todayAppointments: null == todayAppointments
-            ? _value.todayAppointments
-            : todayAppointments // ignore: cast_nullable_to_non_nullable
+        pendingAppointmentCount: null == pendingAppointmentCount
+            ? _value.pendingAppointmentCount
+            : pendingAppointmentCount // ignore: cast_nullable_to_non_nullable
                   as int,
         newUsersThisMonth: null == newUsersThisMonth
             ? _value.newUsersThisMonth
@@ -188,7 +188,7 @@ class _$DashboardModelImpl implements _DashboardModel {
   const _$DashboardModelImpl({
     required this.currentlyInGym,
     required this.pendingOrderCount,
-    required this.todayAppointments,
+    required this.pendingAppointmentCount,
     required this.newUsersThisMonth,
     required final List<ActiveGymVisitItem> activeGymVisits,
     required final List<PendingOrderItem> pendingOrders,
@@ -203,7 +203,7 @@ class _$DashboardModelImpl implements _DashboardModel {
   @override
   final int pendingOrderCount;
   @override
-  final int todayAppointments;
+  final int pendingAppointmentCount;
   @override
   final int newUsersThisMonth;
   final List<ActiveGymVisitItem> _activeGymVisits;
@@ -224,7 +224,7 @@ class _$DashboardModelImpl implements _DashboardModel {
 
   @override
   String toString() {
-    return 'DashboardModel(currentlyInGym: $currentlyInGym, pendingOrderCount: $pendingOrderCount, todayAppointments: $todayAppointments, newUsersThisMonth: $newUsersThisMonth, activeGymVisits: $activeGymVisits, pendingOrders: $pendingOrders)';
+    return 'DashboardModel(currentlyInGym: $currentlyInGym, pendingOrderCount: $pendingOrderCount, pendingAppointmentCount: $pendingAppointmentCount, newUsersThisMonth: $newUsersThisMonth, activeGymVisits: $activeGymVisits, pendingOrders: $pendingOrders)';
   }
 
   @override
@@ -236,8 +236,11 @@ class _$DashboardModelImpl implements _DashboardModel {
                 other.currentlyInGym == currentlyInGym) &&
             (identical(other.pendingOrderCount, pendingOrderCount) ||
                 other.pendingOrderCount == pendingOrderCount) &&
-            (identical(other.todayAppointments, todayAppointments) ||
-                other.todayAppointments == todayAppointments) &&
+            (identical(
+                  other.pendingAppointmentCount,
+                  pendingAppointmentCount,
+                ) ||
+                other.pendingAppointmentCount == pendingAppointmentCount) &&
             (identical(other.newUsersThisMonth, newUsersThisMonth) ||
                 other.newUsersThisMonth == newUsersThisMonth) &&
             const DeepCollectionEquality().equals(
@@ -256,7 +259,7 @@ class _$DashboardModelImpl implements _DashboardModel {
     runtimeType,
     currentlyInGym,
     pendingOrderCount,
-    todayAppointments,
+    pendingAppointmentCount,
     newUsersThisMonth,
     const DeepCollectionEquality().hash(_activeGymVisits),
     const DeepCollectionEquality().hash(_pendingOrders),
@@ -283,7 +286,7 @@ abstract class _DashboardModel implements DashboardModel {
   const factory _DashboardModel({
     required final int currentlyInGym,
     required final int pendingOrderCount,
-    required final int todayAppointments,
+    required final int pendingAppointmentCount,
     required final int newUsersThisMonth,
     required final List<ActiveGymVisitItem> activeGymVisits,
     required final List<PendingOrderItem> pendingOrders,
@@ -297,7 +300,7 @@ abstract class _DashboardModel implements DashboardModel {
   @override
   int get pendingOrderCount;
   @override
-  int get todayAppointments;
+  int get pendingAppointmentCount;
   @override
   int get newUsersThisMonth;
   @override

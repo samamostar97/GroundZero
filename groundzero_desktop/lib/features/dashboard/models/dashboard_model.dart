@@ -8,7 +8,7 @@ class DashboardModel with _$DashboardModel {
   const factory DashboardModel({
     required int currentlyInGym,
     required int pendingOrderCount,
-    required int todayAppointments,
+    required int pendingAppointmentCount,
     required int newUsersThisMonth,
     required List<ActiveGymVisitItem> activeGymVisits,
     required List<PendingOrderItem> pendingOrders,

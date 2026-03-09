@@ -48,10 +48,9 @@ public class DashboardRepository : IDashboardRepository
             })
             .ToListAsync(cancellationToken);
 
-        // Today's appointments count
-        var today = DateTime.UtcNow.Date;
-        var todayAppointments = await _context.Appointments
-            .CountAsync(a => a.ScheduledAt.Date == today, cancellationToken);
+        // Pending appointments count
+        var pendingAppointmentCount = await _context.Appointments
+            .CountAsync(a => a.Status == AppointmentStatus.Pending, cancellationToken);
 
         // New users this month
         var firstOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
@@ -62,7 +61,7 @@ public class DashboardRepository : IDashboardRepository
         {
             CurrentlyInGym = activeVisits.Count,
             PendingOrderCount = pendingOrders.Count,
-            TodayAppointments = todayAppointments,
+            PendingAppointmentCount = pendingAppointmentCount,
             NewUsersThisMonth = newUsersThisMonth,
             ActiveGymVisits = activeVisits,
             PendingOrders = pendingOrders
