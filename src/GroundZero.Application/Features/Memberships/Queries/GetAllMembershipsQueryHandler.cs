@@ -17,7 +17,7 @@ public class GetAllMembershipsQueryHandler : IRequestHandler<GetAllMembershipsQu
     public async Task<PagedResult<UserMembershipResponse>> Handle(GetAllMembershipsQuery query, CancellationToken cancellationToken)
     {
         var paged = await _membershipRepository.GetAllMembershipsPagedAsync(
-            query.Search, query.Status, query.UserId,
+            query.Search, query.Status, query.ExcludeStatus, query.UserId,
             query.SortBy, query.SortDescending, query.PageNumber, query.PageSize, cancellationToken);
 
         return new PagedResult<UserMembershipResponse>

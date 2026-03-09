@@ -22,6 +22,7 @@ class MembershipsRepository {
     int pageSize = 10,
     String? search,
     String? status,
+    String? excludeStatus,
     String? sortBy,
     bool? sortDescending,
   }) async {
@@ -33,6 +34,7 @@ class MembershipsRepository {
           'pageSize': pageSize,
           if (search != null && search.isNotEmpty) 'search': search,
           if (status != null) 'status': status,
+          if (excludeStatus != null) 'excludeStatus': excludeStatus,
           if (sortBy != null) 'sortBy': sortBy,
           if (sortDescending != null) 'sortDescending': sortDescending,
         },

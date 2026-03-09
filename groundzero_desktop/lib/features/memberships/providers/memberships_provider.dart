@@ -84,6 +84,7 @@ class MembershipsNotifier extends Notifier<MembershipsState> {
         pageSize: _pageSize,
         search: state.search,
         status: state.statusFilter,
+        excludeStatus: state.statusFilter == null ? 'Active' : null,
         sortBy: state.sortBy,
         sortDescending: state.sortBy != null ? state.sortDescending : null,
       );
@@ -125,21 +126,6 @@ class MembershipsNotifier extends Notifier<MembershipsState> {
       clearStatusFilter: status == null,
     );
     loadPage(1);
-  }
-
-  Future<void> assign(Map<String, dynamic> data) async {
-    await _repository.assign(data);
-    await loadPage(1);
-  }
-
-  Future<String?> cancel(int id) async {
-    try {
-      await _repository.cancel(id);
-      await loadPage(state.currentPage);
-      return null;
-    } on ApiException catch (e) {
-      return e.firstError;
-    }
   }
 
   void refresh() => loadPage(state.currentPage);

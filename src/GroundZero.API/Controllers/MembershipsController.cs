@@ -44,6 +44,7 @@ public class MembershipsController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
         [FromQuery] MembershipStatus? status = null,
+        [FromQuery] MembershipStatus? excludeStatus = null,
         [FromQuery] int? userId = null,
         [FromQuery] string? sortBy = null,
         [FromQuery] bool sortDescending = true)
@@ -54,6 +55,7 @@ public class MembershipsController : ControllerBase
             PageSize = pageSize,
             Search = search,
             Status = status,
+            ExcludeStatus = excludeStatus,
             UserId = userId,
             SortBy = sortBy,
             SortDescending = sortDescending

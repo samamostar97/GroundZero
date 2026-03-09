@@ -12,6 +12,7 @@ public class GetAllMembershipsQuery : IRequest<PagedResult<UserMembershipRespons
     public int PageSize { get; set; } = 10;
     public string? Search { get; set; }
     public MembershipStatus? Status { get; set; }
+    public MembershipStatus? ExcludeStatus { get; set; }
     public int? UserId { get; set; }
     public string? SortBy { get; set; }
     public bool SortDescending { get; set; } = true;
