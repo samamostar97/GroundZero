@@ -9,6 +9,8 @@ import '../../features/categories/screens/categories_screen.dart';
 import '../../features/dashboard/providers/dashboard_provider.dart';
 import '../../features/dashboard/screens/dashboard_screen.dart';
 import '../../features/gym_visits/providers/gym_visits_provider.dart';
+import '../../features/gym_visits/providers/checkin_provider.dart';
+import '../../features/gym_visits/screens/checkin_screen.dart';
 import '../../features/gym_visits/screens/gym_visits_screen.dart';
 import '../../features/membership_plans/providers/membership_plans_provider.dart';
 import '../../features/membership_plans/screens/membership_plans_screen.dart';
@@ -40,7 +42,7 @@ final tabIndexProvider = StateProvider<int>((ref) => 0);
 const _sectionTabs = <int, List<String>>{
   // 0 = Dashboard — no tabs
   1: ['Korisnici', 'Osoblje', 'Proizvodi', 'Kategorije', 'Planovi članarina'],
-  2: ['Narudžbe', 'Termini', 'Check-in / Check-out', 'Članarine'],
+  2: ['Narudžbe', 'Termini', 'Check-in / Check-out', 'Historija posjeta', 'Članarine'],
   3: ['Prihodi', 'Proizvodi', 'Korisnici', 'Termini', 'Gamifikacija'],
 };
 
@@ -144,8 +146,10 @@ class AppShell extends ConsumerWidget {
           case 1:
             ref.read(appointmentsNotifierProvider.notifier).loadPage(1);
           case 2:
-            ref.read(gymVisitsNotifierProvider.notifier).loadPage(1);
+            ref.read(checkinNotifierProvider.notifier).loadActive();
           case 3:
+            ref.read(gymVisitsNotifierProvider.notifier).loadPage(1);
+          case 4:
             ref.read(membershipsNotifierProvider.notifier).loadPage(1);
         }
         break;
@@ -182,8 +186,10 @@ class AppShell extends ConsumerWidget {
           case 1:
             return const AppointmentsScreen();
           case 2:
-            return const GymVisitsScreen();
+            return const CheckinScreen();
           case 3:
+            return const GymVisitsScreen();
+          case 4:
             return const MembershipsScreen();
           default:
             return const OrdersScreen();

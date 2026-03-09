@@ -7,7 +7,7 @@ part 'dashboard_model.g.dart';
 class DashboardModel with _$DashboardModel {
   const factory DashboardModel({
     required int currentlyInGym,
-    required int pendingOrderCount,
+    required int lowStockProductCount,
     required int pendingAppointmentCount,
     required int newUsersThisMonth,
     required List<ActiveGymVisitItem> activeGymVisits,

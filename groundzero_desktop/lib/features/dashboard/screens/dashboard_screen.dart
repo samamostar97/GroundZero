@@ -164,15 +164,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               const SizedBox(width: 16),
               _StatCard(
-                label: 'Narudžbe na čekanju',
-                value: state.data?.pendingOrderCount.toString() ?? '—',
-                icon: Icons.shopping_bag_rounded,
+                label: 'Nizak stock proizvoda',
+                value: state.data?.lowStockProductCount.toString() ?? '—',
+                icon: Icons.inventory_2_rounded,
+                showIndicator: (state.data?.lowStockProductCount ?? 0) > 0,
               ),
               const SizedBox(width: 16),
               _StatCard(
                 label: 'Termini na čekanju',
                 value: state.data?.pendingAppointmentCount.toString() ?? '—',
                 icon: Icons.calendar_today_rounded,
+                showIndicator: (state.data?.pendingAppointmentCount ?? 0) > 0,
               ),
               const SizedBox(width: 16),
               _StatCard(
@@ -714,19 +716,55 @@ class _StatCard extends StatefulWidget {
   final String label;
   final String value;
   final IconData icon;
+  final bool showIndicator;
 
   const _StatCard({
     required this.label,
     required this.value,
     required this.icon,
+    this.showIndicator = false,
   });
 
   @override
   State<_StatCard> createState() => _StatCardState();
 }
 
-class _StatCardState extends State<_StatCard> {
+class _StatCardState extends State<_StatCard>
+    with SingleTickerProviderStateMixin {
   bool _hovered = false;
+  AnimationController? _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPulse();
+  }
+
+  @override
+  void didUpdateWidget(covariant _StatCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.showIndicator != oldWidget.showIndicator) {
+      _initPulse();
+    }
+  }
+
+  void _initPulse() {
+    if (widget.showIndicator) {
+      _pulseController ??= AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 1200),
+      )..repeat(reverse: true);
+    } else {
+      _pulseController?.dispose();
+      _pulseController = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulseController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -748,14 +786,39 @@ class _StatCardState extends State<_StatCard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Accent top line
-              Container(
-                width: 32,
-                height: 3,
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+              // Accent top line + blinking indicator
+              Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: AppColors.accent,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  if (widget.showIndicator && _pulseController != null) ...[
+                    const Spacer(),
+                    FadeTransition(
+                      opacity: _pulseController!,
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: AppColors.warning,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.warning.withValues(alpha: 0.4),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
               ),
               const SizedBox(height: 14),
               Icon(widget.icon, color: AppColors.accent, size: 20),

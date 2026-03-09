@@ -21,7 +21,7 @@ public class UserRepository : Repository<User>, IUserRepository
         return await _dbSet.AnyAsync(u => u.Email == email.ToLower(), cancellationToken);
     }
 
-    public async Task<PagedResult<User>> GetPagedAsync(string? search, string? sortBy, bool sortDescending, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    public async Task<PagedResult<User>> GetPagedAsync(string? search, string? sortBy, bool sortDescending, int pageNumber, int pageSize, bool? hasActiveMembership = null, CancellationToken cancellationToken = default)
     {
         var query = _dbSet.Where(u => u.Role == Role.User);
 
@@ -32,6 +32,17 @@ public class UserRepository : Repository<User>, IUserRepository
                 u.FirstName.ToLower().Contains(searchLower) ||
                 u.LastName.ToLower().Contains(searchLower) ||
                 u.Email.ToLower().Contains(searchLower));
+        }
+
+        if (hasActiveMembership == true)
+        {
+            var now = DateTime.UtcNow;
+            query = query.Where(u => _context.UserMemberships.Any(m =>
+                m.UserId == u.Id &&
+                !m.IsDeleted &&
+                m.Status == MembershipStatus.Active &&
+                m.StartDate <= now &&
+                m.EndDate >= now));
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

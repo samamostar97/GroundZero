@@ -25,8 +25,8 @@ class ProductsState {
     this.totalCount = 0,
     this.search = '',
     this.categoryFilter,
-    this.sortBy,
-    this.sortDescending = true,
+    this.sortBy = 'stockquantity',
+    this.sortDescending = false,
   });
 
   ProductsState copyWith({

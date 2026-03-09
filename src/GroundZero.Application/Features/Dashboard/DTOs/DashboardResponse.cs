@@ -3,7 +3,7 @@ namespace GroundZero.Application.Features.Dashboard.DTOs;
 public class DashboardResponse
 {
     public int CurrentlyInGym { get; set; }
-    public int PendingOrderCount { get; set; }
+    public int LowStockProductCount { get; set; }
     public int PendingAppointmentCount { get; set; }
     public int NewUsersThisMonth { get; set; }
     public List<ActiveGymVisitItem> ActiveGymVisits { get; set; } = new();

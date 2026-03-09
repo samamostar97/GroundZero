@@ -9,7 +9,7 @@ part of 'dashboard_model.dart';
 _$DashboardModelImpl _$$DashboardModelImplFromJson(Map<String, dynamic> json) =>
     _$DashboardModelImpl(
       currentlyInGym: (json['currentlyInGym'] as num).toInt(),
-      pendingOrderCount: (json['pendingOrderCount'] as num).toInt(),
+      lowStockProductCount: (json['lowStockProductCount'] as num).toInt(),
       pendingAppointmentCount: (json['pendingAppointmentCount'] as num).toInt(),
       newUsersThisMonth: (json['newUsersThisMonth'] as num).toInt(),
       activeGymVisits: (json['activeGymVisits'] as List<dynamic>)
@@ -24,7 +24,7 @@ Map<String, dynamic> _$$DashboardModelImplToJson(
   _$DashboardModelImpl instance,
 ) => <String, dynamic>{
   'currentlyInGym': instance.currentlyInGym,
-  'pendingOrderCount': instance.pendingOrderCount,
+  'lowStockProductCount': instance.lowStockProductCount,
   'pendingAppointmentCount': instance.pendingAppointmentCount,
   'newUsersThisMonth': instance.newUsersThisMonth,
   'activeGymVisits': instance.activeGymVisits,

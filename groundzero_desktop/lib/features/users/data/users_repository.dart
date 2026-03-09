@@ -23,6 +23,7 @@ class UsersRepository {
     String? search,
     String? sortBy,
     bool? sortDescending,
+    bool? hasActiveMembership,
   }) async {
     try {
       final response = await _dio.get(
@@ -33,6 +34,7 @@ class UsersRepository {
           if (search != null && search.isNotEmpty) 'search': search,
           if (sortBy != null) 'sortBy': sortBy,
           if (sortDescending != null) 'sortDescending': sortDescending,
+          if (hasActiveMembership != null) 'hasActiveMembership': hasActiveMembership,
         },
       );
       return PagedResult.fromJson(

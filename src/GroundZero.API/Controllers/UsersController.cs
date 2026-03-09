@@ -71,7 +71,8 @@ public class UsersController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? search = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = true)
+        [FromQuery] bool sortDescending = true,
+        [FromQuery] bool? hasActiveMembership = null)
     {
         var result = await _mediator.Send(new GetAllUsersQuery
         {
@@ -79,7 +80,8 @@ public class UsersController : ControllerBase
             PageSize = pageSize,
             Search = search,
             SortBy = sortBy,
-            SortDescending = sortDescending
+            SortDescending = sortDescending,
+            HasActiveMembership = hasActiveMembership
         });
         return Ok(result);
     }

@@ -52,6 +52,10 @@ public class DashboardRepository : IDashboardRepository
         var pendingAppointmentCount = await _context.Appointments
             .CountAsync(a => a.Status == AppointmentStatus.Pending, cancellationToken);
 
+        // Low stock products (stock < 5)
+        var lowStockProductCount = await _context.Products
+            .CountAsync(p => p.StockQuantity < 5, cancellationToken);
+
         // New users this month
         var firstOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
         var newUsersThisMonth = await _context.Users
@@ -60,7 +64,7 @@ public class DashboardRepository : IDashboardRepository
         return new DashboardResponse
         {
             CurrentlyInGym = activeVisits.Count,
-            PendingOrderCount = pendingOrders.Count,
+            LowStockProductCount = lowStockProductCount,
             PendingAppointmentCount = pendingAppointmentCount,
             NewUsersThisMonth = newUsersThisMonth,
             ActiveGymVisits = activeVisits,

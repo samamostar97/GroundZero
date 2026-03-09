@@ -22,7 +22,7 @@ DashboardModel _$DashboardModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$DashboardModel {
   int get currentlyInGym => throw _privateConstructorUsedError;
-  int get pendingOrderCount => throw _privateConstructorUsedError;
+  int get lowStockProductCount => throw _privateConstructorUsedError;
   int get pendingAppointmentCount => throw _privateConstructorUsedError;
   int get newUsersThisMonth => throw _privateConstructorUsedError;
   List<ActiveGymVisitItem> get activeGymVisits =>
@@ -49,7 +49,7 @@ abstract class $DashboardModelCopyWith<$Res> {
   @useResult
   $Res call({
     int currentlyInGym,
-    int pendingOrderCount,
+    int lowStockProductCount,
     int pendingAppointmentCount,
     int newUsersThisMonth,
     List<ActiveGymVisitItem> activeGymVisits,
@@ -73,7 +73,7 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
   @override
   $Res call({
     Object? currentlyInGym = null,
-    Object? pendingOrderCount = null,
+    Object? lowStockProductCount = null,
     Object? pendingAppointmentCount = null,
     Object? newUsersThisMonth = null,
     Object? activeGymVisits = null,
@@ -85,9 +85,9 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
                 ? _value.currentlyInGym
                 : currentlyInGym // ignore: cast_nullable_to_non_nullable
                       as int,
-            pendingOrderCount: null == pendingOrderCount
-                ? _value.pendingOrderCount
-                : pendingOrderCount // ignore: cast_nullable_to_non_nullable
+            lowStockProductCount: null == lowStockProductCount
+                ? _value.lowStockProductCount
+                : lowStockProductCount // ignore: cast_nullable_to_non_nullable
                       as int,
             pendingAppointmentCount: null == pendingAppointmentCount
                 ? _value.pendingAppointmentCount
@@ -122,7 +122,7 @@ abstract class _$$DashboardModelImplCopyWith<$Res>
   @useResult
   $Res call({
     int currentlyInGym,
-    int pendingOrderCount,
+    int lowStockProductCount,
     int pendingAppointmentCount,
     int newUsersThisMonth,
     List<ActiveGymVisitItem> activeGymVisits,
@@ -145,7 +145,7 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? currentlyInGym = null,
-    Object? pendingOrderCount = null,
+    Object? lowStockProductCount = null,
     Object? pendingAppointmentCount = null,
     Object? newUsersThisMonth = null,
     Object? activeGymVisits = null,
@@ -157,9 +157,9 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
             ? _value.currentlyInGym
             : currentlyInGym // ignore: cast_nullable_to_non_nullable
                   as int,
-        pendingOrderCount: null == pendingOrderCount
-            ? _value.pendingOrderCount
-            : pendingOrderCount // ignore: cast_nullable_to_non_nullable
+        lowStockProductCount: null == lowStockProductCount
+            ? _value.lowStockProductCount
+            : lowStockProductCount // ignore: cast_nullable_to_non_nullable
                   as int,
         pendingAppointmentCount: null == pendingAppointmentCount
             ? _value.pendingAppointmentCount
@@ -187,7 +187,7 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
 class _$DashboardModelImpl implements _DashboardModel {
   const _$DashboardModelImpl({
     required this.currentlyInGym,
-    required this.pendingOrderCount,
+    required this.lowStockProductCount,
     required this.pendingAppointmentCount,
     required this.newUsersThisMonth,
     required final List<ActiveGymVisitItem> activeGymVisits,
@@ -201,7 +201,7 @@ class _$DashboardModelImpl implements _DashboardModel {
   @override
   final int currentlyInGym;
   @override
-  final int pendingOrderCount;
+  final int lowStockProductCount;
   @override
   final int pendingAppointmentCount;
   @override
@@ -224,7 +224,7 @@ class _$DashboardModelImpl implements _DashboardModel {
 
   @override
   String toString() {
-    return 'DashboardModel(currentlyInGym: $currentlyInGym, pendingOrderCount: $pendingOrderCount, pendingAppointmentCount: $pendingAppointmentCount, newUsersThisMonth: $newUsersThisMonth, activeGymVisits: $activeGymVisits, pendingOrders: $pendingOrders)';
+    return 'DashboardModel(currentlyInGym: $currentlyInGym, lowStockProductCount: $lowStockProductCount, pendingAppointmentCount: $pendingAppointmentCount, newUsersThisMonth: $newUsersThisMonth, activeGymVisits: $activeGymVisits, pendingOrders: $pendingOrders)';
   }
 
   @override
@@ -234,8 +234,8 @@ class _$DashboardModelImpl implements _DashboardModel {
             other is _$DashboardModelImpl &&
             (identical(other.currentlyInGym, currentlyInGym) ||
                 other.currentlyInGym == currentlyInGym) &&
-            (identical(other.pendingOrderCount, pendingOrderCount) ||
-                other.pendingOrderCount == pendingOrderCount) &&
+            (identical(other.lowStockProductCount, lowStockProductCount) ||
+                other.lowStockProductCount == lowStockProductCount) &&
             (identical(
                   other.pendingAppointmentCount,
                   pendingAppointmentCount,
@@ -258,7 +258,7 @@ class _$DashboardModelImpl implements _DashboardModel {
   int get hashCode => Object.hash(
     runtimeType,
     currentlyInGym,
-    pendingOrderCount,
+    lowStockProductCount,
     pendingAppointmentCount,
     newUsersThisMonth,
     const DeepCollectionEquality().hash(_activeGymVisits),
@@ -285,7 +285,7 @@ class _$DashboardModelImpl implements _DashboardModel {
 abstract class _DashboardModel implements DashboardModel {
   const factory _DashboardModel({
     required final int currentlyInGym,
-    required final int pendingOrderCount,
+    required final int lowStockProductCount,
     required final int pendingAppointmentCount,
     required final int newUsersThisMonth,
     required final List<ActiveGymVisitItem> activeGymVisits,
@@ -298,7 +298,7 @@ abstract class _DashboardModel implements DashboardModel {
   @override
   int get currentlyInGym;
   @override
-  int get pendingOrderCount;
+  int get lowStockProductCount;
   @override
   int get pendingAppointmentCount;
   @override

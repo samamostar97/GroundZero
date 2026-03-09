@@ -7,7 +7,6 @@ import '../models/gym_visit_model.dart';
 class GymVisitsState {
   final List<GymVisitModel> visits;
   final bool isLoading;
-  final bool isActionLoading;
   final String? error;
   final int currentPage;
   final int totalPages;
@@ -19,7 +18,6 @@ class GymVisitsState {
   const GymVisitsState({
     this.visits = const [],
     this.isLoading = false,
-    this.isActionLoading = false,
     this.error,
     this.currentPage = 1,
     this.totalPages = 1,
@@ -32,7 +30,6 @@ class GymVisitsState {
   GymVisitsState copyWith({
     List<GymVisitModel>? visits,
     bool? isLoading,
-    bool? isActionLoading,
     String? error,
     int? currentPage,
     int? totalPages,
@@ -45,7 +42,6 @@ class GymVisitsState {
     return GymVisitsState(
       visits: visits ?? this.visits,
       isLoading: isLoading ?? this.isLoading,
-      isActionLoading: isActionLoading ?? this.isActionLoading,
       error: error,
       currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
@@ -114,38 +110,6 @@ class GymVisitsNotifier extends Notifier<GymVisitsState> {
       state = state.copyWith(sortBy: column, sortDescending: true);
     }
     loadPage(1);
-  }
-
-  Future<String?> checkIn(int userId) async {
-    state = state.copyWith(isActionLoading: true, error: null);
-    try {
-      await _repository.checkIn(userId);
-      state = state.copyWith(isActionLoading: false);
-      await loadPage(1);
-      return null;
-    } on ApiException catch (e) {
-      state = state.copyWith(isActionLoading: false);
-      return e.firstError;
-    } catch (_) {
-      state = state.copyWith(isActionLoading: false);
-      return 'Greška pri prijavi korisnika.';
-    }
-  }
-
-  Future<String?> checkOut(int userId) async {
-    state = state.copyWith(isActionLoading: true, error: null);
-    try {
-      await _repository.checkOut(userId);
-      state = state.copyWith(isActionLoading: false);
-      await loadPage(1);
-      return null;
-    } on ApiException catch (e) {
-      state = state.copyWith(isActionLoading: false);
-      return e.firstError;
-    } catch (_) {
-      state = state.copyWith(isActionLoading: false);
-      return 'Greška pri odjavi korisnika.';
-    }
   }
 
   void refresh() => loadPage(state.currentPage);

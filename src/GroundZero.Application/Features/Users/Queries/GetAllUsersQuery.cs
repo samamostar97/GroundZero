@@ -12,4 +12,5 @@ public class GetAllUsersQuery : IRequest<PagedResult<UserResponse>>
     public string? Search { get; set; }
     public string? SortBy { get; set; }
     public bool SortDescending { get; set; } = true;
+    public bool? HasActiveMembership { get; set; }
 }
